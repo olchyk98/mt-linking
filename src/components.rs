@@ -14,7 +14,7 @@ pub fn get_app_vertical_layout (frame: &Frame) -> Rc<[Rect]> {
 }
 
 pub fn get_screen_widget<'a> (application_state: &State, screen_index: usize) -> Option<List<'a>> {
-  let screen_files = application_state.get_files_for_screen(screen_index)?;
+  let screen_files = application_state.get_files_for_pane(screen_index)?;
 
   let list_items: Vec<ListItem<'_>> = screen_files
     .iter()
@@ -24,7 +24,6 @@ pub fn get_screen_widget<'a> (application_state: &State, screen_index: usize) ->
     .collect();
 
 
-  // TODO: research stateful widgets
   Some(
     List::new(list_items)
       .highlight_style(Style::default().fg(Color::LightRed))

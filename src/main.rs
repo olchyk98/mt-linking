@@ -3,15 +3,8 @@ pub mod setup;
 pub mod ui;
 pub mod components;
 
-use std::{io::stdout, time::Duration, path::Path};
-
-use crossterm::{
-  terminal::{EnterAlternateScreen, LeaveAlternateScreen, enable_raw_mode, disable_raw_mode}, event::{Event, KeyCode},
-};
-use ratatui::{
-  Terminal,
-  prelude::CrosstermBackend,
-};
+use std::{time::Duration, path::Path};
+use crossterm::event::{KeyEventKind, KeyCode};
 use setup::{prepare_terminal_exit, get_terminal};
 use types::State;
 use ui::draw;
@@ -28,9 +21,16 @@ fn main () -> std::io::Result<()> {
 
     // TODO: Implement keyboard events on a separate thread.
     if crossterm::event::poll(Duration::from_millis(10))? {
-      if let Ok(event) = crossterm::event::read() {
-        if event == Event::Key(KeyCode::Char('q').into()) {
-          break
+      if let crossterm::event::Event::Key(key) = crossterm::event::read()? {
+        if key.kind == KeyEventKind::Press {
+          match key.code {
+            KeyCode::Up => application_state.move_cursor_up()?,
+            KeyCode::Down => application_state.move_cursor_down()?,
+            KeyCode::Left => application_state.move_cursor_left()?,
+            KeyCode::Right => application_state.move_cursor_right()?,
+            KeyCode::Char('q') => break,
+            _ => break,
+          }
         }
       }
     }

@@ -5,7 +5,7 @@ use ratatui::{Terminal, prelude::CrosstermBackend};
 use crate::{types::State, components::{get_screen_widget, get_app_vertical_layout}};
 
 pub fn draw (terminal: &mut Terminal<CrosstermBackend<Stdout>>, application_state: &mut State) {
-  let screens_length = application_state.screens.len();
+  let screens_length = application_state.panes.len();
 
   let _ = terminal.draw(|frame| {
     let main_layout = get_app_vertical_layout(&frame);

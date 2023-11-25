@@ -1,6 +1,6 @@
-use std::{io::{ErrorKind, Error, Result}, fs, path::Path, os::unix::prelude::FileTypeExt};
+use std::{io::{ErrorKind, Error, Result}, fs, path::Path};
 
-use ratatui::{prelude::Layout, widgets::Widget};
+use ratatui::widgets::ListState;
 
 pub enum FileType {
   FOLDER,
@@ -12,8 +12,9 @@ pub struct File {
   pub name: String
 }
 
-pub struct Screen<'a> {
+pub struct Pane<'a> {
   pub loaded_files: Vec<File>,
+  pub list_state: ListState,
   pub path: &'a Path
 }
 
@@ -23,10 +24,9 @@ pub enum Operation {
 }
 
 pub struct State<'a> {
-  cursor_x_position: i8,
-  cursor_y_position: i8,
-  pub screens: Vec<Screen<'a>>,
-  current_screen_index: usize,
+  pane_in_focus: usize,
+  pub panes: Vec<Pane<'a>>,
+  current_pane_index: usize,
   operation: Operation,
 }
 
@@ -34,40 +34,50 @@ pub struct State<'a> {
 impl<'a> State<'a> {
   pub fn default () -> State<'a> {
     State {
-      cursor_x_position: 0,
-      cursor_y_position: 0,
-      screens: Vec::new(),
-      current_screen_index: 0,
+      pane_in_focus: 0,
+      panes: Vec::new(),
+      current_pane_index: 0,
       operation: Operation::SEARCHING,
     }
   }
 
-  pub fn get_files_for_screen (&self, index: usize) -> Option<&Vec<File>> {
-    let screen = self.screens.get(index as usize)?;
-    Some(&screen.loaded_files)
+  pub fn get_files_for_pane (&self, index: usize) -> Option<&Vec<File>> {
+    let pane = self.panes.get(index)?;
+    Some(&pane.loaded_files)
   }
 
-  pub fn get_files_for_current_screen (&self) -> Option<&Vec<File>> {
-    self.get_files_for_screen(self.current_screen_index)
+  pub fn get_files_for_current_pane (&self) -> Option<&Vec<File>> {
+    self.get_files_for_pane(self.current_pane_index)
   }
 
-  fn inc_cursor_x_position (&mut self, value: i8) -> Result<()> {
-    let files_for_current_screen = self.get_files_for_current_screen()
+  fn inc_cursor_y_position (&mut self, value: i8) -> Result<()> {
+    // TODO: CONTINUE HERE -> Solve borrow checking problem
+    let files_for_current_pane = self.get_files_for_current_pane()
       .ok_or(Error::new(ErrorKind::Other, "Could not load the current files."))?;
 
+    let pane = self.panes.get_mut(self.pane_in_focus)
+      .ok_or(Error::new(ErrorKind::Other, "Could not access the current pane."))?;
 
-    self.cursor_x_position = (self.cursor_x_position + value)
-      .clamp(0, files_for_current_screen.len() as i8);
+
+    let selection = pane.list_state.selected().unwrap_or(0);
+
+    let next_selection = ((selection as i8) + value)
+      .clamp(0, files_for_current_pane.len() as i8);
+
+    pane.list_state.select(Some(next_selection as usize));
 
     Ok(())
   }
 
-  fn inc_cursor_y_position (&mut self, value: i8) -> Result<()> {
-    let amount_of_screens = self.screens.len();
+  fn inc_cursor_x_position (&mut self, value: i8) -> Result<()> {
+    let amount_of_panes = self.panes.len();
 
+    let selection = self.pane_in_focus;
 
-    self.cursor_y_position = (self.cursor_x_position + value)
-      .clamp(0, amount_of_screens as i8);
+    let next_selection = (selection as i8) + value
+      .clamp(0, i8::MAX);
+
+    self.pane_in_focus = next_selection as usize;
 
     Ok(())
   }
@@ -102,10 +112,11 @@ impl<'a> State<'a> {
       })
     .collect();
 
-    // DEBUG
-    self.screens.push(
-      Screen { loaded_files, path: root_path }
-    );
+    self.panes.push(Pane {
+      list_state: ListState::default(),
+      loaded_files,
+      path: root_path
+    });
 
     Ok(())
   }
