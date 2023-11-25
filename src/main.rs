@@ -1,58 +1,43 @@
-use std::io::*;
+pub mod types;
+pub mod setup;
+pub mod ui;
+pub mod components;
 
-use ratatui::{
-  prelude::{Terminal, CrosstermBackend, Rect, Alignment, Layout, Constraint, Direction},
-  widgets::{Paragraph, Block, BorderType, Borders, Tabs, Sparkline, block::Title}, style::{Style, Color, Stylize}, symbols::{self, block},
+use std::{io::stdout, time::Duration, path::Path};
+
+use crossterm::{
+  terminal::{EnterAlternateScreen, LeaveAlternateScreen, enable_raw_mode, disable_raw_mode}, event::{Event, KeyCode},
 };
+use ratatui::{
+  Terminal,
+  prelude::CrosstermBackend,
+};
+use setup::{prepare_terminal_exit, get_terminal};
+use types::State;
+use ui::draw;
 
-fn main () -> Result<()> {
-  crossterm::terminal::enable_raw_mode()?;
-  crossterm::execute!(std::io::stderr(), crossterm::terminal::EnterAlternateScreen)?;
+fn main () -> std::io::Result<()> {
+  let mut application_state = State::default();
+  let mut terminal = get_terminal()?;
 
-  let mut terminal = Terminal::new(CrosstermBackend::new(std::io::stdout()))?;
+  application_state.load_root(Path::new("/"))?;
 
   loop {
-    std::thread::sleep(std::time::Duration::from_secs(1));
+    draw(&mut terminal, &mut application_state);
 
-    terminal.draw(|frame| {
-      let frame_rect = frame.size();
 
-      let layout = Layout::new()
-        .direction(Direction::Vertical)
-        .constraints([
-          Constraint::Length(1),
-          Constraint::Min(0),
-        ])
-        .split(frame_rect);
-
-      let tabs = vec!["@mediatool/mt-mediaplanning", "@mediatool/mt-webapp", "@mediatool/integrations"];
-      let tabs_widget = Tabs::new(tabs)
-        .select(0)
-        .highlight_style(Style::default().fg(Color::Red))
-        .divider(" ")
-        .bg(Color::Rgb(40, 22, 49));
-
-      let content_bg = Block::default()
-        .bg(Color::Rgb(16, 23, 48));
-
-      frame.render_widget(tabs_widget, layout[0]);
-      frame.render_widget(content_bg, layout[1]);
-    })?;
-
-    if crossterm::event::poll(std::time::Duration::from_millis(1))? {
-      if let crossterm::event::Event::Key(key) = crossterm::event::read()? {
-        if key.kind == crossterm::event::KeyEventKind::Press {
-          match key.code {
-            crossterm::event::KeyCode::Char('q') => break,
-            _ => ()
-          }
+    // TODO: Implement keyboard events on a separate thread.
+    if crossterm::event::poll(Duration::from_millis(10))? {
+      if let Ok(event) = crossterm::event::read() {
+        if event == Event::Key(KeyCode::Char('q').into()) {
+          break
         }
       }
     }
   }
 
-  crossterm::terminal::disable_raw_mode()?;
-  crossterm::execute!(std::io::stderr(), crossterm::terminal::LeaveAlternateScreen)?;
 
+  prepare_terminal_exit()?;
   Ok(())
 }
+
