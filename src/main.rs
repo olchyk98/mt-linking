@@ -28,6 +28,7 @@ fn main () -> std::io::Result<()> {
             KeyCode::Down => application_state.move_cursor_down()?,
             KeyCode::Left => application_state.move_cursor_left()?,
             KeyCode::Right => application_state.move_cursor_right()?,
+            KeyCode::Enter => application_state.open_selection()?,
             KeyCode::Char('q') => break,
             _ => break,
           }
@@ -35,7 +36,6 @@ fn main () -> std::io::Result<()> {
       }
     }
   }
-
 
   prepare_terminal_exit()?;
   Ok(())

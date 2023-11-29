@@ -13,8 +13,8 @@ pub fn get_app_vertical_layout (frame: &Frame) -> Rc<[Rect]> {
     .split(frame.size())
 }
 
-pub fn get_screen_widget<'a> (application_state: &State, screen_index: usize) -> Option<List<'a>> {
-  let screen_files = application_state.get_files_for_pane(screen_index)?;
+pub fn get_pane_widget<'a> (application_state: &State, pane_index: usize) -> Option<List<'a>> {
+  let screen_files = application_state.get_files_for_pane(pane_index)?;
 
   let list_items: Vec<ListItem<'_>> = screen_files
     .iter()
@@ -26,8 +26,7 @@ pub fn get_screen_widget<'a> (application_state: &State, screen_index: usize) ->
 
   Some(
     List::new(list_items)
-      .highlight_style(Style::default().fg(Color::LightRed))
-      .highlight_symbol(">")
+      .highlight_style(Style::default().bg(Color::Yellow))
       .highlight_spacing(HighlightSpacing::WhenSelected)
   )
 }

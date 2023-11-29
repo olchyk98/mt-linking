@@ -1,4 +1,4 @@
-use std::{io::{ErrorKind, Error, Result}, fs, path::Path};
+use std::{io::{ErrorKind, Error, Result}, fs, path::Path, error::Error};
 
 use ratatui::widgets::ListState;
 
@@ -51,18 +51,14 @@ impl<'a> State<'a> {
   }
 
   fn inc_cursor_y_position (&mut self, value: i8) -> Result<()> {
-    // TODO: CONTINUE HERE -> Solve borrow checking problem
-    let files_for_current_pane = self.get_files_for_current_pane()
-      .ok_or(Error::new(ErrorKind::Other, "Could not load the current files."))?;
-
     let pane = self.panes.get_mut(self.pane_in_focus)
       .ok_or(Error::new(ErrorKind::Other, "Could not access the current pane."))?;
 
-
     let selection = pane.list_state.selected().unwrap_or(0);
+    let files_count = pane.loaded_files.len() as i8;
 
     let next_selection = ((selection as i8) + value)
-      .clamp(0, files_for_current_pane.len() as i8);
+      .clamp(0, files_count);
 
     pane.list_state.select(Some(next_selection as usize));
 
@@ -70,12 +66,12 @@ impl<'a> State<'a> {
   }
 
   fn inc_cursor_x_position (&mut self, value: i8) -> Result<()> {
-    let amount_of_panes = self.panes.len();
+    let amount_of_panes = self.panes.len() as i8;
 
     let selection = self.pane_in_focus;
 
     let next_selection = (selection as i8) + value
-      .clamp(0, i8::MAX);
+      .clamp(0, amount_of_panes);
 
     self.pane_in_focus = next_selection as usize;
 
@@ -98,6 +94,17 @@ impl<'a> State<'a> {
     self.inc_cursor_x_position(1)
   }
 
+  pub fn open_selection (&mut self) -> Result<()> {
+    let panes_count = self.panes.len();
+    let pane_option = self.panes.get(self.current_pane_index);
+
+    if let Some(pane) = pane_option {
+      // TODO: CONTINUE HERE
+    }
+
+    return Err(Error::new(ErrorKind::Other, "Could not open it."))
+  }
+
   pub fn load_root (&mut self, root_path: &'a Path) -> Result<()> {
     let dir_files = fs::read_dir(root_path)?;
 
@@ -112,8 +119,11 @@ impl<'a> State<'a> {
       })
     .collect();
 
+    let mut list_state = ListState::default();
+    list_state.select(Some(0));
+
     self.panes.push(Pane {
-      list_state: ListState::default(),
+      list_state,
       loaded_files,
       path: root_path
     });
