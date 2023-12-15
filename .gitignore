@@ -162,3 +162,5 @@ __pycache__
 
 # === Rules for C++ development ===
 compile_commands.json
+
+yarn-error.log
