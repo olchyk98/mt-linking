@@ -1,5 +1,5 @@
 import blessed from 'blessed'
-import { spawnScreen } from './src/spawn-screen'
+import { spawnScreen } from './src/core'
 
 // XXX: Probably create an abstraction for
 //  - Blessed API
@@ -8,8 +8,9 @@ import { spawnScreen } from './src/spawn-screen'
 function main () {
   const screen = spawnScreen()
   const box = blessed.box({
-    top: 'center',
+    top: 'left',
     left: 'center',
+    right: 'right',
     width: '50%',
     height: '50%',
     content: 'Hello {bold}world{/bold}!',
