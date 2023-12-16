@@ -17,12 +17,13 @@ const convertTabToOption = (tab: Tab): Widgets.Types.ListbarCommand => ({
 export class TabsNavigation implements UIComponentTrait<ListbarElement> {
   private listbar: ListbarElement
   private tabs: Tab[]
-  constructor (tabs: Tab[]) {
-    this.tabs = tabs
-    this.listbar = this.init()
+  constructor (parent?: Widgets.Node) {
+    this.tabs = [] // Should be pulled from redux state
+    this.listbar = this.init(parent)
   }
-  private init () {
+  private init (parent?: Widgets.Node) {
     const listbar = blessed.listbar({
+      parent,
       commands: [],
       items: [],
       autoCommandKeys: true,
@@ -36,7 +37,7 @@ export class TabsNavigation implements UIComponentTrait<ListbarElement> {
       },
       style: {
         selected: {
-          bg: 'red',
+          bg: '#70CBF4',
         },
       },
     })

@@ -1,5 +1,5 @@
-import { spawnScreen } from './src/core'
-import { TabsNavigation } from './src/ui'
+import { renderComponents, spawnScreen } from './src/core'
+import { OverviewPage } from './src/ui'
 
 // TODO: "blessed-contrib" for more widgets
 
@@ -9,12 +9,8 @@ import { TabsNavigation } from './src/ui'
 
 function main () {
   const screen = spawnScreen()
-  const nav = new TabsNavigation([
-    { key: 'a', name: 'webapp' },
-    { key: 'b', name: 'mt-mediaplanning-ui' },
-  ])
-  screen.append(nav.render())
-  screen.render() // should be called on each update
+  const overviewPage = new OverviewPage(screen)
+  renderComponents(screen, [ overviewPage ])
 }
 
 try {
