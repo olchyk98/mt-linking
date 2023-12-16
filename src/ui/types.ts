@@ -1,3 +1,3 @@
 export interface UIComponentTrait<T> {
-  get(): T
+  render(): T
 }
