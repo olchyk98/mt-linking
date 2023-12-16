@@ -1,8 +1,6 @@
 import { spawnScreen } from './src/core'
 import { NewModuleLinkForm, OverviewPage } from './src/ui'
 
-// TODO: CONTINUE HERE -> Add "N" (New link) action.
-
 // TODO: "blessed-contrib" for more widgets
 
 // XXX: Overview Page
