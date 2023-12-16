@@ -2,16 +2,26 @@ import blessed, { Widgets } from 'blessed'
 import blessedContrib from 'blessed-contrib'
 import { UIComponentTrait } from './types'
 import { Node, Screen } from '../core'
-import { moduleLinksSlice, stateStore } from '../state'
+import { moduleLinksSlice, screenSlice, stateStore } from '../state'
 
-export class NewModuleLinkForm implements UIComponentTrait<Node> {
+export class NewModuleLinkForm implements UIComponentTrait<Widgets.BoxElement> {
   private currentStep: FormStep
   private screen: Screen
   private messageNode: Widgets.MessageElement
+  private treeNode: blessedContrib.Widgets.TreeElement
+  private layoutContainer: Widgets.BoxElement
   constructor (screen: Screen) {
     this.currentStep = 'NOTIFY_ABOUT_FROM'
     this.screen = screen
+    this.initLayoutContainer()
     this.initMessageNode()
+    this.initTreeNode()
+  }
+  private initLayoutContainer () {
+    this.layoutContainer = blessed.box({
+      width: '100%',
+      height: '100%',
+    })
   }
   private initMessageNode () {
     this.messageNode = blessed.message({
@@ -27,6 +37,17 @@ export class NewModuleLinkForm implements UIComponentTrait<Node> {
       style: { border: { fg: 'blue' } },
     })
   }
+  private initTreeNode () {
+    this.treeNode = blessedContrib.tree({
+      parent: this.layoutContainer,
+      width: 40,
+      height: 20,
+      left: 'center',
+      top: 'center',
+      border: 'line',
+      hidden: true,
+    })
+  }
   private setStep (step: FormStep) {
     this.currentStep = step
     this.render()
@@ -38,8 +59,6 @@ export class NewModuleLinkForm implements UIComponentTrait<Node> {
       2,
       () => { this.setStep('SELECT_FROM') },
     )
-    this.screen.render()
-    return this.messageNode
   }
   private renderNotifyToPrompt () {
     this.messageNode.log(
@@ -47,21 +66,20 @@ export class NewModuleLinkForm implements UIComponentTrait<Node> {
       2,
       () => { this.setStep('SELECT_TO') },
     )
-    this.screen.render()
-    return this.messageNode
   }
-  private renderSelectFrom () {
-    const tree = blessedContrib.tree({
-      width: 40,
-      height: 20,
-      border: 'line',
-      shadow: true,
-      left: 'center',
-      top: 'center',
-      fg: 'green',
-    })
-    tree.focus()
-    tree.setData({
+  private renderNotifyLinkCreated () {
+    this.messageNode.log(
+      'Link has been created!',
+      2,
+      () => {
+        this.screen.remove(this.render())
+        stateStore.dispatch(screenSlice.actions.setActiveScreen('OVERVIEW'))
+      },
+    )
+  }
+  private renderFromSelector () {
+    this.treeNode.hidden = false
+    this.treeNode.setData({
       extended: true,
       children: {
         A: {},
@@ -69,25 +87,44 @@ export class NewModuleLinkForm implements UIComponentTrait<Node> {
         C: {},
       },
     })
-    tree.focus()
-    this.screen.append(tree)
-    tree.on('select', (node) => {
+    this.treeNode.focus()
+    this.treeNode.on('select', (node) => {
+      this.treeNode.hidden = true
       stateStore.dispatch(moduleLinksSlice.actions.createModuleLinkBase(node.from))
-      this.screen.remove(tree)
       this.setStep('NOTIFY_ABOUT_TO')
     })
-    return tree
   }
-  render (): Node {
+  private renderToSelector () {
+    this.treeNode.hidden = false
+    this.treeNode.setData({
+      extended: true,
+      children: {
+        A: {},
+        B: {},
+        C: {},
+      },
+    })
+    this.treeNode.focus()
+    this.treeNode.on('select', (node) => {
+      this.treeNode.hidden = true
+      stateStore.dispatch(moduleLinksSlice.actions.createModuleLinkBase(node.from))
+      this.setStep('LINK_CREATED')
+    })
+  }
+  render (): Widgets.BoxElement {
+    // TODO: Don't append/remove different nodes, but instead work with
+    // one container (layout)
+    // TODO: Display current information module link on all
+    // select screens.
     const rendererMap: Record<FormStep, () => Node> = {
       NOTIFY_ABOUT_FROM: this.renderNotifyFromPrompt.bind(this),
-      SELECT_FROM: this.renderSelectFrom.bind(this),
+      SELECT_FROM: this.renderFromSelector.bind(this),
       NOTIFY_ABOUT_TO: this.renderNotifyToPrompt.bind(this),
-      SELECT_TO: // TODO: CONTINUE HERE ->>>
+      SELECT_TO: this.renderToSelector.bind(this),
       LINK_CREATED: this.renderNotifyLinkCreated.bind(this),
     }
-    const renderer = rendererMap[this.currentStep]
-    return renderer()
+    rendererMap[this.currentStep]()
+    return this.layoutContainer
   }
 }
 
