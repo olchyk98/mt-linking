@@ -1,5 +1,7 @@
-import blessed from 'blessed'
 import { spawnScreen } from './src/core'
+import { TabsNavigation } from './src/ui'
+
+// TODO: "blessed-contrib" for more widgets
 
 // XXX: Probably create an abstraction for
 //  - Blessed API
@@ -7,30 +9,18 @@ import { spawnScreen } from './src/core'
 
 function main () {
   const screen = spawnScreen()
-  const box = blessed.box({
-    top: 'left',
-    left: 'center',
-    right: 'right',
-    width: '50%',
-    height: '50%',
-    content: 'Hello {bold}world{/bold}!',
-    tags: true,
-    border: {
-      type: 'line',
-    },
-    style: {
-      fg: 'white',
-      bg: 'magenta',
-      border: {
-        fg: '#f0f0f0',
-      },
-      hover: {
-        bg: 'green',
-      },
-    },
-  })
-  screen.append(box)
+  const nav = new TabsNavigation([
+    { key: 'a', name: 'webapp' },
+    { key: 'b', name: 'mt-mediaplanning-ui' },
+  ])
+  screen.append(nav.render())
   screen.render() // should be called on each update
 }
 
-main()
+try {
+  main()
+} catch (e) {
+  console.log(e)
+  console.log('Crashed.')
+  process.exit(1)
+}

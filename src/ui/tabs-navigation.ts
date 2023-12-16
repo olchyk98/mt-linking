@@ -1,4 +1,4 @@
-import { map } from 'ramda'
+import { isEmpty, map } from 'ramda'
 import blessed, { Widgets } from 'blessed'
 import { UIComponentTrait } from './types'
 
@@ -6,8 +6,11 @@ type ListbarElement = Widgets.ListbarElement
 
 const convertTabToOption = (tab: Tab): Widgets.Types.ListbarCommand => ({
   key: tab.key,
+  // XXX: Invalid types in the external library.
+  // @ts-ignore
+  text: tab.name,
   callback () {
-
+    // TODO: Implement switching
   },
 })
 
@@ -19,8 +22,24 @@ export class TabsNavigation implements UIComponentTrait<ListbarElement> {
     this.listbar = this.init()
   }
   private init () {
-    const listbar = blessed.listbar()
-    listbar.setItems(map(convertTabToOption, this.tabs))
+    const listbar = blessed.listbar({
+      commands: [],
+      items: [],
+      autoCommandKeys: true,
+      mouse: true,
+      keys: true,
+      width: '100%',
+      height: 3,
+      tags: true,
+      border: {
+        type: 'line',
+      },
+      style: {
+        selected: {
+          bg: 'red',
+        },
+      },
+    })
     return listbar
   }
   appendTab (tab: Tab): void {
@@ -29,7 +48,9 @@ export class TabsNavigation implements UIComponentTrait<ListbarElement> {
   prependTab (tab: Tab) {
     this.tabs.unshift(tab)
   }
-  get () {
+  render () {
+    this.listbar.setItems(map(convertTabToOption, this.tabs))
+    this.listbar.setLabel('Press N to add')
     return this.listbar
   }
 }

@@ -20,6 +20,7 @@ module.exports = {
   rules: {
     'comma-dangle': [ 'error', 'always-multiline' ],
     'object-curly-spacing': [ 'error', 'always' ],
+    '@typescript-eslint/ban-ts-comment': 0,
     'array-bracket-spacing': [ 'error', 'always' ],
     'linebreak-style': [ 'error', 'unix' ],
     quotes: [ 'error', 'single' ],
