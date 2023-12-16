@@ -13,7 +13,7 @@ export interface ModuleLinksState {
 
 export type ScreenType =
   | 'OVERVIEW'
-  | 'SELECT_NEW_LINK'
+  | 'CREATE_NEW_LINK'
 
 export interface ModuleLink {
   from: string

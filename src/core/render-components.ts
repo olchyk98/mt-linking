@@ -1,13 +1,7 @@
-import { forEach, map } from 'ramda'
+import { forEach } from 'ramda'
 import { UIComponentTrait } from '../ui/types'
-import { Node, Screen } from './types'
+import { Node } from './types'
 
-export function renderComponents (
-  screen: Screen,
-  components: UIComponentTrait<Node>[],
-): void {
-  const instances = map( (l) => l.render(), components)
-  const append = screen.children.length
-  if (append) forEach<Node, Node[]>((l) => screen.append(l), instances)
-  screen.render()
+export function renderComponents (components: UIComponentTrait<Node>[]): void {
+  forEach<UIComponentTrait<Node>, UIComponentTrait<Node>[]>((l) => l.render(), components)
 }
