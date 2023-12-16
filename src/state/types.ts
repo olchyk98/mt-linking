@@ -1,3 +1,7 @@
+import type { storeReducer } from './reducers'
+
+export type StateStore = ReturnType<typeof storeReducer>
+
 export interface ScreenState {
   screen: ScreenType
 }

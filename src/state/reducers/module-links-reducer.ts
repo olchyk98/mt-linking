@@ -1,15 +1,15 @@
 import { append, assoc, find, findIndex, map, remove } from 'ramda'
-import { ModuleLinkBase, ModuleLinkStatus, ModuleLinksState } from '../types'
+import { ModuleLink, ModuleLinkBase, ModuleLinkStatus, ModuleLinksState } from '../types'
 
 const defaultModuleLinksState: ModuleLinksState = {
   links: [],
   linkBases: [],
 }
 
-export function screenReducer (
+export function moduleLinksReducer (
   state: ModuleLinksState = defaultModuleLinksState,
   action: ModuleLinksReducerAction,
-) {
+): ModuleLinksState {
   switch (action.type) {
     case 'CREATE_MODULE_LINK_BASE': {
       const alreadySet = find((l) => l.from === action.payload, state.linkBases)
@@ -20,7 +20,7 @@ export function screenReducer (
     case 'FULFILL_MODULE_LINK': {
       const baseIndex = findIndex((l) => l.from === action.payload.from, state.linkBases)
       if (baseIndex === -1) return state
-      const link = assoc('to', action.payload.to, state.linkBases[baseIndex])
+      const link: ModuleLink = { ...state.linkBases[baseIndex], to: action.payload.to }
       return {
         ...state,
         links: append(link, state.links),

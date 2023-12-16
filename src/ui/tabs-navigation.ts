@@ -1,8 +1,15 @@
-import { isEmpty, map } from 'ramda'
+import { map } from 'ramda'
 import blessed, { Widgets } from 'blessed'
 import { UIComponentTrait } from './types'
+import { ModuleLink, stateStore } from '../state'
+import { extractNameFromModuleLinkPath } from '../utils'
 
 type ListbarElement = Widgets.ListbarElement
+
+const convertLinkToTab = (link: ModuleLink): Tab => ({
+  key: link.from,
+  name: `${extractNameFromModuleLinkPath(link.from, '?')} -> ${extractNameFromModuleLinkPath(link.to, '?')}`,
+})
 
 const convertTabToOption = (tab: Tab): Widgets.Types.ListbarCommand => ({
   key: tab.key,
@@ -22,6 +29,10 @@ export class TabsNavigation implements UIComponentTrait<ListbarElement> {
     this.listbar = this.init(parent)
   }
   private init (parent?: Widgets.Node) {
+    stateStore.subscribe(() => {
+      const state = stateStore.getState()
+      this.tabs = map(convertLinkToTab, state.moduleLinks.links)
+    })
     const listbar = blessed.listbar({
       parent,
       commands: [],

@@ -8,7 +8,7 @@ const defaultScreenState: ScreenState = {
 export function screenReducer (
   state: ScreenState = defaultScreenState,
   action: ScreenReducerAction,
-) {
+): ScreenState {
   switch (action.type) {
     case 'SET_ACTIVE_SCREEN': {
       return assoc('screen', action.payload, state)
