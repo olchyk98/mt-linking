@@ -1,9 +1,9 @@
 import blessed, { Widgets } from 'blessed'
-import { map } from 'ramda'
+import { pluck } from 'ramda'
 import { UIComponentTrait } from './types'
 import { Node, Screen } from '../core'
 import { moduleLinksSlice, screenSlice, stateStore } from '../state'
-import { extractNameFromModuleLinkPath } from '../utils'
+import { getLinkablePackagesWithMeta } from '../logic/get-linkable-packages-with-meta'
 
 export class NewModuleLinkForm implements UIComponentTrait<Node> {
   private currentStep: FormStep
@@ -79,22 +79,15 @@ export class NewModuleLinkForm implements UIComponentTrait<Node> {
   }
   private renderFromSelector () {
     // TODO: CONTINUE HERE ->
-    // TODO: A separate function in logic
-    // that would fetch package names
-    // based on paths from package.json
-    //
     // TODO: A separate function that
     // would fetch dependencies for
     // specified package by path from
     // package.json and check if any
     // of the linked packages can
     // be linked there.
-    const links = map(
-      (l) => l && extractNameFromModuleLinkPath(l, '?'),
-      getLinkablePackagePaths(),
-    ).filter(Boolean)
+    const linksWithMeta = getLinkablePackagesWithMeta()
     this.listNode.show()
-    this.listNode.setItems(links)
+    this.listNode.setItems(pluck('name', linksWithMeta))
     this.listNode.on('select', (_, selectIndex) => {
       console.log(selectIndex)
       stateStore.dispatch(moduleLinksSlice.actions.createModuleLinkBase(node.from))

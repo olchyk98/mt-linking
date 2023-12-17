@@ -2,13 +2,13 @@ import { map } from 'ramda'
 import blessed, { Widgets } from 'blessed'
 import { UIComponentTrait } from './types'
 import { ModuleLink, stateStore } from '../state'
-import { extractNameFromModuleLinkPath } from '../utils'
+import { getPackageNameByPath } from '../logic/get-package-name-by-path'
 
 type ListbarElement = Widgets.ListbarElement
 
 const convertLinkToTab = (link: ModuleLink): Tab => ({
   key: link.from,
-  name: `${extractNameFromModuleLinkPath(link.from, '?')} -> ${extractNameFromModuleLinkPath(link.to, '?')}`,
+  name: `${getPackageNameByPath(link.from) ?? '?'} -> ${getPackageNameByPath(link.to) ?? '?'}`,
 })
 
 const convertTabToOption = (tab: Tab): Widgets.Types.ListbarCommand => ({
