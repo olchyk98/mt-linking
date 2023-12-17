@@ -1,27 +1,20 @@
 import blessed, { Widgets } from 'blessed'
-import blessedContrib from 'blessed-contrib'
+import { map } from 'ramda'
 import { UIComponentTrait } from './types'
 import { Node, Screen } from '../core'
 import { moduleLinksSlice, screenSlice, stateStore } from '../state'
+import { extractNameFromModuleLinkPath } from '../utils'
 
-export class NewModuleLinkForm implements UIComponentTrait<Widgets.BoxElement> {
+export class NewModuleLinkForm implements UIComponentTrait<Node> {
   private currentStep: FormStep
   private screen: Screen
   private messageNode: Widgets.MessageElement
-  private treeNode: blessedContrib.Widgets.TreeElement
-  private layoutContainer: Widgets.BoxElement
+  private listNode: Widgets.ListElement
   constructor (screen: Screen) {
     this.currentStep = 'NOTIFY_ABOUT_FROM'
     this.screen = screen
-    this.initLayoutContainer()
     this.initMessageNode()
     this.initTreeNode()
-  }
-  private initLayoutContainer () {
-    this.layoutContainer = blessed.box({
-      width: '100%',
-      height: '100%',
-    })
   }
   private initMessageNode () {
     this.messageNode = blessed.message({
@@ -33,16 +26,19 @@ export class NewModuleLinkForm implements UIComponentTrait<Widgets.BoxElement> {
       width: '100%',
       border: 'line',
       align: 'center',
-      buttons: false,
       style: { border: { fg: 'blue' } },
+      hidden: true,
     })
   }
   private initTreeNode () {
-    this.treeNode = blessedContrib.tree({
-      parent: this.layoutContainer,
+    this.listNode = blessed.list({
+      parent: this.screen,
       width: 40,
       height: 20,
+      keys: true,
+      interactive: true,
       left: 'center',
+      selectedBg: 'blue',
       top: 'center',
       border: 'line',
       hidden: true,
@@ -51,24 +47,28 @@ export class NewModuleLinkForm implements UIComponentTrait<Widgets.BoxElement> {
   private setStep (step: FormStep) {
     this.currentStep = step
     this.render()
-    this.screen.render()
   }
   private renderNotifyFromPrompt () {
-    this.messageNode.log(
+    this.messageNode.display(
       'Select a package that will be linked to source.',
       2,
-      () => { this.setStep('SELECT_FROM') },
+      () => {
+        this.setStep('SELECT_FROM')
+      },
     )
   }
   private renderNotifyToPrompt () {
-    this.messageNode.log(
+    this.messageNode.display(
       'Select a package that the package will be linked to.',
       2,
-      () => { this.setStep('SELECT_TO') },
+      () => {
+        this.setStep('SELECT_TO')
+      },
     )
+    this.screen.render()
   }
   private renderNotifyLinkCreated () {
-    this.messageNode.log(
+    this.messageNode.display(
       'Link has been created!',
       2,
       () => {
@@ -78,40 +78,42 @@ export class NewModuleLinkForm implements UIComponentTrait<Widgets.BoxElement> {
     )
   }
   private renderFromSelector () {
-    this.treeNode.hidden = false
-    this.treeNode.setData({
-      extended: true,
-      children: {
-        A: {},
-        B: {},
-        C: {},
-      },
-    })
-    this.treeNode.focus()
-    this.treeNode.on('select', (node) => {
-      this.treeNode.hidden = true
+    // TODO: CONTINUE HERE ->
+    // TODO: A separate function in logic
+    // that would fetch package names
+    // based on paths from package.json
+    //
+    // TODO: A separate function that
+    // would fetch dependencies for
+    // specified package by path from
+    // package.json and check if any
+    // of the linked packages can
+    // be linked there.
+    const links = map(
+      (l) => l && extractNameFromModuleLinkPath(l, '?'),
+      getLinkablePackagePaths(),
+    ).filter(Boolean)
+    this.listNode.show()
+    this.listNode.setItems(links)
+    this.listNode.on('select', (_, selectIndex) => {
+      console.log(selectIndex)
       stateStore.dispatch(moduleLinksSlice.actions.createModuleLinkBase(node.from))
       this.setStep('NOTIFY_ABOUT_TO')
     })
+    this.listNode.focus()
+    this.screen.render()
   }
   private renderToSelector () {
-    this.treeNode.hidden = false
-    this.treeNode.setData({
-      extended: true,
-      children: {
-        A: {},
-        B: {},
-        C: {},
-      },
-    })
-    this.treeNode.focus()
-    this.treeNode.on('select', (node) => {
-      this.treeNode.hidden = true
+    this.listNode.show()
+    this.listNode.setItems([ 'a', 'b', 'c' ])
+    this.listNode.focus()
+    this.listNode.on('select', (node) => {
       stateStore.dispatch(moduleLinksSlice.actions.createModuleLinkBase(node.from))
       this.setStep('LINK_CREATED')
     })
+    this.screen.render()
   }
-  render (): Widgets.BoxElement {
+  render (): Widgets.Node {
     // TODO: Don't append/remove different nodes, but instead work with
     // one container (layout)
     // TODO: Display current information module link on all
@@ -123,8 +125,7 @@ export class NewModuleLinkForm implements UIComponentTrait<Widgets.BoxElement> {
       SELECT_TO: this.renderToSelector.bind(this),
       LINK_CREATED: this.renderNotifyLinkCreated.bind(this),
     }
-    rendererMap[this.currentStep]()
-    return this.layoutContainer
+    return rendererMap[this.currentStep]()
   }
 }
 

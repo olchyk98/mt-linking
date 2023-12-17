@@ -1,5 +1,5 @@
 import { spawnScreen } from './src/core'
-import { NewModuleLinkForm, OverviewPage } from './src/ui'
+import { NewModuleLinkForm } from './src/ui'
 
 // TODO: "blessed-contrib" for more widgets
 
@@ -13,7 +13,8 @@ function main () {
   //const overviewPage = new OverviewPage()
   const newModuleLinkPage = new NewModuleLinkForm(screen)
   //screen.append(overviewPage.render())
-  screen.append(newModuleLinkPage.render())
+  newModuleLinkPage.render()
+  screen.render()
 }
 
 try {

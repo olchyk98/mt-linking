@@ -1,1 +1,1 @@
-export * from './get-linked-packages'
+export * from './get-linkable-packages'
