@@ -48,5 +48,8 @@ export const moduleLinksSlice = createSlice({
       )
       state.links = links
     },
+    resetLinkBases (state) {
+      state.linkBases = []
+    },
   },
 })

@@ -1,5 +1,5 @@
 import { spawnScreen } from './src/core'
-import { NewModuleLinkForm } from './src/components'
+import { bindScreenStager } from './src/logic/bind-screen-stager'
 
 // TODO: "blessed-contrib" for more widgets
 
@@ -10,17 +10,13 @@ import { NewModuleLinkForm } from './src/components'
 
 function main () {
   const screen = spawnScreen()
-  //const overviewPage = new OverviewPage()
-  const newModuleLinkPage = new NewModuleLinkForm(screen)
-  //screen.append(overviewPage.render())
-  newModuleLinkPage.render()
-  screen.render()
+  bindScreenStager(screen)
 }
 
 try {
   main()
 } catch (e) {
-  console.log(e)
-  console.log('Crashed.')
+  console.error(e)
+  console.info('Panic.')
   process.exit(1)
 }

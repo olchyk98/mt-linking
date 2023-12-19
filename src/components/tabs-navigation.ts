@@ -1,8 +1,10 @@
 import { map } from 'ramda'
 import blessed, { Widgets } from 'blessed'
 import { UIComponentTrait } from './types'
-import { ModuleLink, stateStore } from '../state'
-import { getPackageNameByPath } from '../logic/get-package-name-by-path'
+import { ModuleLink, screenSlice, stateStore, watchStateValue } from '../state'
+import { getPackageNameByPath } from '../logic'
+import { Screen } from '../core'
+import { KEYMAP } from '../constants'
 
 type ListbarElement = Widgets.ListbarElement
 
@@ -24,16 +26,16 @@ const convertTabToOption = (tab: Tab): Widgets.Types.ListbarCommand => ({
 export class TabsNavigation implements UIComponentTrait<ListbarElement> {
   private listbar: ListbarElement
   private tabs: Tab[]
-  constructor (parent?: Widgets.Node) {
-    this.tabs = [] // Should be pulled from redux state
-    this.listbar = this.init(parent)
+  private screen: Screen
+  constructor (screen: Screen, parent?: Widgets.Node) {
+    // TODO: Should be pulled from redux state
+    this.tabs = []
+    this.screen = screen
+    this.initListbar(parent)
+    this.bindEvents()
   }
-  private init (parent?: Widgets.Node) {
-    stateStore.subscribe(() => {
-      const state = stateStore.getState()
-      this.tabs = map(convertLinkToTab, state.moduleLinks.links)
-    })
-    const listbar = blessed.listbar({
+  private initListbar (parent?: Widgets.Node) {
+    this.listbar = blessed.listbar({
       parent,
       commands: [],
       items: [],
@@ -52,18 +54,31 @@ export class TabsNavigation implements UIComponentTrait<ListbarElement> {
         },
       },
     })
-    return listbar
   }
-  appendTab (tab: Tab): void {
-    this.tabs.push(tab)
+  private linkNewPackage () {
+    stateStore.dispatch(screenSlice.actions.setActiveScreen('CREATE_NEW_LINK'))
   }
-  prependTab (tab: Tab) {
-    this.tabs.unshift(tab)
+  private bindEvents () {
+    this.screen.key(KEYMAP.CREATE_NEW_LINK, this.linkNewPackage)
+    // TODO: Critical. Needs unsubscribe, otherwise this
+    // will trigger N amount of times on each "links" change,
+    // where N is amount of times this component has be inited.
+    watchStateValue((state) => state.moduleLinks.links, (_, __, links) => {
+      this.tabs = map(convertLinkToTab, links)
+    })
+  }
+  private unbindEvents () {
+    this.screen.unkey(KEYMAP.CREATE_NEW_LINK, this.linkNewPackage)
   }
   render () {
     this.listbar.setItems(map(convertTabToOption, this.tabs))
-    this.listbar.setLabel('Press N to add')
+    this.listbar.setLabel(' Press N to add a link ')
     return this.listbar
+  }
+  destroy () {
+    this.listbar.destroy()
+    this.unbindEvents()
+    this.screen.render()
   }
 }
 
