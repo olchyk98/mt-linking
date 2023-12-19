@@ -1,4 +1,4 @@
-import type { storeReducer } from './reducers'
+import type { storeReducer } from './slices'
 
 export type StateStore = ReturnType<typeof storeReducer>
 

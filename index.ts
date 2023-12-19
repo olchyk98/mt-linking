@@ -1,5 +1,5 @@
 import { spawnScreen } from './src/core'
-import { NewModuleLinkForm } from './src/ui'
+import { NewModuleLinkForm } from './src/components'
 
 // TODO: "blessed-contrib" for more widgets
 

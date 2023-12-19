@@ -1,3 +1,4 @@
 export * from './state-store'
 export * from './types'
 export * from './slices'
+export * from './get-with-state'

@@ -1,6 +1,5 @@
-import fs from 'fs'
-import path from 'path'
 import { propOr } from 'ramda'
+import { PackageJson, getPackageJsonForPath } from './get-package-json-for-path'
 
 /**
 * -----
@@ -11,17 +10,9 @@ import { propOr } from 'ramda'
 *
 * The specified "packagePath" has to be absolute.
 * */
-export function getPackageNameByPath (packagePath: string): string | null {
-  try {
-    const specPath = path.resolve(packagePath, 'package.json')
-    const specJson = fs.readFileSync(specPath, 'utf8')
-    const spec = JSON.parse(specJson) as PackageJson
-    return propOr(null, 'name', spec)
-  } catch (_) {
-    return null
-  }
-}
-
-interface PackageJson {
-  name: string
+export function getPackageNameByPath (packagePath: string | PackageJson): string | null {
+  const packageJson = typeof packagePath === 'object'
+    ? packagePath
+    : getPackageJsonForPath(packagePath)
+  return propOr(null, 'name', packageJson)
 }

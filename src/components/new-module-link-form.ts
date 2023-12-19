@@ -1,9 +1,10 @@
 import blessed, { Widgets } from 'blessed'
-import { pluck } from 'ramda'
+import { head, pluck } from 'ramda'
 import { UIComponentTrait } from './types'
 import { Node, Screen } from '../core'
-import { moduleLinksSlice, screenSlice, stateStore } from '../state'
-import { getLinkablePackagesWithMeta } from '../logic/get-linkable-packages-with-meta'
+import { getWithState, moduleLinksSlice, screenSlice, stateStore } from '../state'
+import { getLinkablePackages, getLinkablePackagesForSource } from '../logic'
+import { panic } from '../utils'
 
 export class NewModuleLinkForm implements UIComponentTrait<Node> {
   private currentStep: FormStep
@@ -85,32 +86,35 @@ export class NewModuleLinkForm implements UIComponentTrait<Node> {
     // package.json and check if any
     // of the linked packages can
     // be linked there.
-    const linksWithMeta = getLinkablePackagesWithMeta()
+    const linkablePackages = getLinkablePackages()
     this.listNode.show()
-    this.listNode.setItems(pluck('name', linksWithMeta))
-    this.listNode.on('select', (_, selectIndex) => {
-      console.log(selectIndex)
-      stateStore.dispatch(moduleLinksSlice.actions.createModuleLinkBase(node.from))
+    this.listNode.setItems(pluck('name', linkablePackages))
+    this.listNode.on('select', (_, selectedIndex) => {
+      const selectedLink = linkablePackages[selectedIndex]
+      stateStore.dispatch(moduleLinksSlice.actions.createModuleLinkBase(selectedLink.absolutePath))
       this.setStep('NOTIFY_ABOUT_TO')
     })
     this.listNode.focus()
     this.screen.render()
   }
   private renderToSelector () {
+    const linkBase = getWithState((state) => head(state.moduleLinks.linkBases))
+    const availablePackagesForSource = linkBase && getLinkablePackagesForSource(linkBase.from)
+    if (!availablePackagesForSource) panic('Tried to render "To" selector with no valid base specified.')
     this.listNode.show()
-    this.listNode.setItems([ 'a', 'b', 'c' ])
+    this.listNode.setItems(pluck('name', availablePackagesForSource))
     this.listNode.focus()
-    this.listNode.on('select', (node) => {
-      stateStore.dispatch(moduleLinksSlice.actions.createModuleLinkBase(node.from))
+    this.listNode.on('select', (_, selectedIndex) => {
+      const selectedLink = availablePackagesForSource[selectedIndex]
+      const fulfillAction = moduleLinksSlice.actions.fulfillModuleLink({
+        from: linkBase.from, to: selectedLink.absolutePath,
+      })
+      stateStore.dispatch(fulfillAction)
       this.setStep('LINK_CREATED')
     })
     this.screen.render()
   }
   render (): Widgets.Node {
-    // TODO: Don't append/remove different nodes, but instead work with
-    // one container (layout)
-    // TODO: Display current information module link on all
-    // select screens.
     const rendererMap: Record<FormStep, () => Node> = {
       NOTIFY_ABOUT_FROM: this.renderNotifyFromPrompt.bind(this),
       SELECT_FROM: this.renderFromSelector.bind(this),

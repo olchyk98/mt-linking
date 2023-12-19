@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { find, findIndex, map, remove } from 'ramda'
 import { ModuleLink, ModuleLinkBase, ModuleLinkStatus, ModuleLinksState } from '../types'
+import { panic } from '../../utils'
 
 export type CreateModuleLinkBaseActionPayload = string // from
 
@@ -28,6 +29,9 @@ export const moduleLinksSlice = createSlice({
       if (alreadySet) return state
       const linkBase: ModuleLinkBase = { from: action.payload }
       state.linkBases.push(linkBase)
+      if (state.linkBases.length > 1) {
+        panic('There cannot be more than one link base at the same time.')
+      }
     },
     fulfillModuleLink (state, action: PayloadAction<FulfillModuleLinkActionPayload>) {
       const baseIndex = findIndex((l) => l.from === action.payload.from, state.linkBases)
