@@ -9,6 +9,7 @@ import { bindScreenStager } from './src/logic/bind-screen-stager'
 // XXX: Select links (Message (native package) + Tree)
 
 function main () {
+  // TODO: CONTINUE HERE -> Start building linking logic (create "getLinkingStrategy" function) and overview page
   const screen = spawnScreen()
   bindScreenStager(screen)
 }
