@@ -79,17 +79,11 @@ export class NewModuleLinkForm implements UIComponentTrait<Node> {
     )
   }
   private renderFromSelector () {
-    // TODO: CONTINUE HERE ->
-    // TODO: A separate function that
-    // would fetch dependencies for
-    // specified package by path from
-    // package.json and check if any
-    // of the linked packages can
-    // be linked there.
     const linkablePackages = getLinkablePackages()
     this.listNode.show()
     this.listNode.setItems(pluck('name', linkablePackages))
     this.listNode.on('select', (_, selectedIndex) => {
+      this.listNode.hide()
       const selectedLink = linkablePackages[selectedIndex]
       stateStore.dispatch(moduleLinksSlice.actions.createModuleLinkBase(selectedLink.absolutePath))
       this.setStep('NOTIFY_ABOUT_TO')
