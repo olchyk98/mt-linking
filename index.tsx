@@ -4,26 +4,36 @@ import { spawnScreen } from './src/core'
 
 function Hero () {
   return (
-    <box
-      top="center"
-      left="center"
-      width="100%"
-      height="100%"
-    >
+    <element width="100%" height="100%">
       <listbar
         border="line"
         width="100%"
         height={ 3 }
         label=" Press N "
+        keys={ true }
+        autoCommandKeys={ true }
         style={{
-          selected
+          selected: { bg: 'yellow' },
         }}
         ref={ (el) => {
-          el?.setItems([ { text: 'a', key: 'a' } ])
+          el?.setItems([
+            { text: 'a', key: 'a' },
+            { text: 'a', key: 'b' },
+            { text: 'a', key: 'c' },
+          ])
         } }
       >
       </listbar>
-    </box>
+      <list
+        top={ 3 }
+        width="100%"
+        ref={ (el) => {
+          el?.setItems([ 'a', 'b', 'c' ])
+        } }
+      >
+
+      </list>
+    </element>
   )
 }
 
