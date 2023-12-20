@@ -1,16 +1,15 @@
 import { spawnScreen } from './src/core'
-import { bindScreenStager } from './src/logic/bind-screen-stager'
+import { bindScreenStager, initLinkingObservers } from './src/logic'
 
 // TODO: "blessed-contrib" for more widgets
+// TODO: Re-write with "react-blessed" :)
 
 // XXX: Overview Page
 //  : Sparkline (To see when update happened) + Table (To see stats, like how many re-builds) + RollingLog (Output from nodemon and transpile)
-//
-// XXX: Select links (Message (native package) + Tree)
 
 function main () {
-  // TODO: CONTINUE HERE -> Start building linking logic (create "getLinkingStrategy" function) and overview page
   const screen = spawnScreen()
+  initLinkingObservers()
   bindScreenStager(screen)
 }
 

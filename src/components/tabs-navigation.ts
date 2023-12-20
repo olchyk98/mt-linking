@@ -50,7 +50,7 @@ export class TabsNavigation implements UIComponentTrait<ListbarElement> {
       },
       style: {
         selected: {
-          bg: '#70CBF4',
+          bg: 'yellow',
         },
       },
     })

@@ -11,9 +11,9 @@ import { watchStateValue } from '../state'
 * */
 export function bindScreenStager (screen: Screen): void {
   let currentPage: UIComponentTrait<unknown> | null = null
-  watchStateValue((state) => state.screen.screen, (_, __, currentScreen) => {
+  watchStateValue((state) => state.screen.screen, (_, __, nextPageKey) => {
     currentPage?.destroy?.()
-    const initPage = pageInitMap[currentScreen]
+    const initPage = pageInitMap[nextPageKey]
     const page = initPage(screen)
     currentPage = page
     page.render()
