@@ -15,8 +15,11 @@ function Hero () {
         width="100%"
         height={ 3 }
         label=" Press N "
+        style={{
+          selected
+        }}
         ref={ (el) => {
-          el?.setItems([ { name:'a' } ])
+          el?.setItems([ { text: 'a', key: 'a' } ])
         } }
       >
       </listbar>
