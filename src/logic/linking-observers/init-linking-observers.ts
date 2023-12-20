@@ -1,5 +1,6 @@
 import { head } from 'ramda'
 import { watchStateValue } from '../../state'
+import { createLinker } from './create-linker'
 
 export function initLinkingObservers (): void {
   let _test_inited = false
@@ -11,6 +12,13 @@ export function initLinkingObservers (): void {
     if (!link) return
 
     _test_inited = true
+
+    const linker = createLinker(link)
+    linker.start()
+
+    setInterval(() => {
+      linker.stop()
+    }, 5000)
 
     // 1. Listen to changes in the package (npm package "chokidar")
     // 2. Transpile with optimal strategy

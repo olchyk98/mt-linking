@@ -1,5 +1,6 @@
 import path from 'path'
 import fs from 'fs'
+import { PACKAGE_JSON } from '../../literals'
 
 /**
 * -----
@@ -16,11 +17,17 @@ import fs from 'fs'
 * exist at the specified path, the
 * function will return null.
 * */
-export function getPackageJsonForPath (absolutePath: string): PackageJson | null {
+export function getPackageJsonForPath (absolutePath: string, sync?: false): Promise<PackageJson | null>
+export function getPackageJsonForPath (absolutePath: string, sync?: true): PackageJson | null
+export function getPackageJsonForPath (absolutePath: string, sync = true): Promise<PackageJson | null> | PackageJson | null {
   try {
-    const specPath = path.resolve(absolutePath, 'package.json')
-    const specJson = fs.readFileSync(specPath, 'utf8')
-    return JSON.parse(specJson) as PackageJson
+    const specPath = path.resolve(absolutePath, PACKAGE_JSON)
+    if (sync) {
+      const specJson = fs.readFileSync(specPath, 'utf8')
+      return JSON.parse(specJson) as PackageJson
+    }
+    return fs.promises.readFile(specPath, 'utf8')
+      .then((specJson) => JSON.parse(specJson) as PackageJson)
   } catch (_) {
     return null
   }
@@ -28,4 +35,5 @@ export function getPackageJsonForPath (absolutePath: string): PackageJson | null
 
 export interface PackageJson {
   name: string
+  scripts?: Record<string, string>
 }
