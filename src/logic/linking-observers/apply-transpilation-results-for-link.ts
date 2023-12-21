@@ -12,7 +12,7 @@ import { getPackageNameByPath } from '../package'
 // require copying node_modules as well. Not solving this
 // for now, until the problem can be fully reproduced.
 
-const resolveDestination = async (link: ModuleLink) => {
+async function resolveDestination (link: ModuleLink): Promise<string> {
   const { from, to } = link
   const packageName = await getPackageNameByPath(from, false)
   if (!packageName) panic(`Unknown module (${from})`)
@@ -39,6 +39,7 @@ const copyAmendSourcesForLink: ApplyTranspilationResultFn = async (link) => {
 const strategyApplyResultFnMap: Record<LinkingStrategy, ApplyTranspilationResultFn> = {
   TRANSPILED: copyDistForLink,
   TRANSPILED_LEGACY: copyDistForLink,
+  MAKEFILE_BUILD: copyDistForLink,
   AMEND_NATIVE: copyAmendSourcesForLink,
 }
 

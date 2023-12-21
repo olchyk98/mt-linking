@@ -34,7 +34,6 @@ export function composeWidgets <const T extends ComposedWidget> (
   shape: T,
   parent?: Widgets.Node,
 ): ComposedWidgetsTable<T> {
-  // TODO: probably append to parent
   const table = { [shape.key]: shape.widget } as ComposedWidgetsTable<T>
   if (parent) {
     parent.append(shape.widget)

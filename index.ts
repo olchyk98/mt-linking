@@ -1,7 +1,7 @@
-import blessed from 'blessed'
-import { composeWidgets } from './src/components'
 import { spawnScreen } from './src/core'
 import { bindScreenStager, initLinkingObservers } from './src/logic'
+
+// TODO: Use "composeWidgets" (function in components)
 
 // TODO: Write tests for linker
 
@@ -16,46 +16,10 @@ import { bindScreenStager, initLinkingObservers } from './src/logic'
 // XXX: Overview Page
 //  : Sparkline (To see when update happened) + Table (To see stats, like how many re-builds) + RollingLog (Output from nodemon and transpile)
 
-//function main () {
-//const screen = spawnScreen()
-//initLinkingObservers()
-//bindScreenStager(screen)
-//}
-
 function main () {
   const screen = spawnScreen()
-  const table = composeWidgets({
-    key: 'main',
-    widget: blessed.layout({
-      layout: 'inline',
-      parent: screen,
-      height: '100%',
-      width: '100%',
-    }),
-    children: [
-      {
-        key: 'nav',
-        widget: blessed.box({
-          content: 'Hello, world',
-          align: 'center',
-          height: 10,
-          width: '100%',
-          border: 'line',
-        }),
-      },
-      {
-        key: 'content',
-        widget: blessed.box({
-          content: 'Content',
-          height: 20,
-          width: '100%',
-          align: 'center',
-          border: 'line',
-        }),
-      },
-    ],
-  })
-  screen.render()
+  initLinkingObservers()
+  bindScreenStager(screen)
 }
 
 try {

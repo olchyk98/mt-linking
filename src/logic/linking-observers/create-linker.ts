@@ -22,6 +22,7 @@ export function createLinker (link: ModuleLink): Linker {
       const linkingStrategy = await getLinkingStrategyForPackage(link.from)
       if (!linkingStrategy) {
         stop()
+        // TODO: Log
         return
       }
       unsubscribeFromWatcher = observeChangesForPackage(link.from, async (_path, _changedIndex) => {

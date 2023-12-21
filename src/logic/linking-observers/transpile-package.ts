@@ -6,6 +6,7 @@ const strategyTranspileFnMap: Record<LinkingStrategy, TranspileFn> = {
   TRANSPILED: (absolutePath) => executeShell('yarn', [ `--cwd ${absolutePath}`, 'transpile' ]),
   TRANSPILED_LEGACY: (absolutePath) => executeShell('yarn', [ `--cwd ${absolutePath}`, 'build' ]),
   AMEND_NATIVE: () => [ 'No transpilation required.' ],
+  MAKEFILE_BUILD: (absolutePath) => executeShell('make', [ `-C ${absolutePath}` ]),
 }
 
 /**

@@ -15,6 +15,7 @@ const strategyCheckersMap: Record<LinkingStrategy, StrategyCheckerFn> = {
   AMEND_NATIVE: (items) => (
     items.has('amend') && items.has('lib')
   ),
+  MAKEFILE_BUILD: (items) => items.has('Makefile'),
 }
 
 async function getOptimalStrategy (folderItems: Set<string>, packageJson: PackageJson): Promise<LinkingStrategy | null> {

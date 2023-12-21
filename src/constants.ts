@@ -16,6 +16,7 @@ export const TRANSPILE_TRIGGERS: string[] = [
   '**/*.ts',
   '**/*.jsx',
   '**/*.tsx',
+  '**/*.html',
 ]
 
 export const TRANSPILE_IGNORE: string[] = [

@@ -10,7 +10,7 @@ export class OverviewPageLog implements UIComponentTrait<BlessedWidgets.LogEleme
       parent,
       fg: 'green',
       width: '100%',
-      height: 30,
+      height: '100%-3',
       label: ' Logs ',
       border: { type: 'line' },
     })
