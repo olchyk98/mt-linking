@@ -9,12 +9,12 @@ export function watchStateValue <T> (
 ): WatchStateValueInterruptFn {
   const initState = stateStore.getState()
   let previousValue = getValue(initState)
-  const handleStateChanged = () => {
+  const handleStateChanged = async () => {
     const state = stateStore.getState()
     const currentValue = getValue(state)
     if (!compareValues(currentValue, previousValue)) {
       previousValue = currentValue
-      callback(state, previousValue, currentValue)
+      await callback(state, previousValue, currentValue)
     }
   }
 
@@ -23,7 +23,7 @@ export function watchStateValue <T> (
 }
 
 export type WatchStateValueCallback<T> = (
-  (state: StateStore, previousValue: T | null, currentValue: T) => void
+  (state: StateStore, previousValue: T | null, currentValue: T) => void | Promise<void>
 )
 
 export type WatchStateValueInterruptFn = () => void

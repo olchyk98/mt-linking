@@ -1,4 +1,3 @@
-// TODO: CONTINUE HERE -> Implement logs pushing with redux state (there are other comments on how to do that in TODOs)
 import fs from 'fs'
 import path from 'path'
 import Bluebird from 'bluebird'

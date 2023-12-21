@@ -19,14 +19,25 @@ export interface ModuleLink {
   from: string
   to: string
   status?: ModuleLinkStatus
+  logs: ModuleLinkLog[]
 }
+
+export interface ModuleLinkLog {
+  message: string
+  severity: ModuleLinkLogSeverity
+}
+
+export type ModuleLinkLogSeverity =
+  | 'info'
+  | 'error'
+  | 'success'
 
 export type ModuleLinkBase = (
   Required<Pick<ModuleLink, 'from'>> & Partial<Pick<ModuleLink, 'to'>>
 )
 
 export interface ModuleLinkStatus {
-  message: string
+  message?: string
   status: ModuleLinkStatusType
 }
 

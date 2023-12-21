@@ -1,10 +1,11 @@
 import { head } from 'ramda'
 import { watchStateValue } from '../../state'
 import { createLinker } from './create-linker'
+import { logForLinker } from './log-for-linker'
 
 export function initLinkingObservers (): void {
   let _test_inited = false
-  watchStateValue((state) => state.moduleLinks.links, (_, __, links) => {
+  watchStateValue((state) => state.moduleLinks.links, async (_, __, links) => {
     // TODO: Make this work with multiple, curently only testing.
 
     if (_test_inited) return
@@ -13,6 +14,7 @@ export function initLinkingObservers (): void {
 
     _test_inited = true
 
+    logForLinker(link.from, 'Initializing linking')
     const linker = createLinker(link)
     linker.start()
 

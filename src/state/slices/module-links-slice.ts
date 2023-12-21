@@ -1,19 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { find, findIndex, map, remove } from 'ramda'
-import { ModuleLink, ModuleLinkBase, ModuleLinkStatus, ModuleLinksState } from '../types'
+import { append, find, findIndex, map, remove } from 'ramda'
+import { ModuleLink, ModuleLinkBase, ModuleLinkLog, ModuleLinkStatus, ModuleLinksState } from '../types'
 import { panic } from '../../utils'
-
-export type CreateModuleLinkBaseActionPayload = string // from
-
-export interface FulfillModuleLinkActionPayload {
-  from: string
-  to: string
-}
-
-export interface SetModuleLinkStatusActionPayload {
-  from: string
-  status: ModuleLinkStatus
-}
 
 const initialModuleLinksState: ModuleLinksState = {
   links: [],
@@ -36,13 +24,17 @@ export const moduleLinksSlice = createSlice({
     fulfillModuleLink (state, action: PayloadAction<FulfillModuleLinkActionPayload>) {
       const baseIndex = findIndex((l) => l.from === action.payload.from, state.linkBases)
       if (baseIndex === -1) return state
-      const link: ModuleLink = { ...state.linkBases[baseIndex], to: action.payload.to }
+      const link: ModuleLink = {
+        ...state.linkBases[baseIndex],
+        to: action.payload.to,
+        logs: [],
+      }
       state.links.push(link)
       state.linkBases = remove(baseIndex, 1, state.linkBases)
     },
-    setModuleLinkState (state, action: PayloadAction<SetModuleLinkStatusActionPayload>) {
+    setModuleLinkStatus (state, action: PayloadAction<SetModuleLinkStatusActionPayload>) {
       const { from, status } = action.payload
-      const links = map(
+      const links: ModuleLink[] = map(
         (l) => l.from === from ? ({ ...l, status }) : l,
         state.links,
       )
@@ -51,5 +43,30 @@ export const moduleLinksSlice = createSlice({
     resetLinkBases (state) {
       state.linkBases = []
     },
+    logForModuleLink (state, action: PayloadAction<LogForModuleLink>) {
+      const { from, log } = action.payload
+      const links: ModuleLink[] = map(
+        (l) => l.from === from ? ({ ...l, logs: append(log, l.logs) }) : l,
+        state.links,
+      )
+      state.links = links
+    },
   },
 })
+
+export type CreateModuleLinkBaseActionPayload = string // from
+
+export interface FulfillModuleLinkActionPayload {
+  from: string
+  to: string
+}
+
+export interface SetModuleLinkStatusActionPayload {
+  from: string
+  status: ModuleLinkStatus
+}
+
+export interface LogForModuleLink {
+  from: string
+  log: ModuleLinkLog
+}
