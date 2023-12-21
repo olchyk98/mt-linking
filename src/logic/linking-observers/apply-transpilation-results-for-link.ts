@@ -47,8 +47,12 @@ export async function applyTranspilationResultForLink (
   linkingStrategy: LinkingStrategy,
 ): Promise<void | Error> {
   const applyResultFn = strategyApplyResultFnMap[linkingStrategy]
-  await applyResultFn(link)
-  // TODO: Catch errors
+  try {
+    await applyResultFn(link)
+    // TODO: log
+  } catch (e) {
+    return e
+  }
 }
 
 type ApplyTranspilationResultFn = (link: ModuleLink) => Promise<void>

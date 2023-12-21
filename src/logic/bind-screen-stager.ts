@@ -7,7 +7,7 @@ import { watchStateValue } from '../state'
 * The purpose of this function is to
 * observe the "screen" value change
 * in app state and render
-* the currently set screen accordingly.
+* the currently set screen.
 * */
 export function bindScreenStager (screen: Screen): void {
   let currentPage: UIComponentTrait<unknown> | null = null

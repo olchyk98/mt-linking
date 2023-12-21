@@ -16,9 +16,7 @@ export function createLinker (link: ModuleLink): Linker {
   }
   return {
     key: linkerKey,
-    get running () {
-      return running
-    },
+    get running () { return running },
     async start () {
       running = true
       const linkingStrategy = await getLinkingStrategyForPackage(link.from)
