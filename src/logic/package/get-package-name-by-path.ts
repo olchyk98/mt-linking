@@ -1,5 +1,10 @@
 import { propOr } from 'ramda'
 import { PackageJson, getPackageJsonForPath } from './get-package-json-for-path'
+import { isPromise } from '../../utils'
+
+const takeNameOrNullFromPackageJson = (packageJson: PackageJson): string | null => (
+  propOr(null, 'name', packageJson)
+)
 
 /**
 * -----
@@ -10,9 +15,14 @@ import { PackageJson, getPackageJsonForPath } from './get-package-json-for-path'
 *
 * The specified "packagePath" has to be absolute.
 * */
-export function getPackageNameByPath (packagePath: string | PackageJson): string | null {
+export function getPackageNameByPath (packagePath: string | PackageJson, sync: false): Promise<string | null>
+export function getPackageNameByPath (packagePath: string | PackageJson, sync: true): string | null
+export function getPackageNameByPath (packagePath: string | PackageJson, sync: boolean): string | null | Promise<string | null>
+export function getPackageNameByPath (packagePath: string | PackageJson, sync: boolean): string | null | Promise<string | null> {
   const packageJson = typeof packagePath === 'object'
     ? packagePath
-    : getPackageJsonForPath(packagePath)
-  return propOr(null, 'name', packageJson)
+    : getPackageJsonForPath(packagePath, sync)
+  return isPromise<PackageJson>(packageJson)
+    ? packageJson.then(takeNameOrNullFromPackageJson)
+    : takeNameOrNullFromPackageJson(packageJson as PackageJson)
 }

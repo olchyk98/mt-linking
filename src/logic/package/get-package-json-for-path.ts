@@ -17,9 +17,10 @@ import { PACKAGE_JSON } from '../../literals'
 * exist at the specified path, the
 * function will return null.
 * */
-export function getPackageJsonForPath (absolutePath: string, sync?: false): Promise<PackageJson | null>
-export function getPackageJsonForPath (absolutePath: string, sync?: true): PackageJson | null
-export function getPackageJsonForPath (absolutePath: string, sync = true): Promise<PackageJson | null> | PackageJson | null {
+export function getPackageJsonForPath (absolutePath: string, sync: false): Promise<PackageJson | null>
+export function getPackageJsonForPath (absolutePath: string, sync: true): PackageJson | null
+export function getPackageJsonForPath (absolutePath: string, sync: boolean): Promise<PackageJson | null> | PackageJson | null
+export function getPackageJsonForPath (absolutePath: string, sync: boolean): Promise<PackageJson | null> | PackageJson | null {
   try {
     const specPath = path.resolve(absolutePath, PACKAGE_JSON)
     if (sync) {

@@ -10,7 +10,7 @@ type ListbarElement = Widgets.ListbarElement
 
 const convertLinkToTab = (link: ModuleLink): Tab => ({
   key: link.from,
-  name: `${getPackageNameByPath(link.from) ?? '?'} -> ${getPackageNameByPath(link.to) ?? '?'}`,
+  name: `${getPackageNameByPath(link.from, true) ?? '?'} -> ${getPackageNameByPath(link.to, true) ?? '?'}`,
 })
 
 const convertTabToOption = (tab: Tab): Widgets.Types.ListbarCommand => ({

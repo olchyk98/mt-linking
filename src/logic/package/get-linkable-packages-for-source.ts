@@ -16,7 +16,7 @@ import { LinkablePackage } from './get-package-for-path'
 * will output an empty array.
 * */
 export function getLinkablePackagesForSource (packageAbsolutePath: string): LinkablePackage[] | null {
-  const packageName = getPackageNameByPath(packageAbsolutePath)
+  const packageName = getPackageNameByPath(packageAbsolutePath, true)
   if (isNil(packageName)) return null
   const knownPackages = getLinkablePackages()
   const packagesToLink = filter((l) => l.dependencyNames.includes(packageName), knownPackages)

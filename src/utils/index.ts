@@ -1,3 +1,5 @@
 export * from './dbg'
 export * from './panic'
 export * from './compare-values'
+export * from './wrap-error'
+export * from './is-promise'

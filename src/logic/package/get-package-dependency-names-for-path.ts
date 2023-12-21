@@ -15,7 +15,7 @@ import { PackageJson, getPackageJsonForPath } from './get-package-json-for-path'
 export function getPackageDepedencyNamesForPath (packagePath: string | PackageJson): string[] | null {
   const packageJson = typeof packagePath === 'object'
     ? packagePath
-    : getPackageJsonForPath(packagePath)
+    : getPackageJsonForPath(packagePath, true)
   const dependencies = propOr(null, 'dependencies', packageJson)
   if (!dependencies) return null
   return keys(dependencies)

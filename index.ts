@@ -1,6 +1,8 @@
 import { spawnScreen } from './src/core'
 import { bindScreenStager, initLinkingObservers } from './src/logic'
 
+// TODO: Write tests for linker
+
 // TODO: "blessed-contrib" for more widgets
 // TODO: Re-write with "react-blessed" :)
 // TODO: For backend packages, output info in logs,

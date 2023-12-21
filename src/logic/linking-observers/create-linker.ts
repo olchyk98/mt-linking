@@ -1,6 +1,8 @@
 import { ModuleLink } from '../../state'
+import { applyTranspilationResultForLink } from './apply-transpilation-results-for-link'
 import { getLinkingStrategyForPackage } from './get-linking-strategy-for-package'
 import { ObserveChangesForPackageUnsubscribeFn, observeChangesForPackage } from './observe-changes-for-package'
+import { transpilePackage } from './transpile-package'
 
 // TODO: Log on each instruction to output stuff from linker: create "logFromLinker(linkerKey, message)"
 // to push to redux store
@@ -8,6 +10,10 @@ export function createLinker (link: ModuleLink): Linker {
   const linkerKey = link.from + link.to + Math.random()
   let running = false
   let unsubscribeFromWatcher: ObserveChangesForPackageUnsubscribeFn | null = null
+  const stop = () => {
+    unsubscribeFromWatcher?.()
+    running = false
+  }
   return {
     key: linkerKey,
     get running () {
@@ -15,16 +21,17 @@ export function createLinker (link: ModuleLink): Linker {
     },
     async start () {
       running = true
-      const transpileStrategy = await getLinkingStrategyForPackage(link.from)
+      const linkingStrategy = await getLinkingStrategyForPackage(link.from)
+      if (!linkingStrategy) {
+        stop()
+        return
+      }
       unsubscribeFromWatcher = observeChangesForPackage(link.from, async (_path, _changedIndex) => {
-        transpilePackage(link.from, transpileStrategy)
-        applyTranspilationResultForLink(link, transpileStrategy)
+        transpilePackage(link.from, linkingStrategy)
+        applyTranspilationResultForLink(link, linkingStrategy)
       })
     },
-    stop () {
-      unsubscribeFromWatcher?.()
-      running = false
-    },
+    stop,
   }
 }
 
