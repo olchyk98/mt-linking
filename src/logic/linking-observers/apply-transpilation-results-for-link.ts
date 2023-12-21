@@ -6,6 +6,7 @@ import { ModuleLink } from '../../state'
 import { LinkingStrategy } from './types'
 import { panic } from '../../utils'
 import { getPackageNameByPath } from '../package'
+import { logForLinker } from '../log-for-linker'
 
 // XXX: There's a possible edge-case, when some packages
 // require copying node_modules as well. Not solving this
@@ -48,9 +49,10 @@ export async function applyTranspilationResultForLink (
 ): Promise<void | Error> {
   const applyResultFn = strategyApplyResultFnMap[linkingStrategy]
   try {
+    logForLinker(link.from, 'Applying transpilation result')
     await applyResultFn(link)
-    // TODO: log
   } catch (e) {
+    logForLinker(link.from, `Could not apply transpilation process: ${e}`, 'ERROR')
     return e
   }
 }

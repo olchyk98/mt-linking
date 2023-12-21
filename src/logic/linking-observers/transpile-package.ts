@@ -1,5 +1,6 @@
 import { executeShell } from '../../core'
 import { LinkingStrategy } from './types'
+import { logForLinker } from '../log-for-linker'
 
 const strategyTranspileFnMap: Record<LinkingStrategy, TranspileFn> = {
   // TODO: --cwd
@@ -22,9 +23,11 @@ const strategyTranspileFnMap: Record<LinkingStrategy, TranspileFn> = {
 export async function transpilePackage (absolutePath: string, linkingStrategy: LinkingStrategy): Promise<void | Error> {
   const transpileFn = strategyTranspileFnMap[linkingStrategy]
   try {
+    logForLinker(absolutePath, 'Transpiling the package...')
     const logs = await transpileFn(absolutePath)
-    // TODO: Emit logs
+    if (logs) logs.forEach((log) => logForLinker(absolutePath, log))
   } catch (e) {
+    logForLinker(absolutePath, `Could not transpile the package: ${e}`, 'ERROR')
     return e
   }
 }

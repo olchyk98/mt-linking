@@ -13,6 +13,8 @@ export function observeChangesForPackage (
     (t) => path.resolve(absolutePath, t),
     TRANSPILE_TRIGGERS,
   )
+
+  // FIXME: Does not work
   const instance = chokidar.watch(triggersWithAbsolutePath, {
     ignored: TRANSPILE_IGNORE,
     persistent: true,

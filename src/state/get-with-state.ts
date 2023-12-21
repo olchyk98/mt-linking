@@ -1,9 +1,9 @@
 import { stateStore } from './state-store'
 import { StateStore } from './types'
 
-export function getWithState <T> (getStateValueFn: GetWithStateFn<T>): T {
+export function getWithState <T> (getStateValueFn: SelectFromState<T>): T {
   const state = stateStore.getState()
   return getStateValueFn(state)
 }
 
-export type GetWithStateFn<T> = (state: StateStore) => T
+export type SelectFromState<T> = (state: StateStore) => T

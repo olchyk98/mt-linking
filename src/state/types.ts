@@ -28,9 +28,9 @@ export interface ModuleLinkLog {
 }
 
 export type ModuleLinkLogSeverity =
-  | 'info'
-  | 'error'
-  | 'success'
+  | 'INFO'
+  | 'ERROR'
+  | 'SUCCESS'
 
 export type ModuleLinkBase = (
   Required<Pick<ModuleLink, 'from'>> & Partial<Pick<ModuleLink, 'to'>>

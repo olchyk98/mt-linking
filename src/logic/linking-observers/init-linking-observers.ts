@@ -1,7 +1,7 @@
 import { head } from 'ramda'
 import { watchStateValue } from '../../state'
 import { createLinker } from './create-linker'
-import { logForLinker } from './log-for-linker'
+import { logForLinker } from '../log-for-linker'
 
 export function initLinkingObservers (): void {
   let _test_inited = false

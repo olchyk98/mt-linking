@@ -72,5 +72,3 @@ type MergeObjectsInArray<T> = (
       : Record<never, unknown>
     : never
 )
-
-// TODO: Protein

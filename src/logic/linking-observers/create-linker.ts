@@ -4,7 +4,8 @@ import { applyTranspilationResultForLink } from './apply-transpilation-results-f
 import { getLinkingStrategyForPackage } from './get-linking-strategy-for-package'
 import { ObserveChangesForPackageUnsubscribeFn, observeChangesForPackage } from './observe-changes-for-package'
 import { transpilePackage } from './transpile-package'
-import { logForLinker } from './log-for-linker'
+import { setModuleLinkStatus } from '../set-module-link-status'
+import { logForLinker } from '../log-for-linker'
 
 // TODO: Log on each instruction to output stuff from linker: create "logFromLinker(linkerKey, message)"
 // to push to redux store
@@ -23,15 +24,25 @@ export function createLinker (link: ModuleLink): Linker {
       ))
     },
     async start () {
+      logForLinker(link.from, 'Linking')
+      logForLinker(link.from, 'Choosing linking strategy')
       const linkingStrategy = await getLinkingStrategyForPackage(link.from)
       if (!linkingStrategy) {
         stop()
-        logForLinker(link.from, 'Could not find optimal linking strategy. Aborting.')
+        const errorMessage = 'Could not find optimal linking strategy. Aborting.'
+        logForLinker(link.from, errorMessage, 'ERROR')
+        setModuleLinkStatus(errorMessage, 'FAILED')
         return
       }
-      unsubscribeFromWatcher = observeChangesForPackage(link.from, async (_path, _changedIndex) => {
-        transpilePackage(link.from, linkingStrategy)
-        applyTranspilationResultForLink(link, linkingStrategy)
+      logForLinker(link.from, `Selected strategy: "${linkingStrategy}"`)
+      unsubscribeFromWatcher = observeChangesForPackage(link.from, async (changedPath, changedIndex) => {
+        logForLinker(link.from, `(${changedIndex}) Detected change in source file "${changedPath}"`)
+        const transpilationError = await transpilePackage(link.from, linkingStrategy)
+        if (transpilationError) return
+        logForLinker(link.from, 'Transpiled. Applying changes...', 'SUCCESS')
+        const applyResultError = await applyTranspilationResultForLink(link, linkingStrategy)
+        if (applyResultError) return
+        logForLinker(link.from, 'Changes applied', 'SUCCESS')
       })
     },
     stop,

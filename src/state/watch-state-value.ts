@@ -1,10 +1,10 @@
 import { compareValues } from '../utils'
-import { GetWithStateFn } from './get-with-state'
+import { SelectFromState } from './get-with-state'
 import { stateStore } from './state-store'
 import { StateStore } from './types'
 
 export function watchStateValue <T> (
-  getValue: GetWithStateFn<T>,
+  getValue: SelectFromState<T>,
   callback: WatchStateValueCallback<T>,
 ): WatchStateValueInterruptFn {
   const initState = stateStore.getState()

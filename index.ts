@@ -1,3 +1,6 @@
+// TODO: CONTINUE HERE -> Changes do not propagate in logs
+// TODO: CONTINUE HERE -> Once fixed, support multiple screens
+
 import { spawnScreen } from './src/core'
 import { bindScreenStager, initLinkingObservers } from './src/logic'
 
