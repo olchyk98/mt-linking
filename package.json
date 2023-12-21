@@ -23,6 +23,7 @@
     "ramda": "^0.29.1",
     "react": "^18.2.0",
     "react-blessed": "^0.7.2",
+    "react-blessed-contrib": "^0.2.1",
     "redux": "^5.0.0",
     "term.js": "^0.0.7"
   },

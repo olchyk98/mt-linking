@@ -4,11 +4,11 @@ import { spawnScreen } from './src/core'
 
 function Hero () {
   return (
-    <element width="100%" height="100%">
+    <layout width="100%" height="100%" layout="inline">
       <listbar
         border="line"
-        width="100%"
         height={ 3 }
+        width="100%"
         label=" Press N "
         keys={ true }
         autoCommandKeys={ true }
@@ -25,7 +25,7 @@ function Hero () {
       >
       </listbar>
       <list
-        top={ 3 }
+        border="line"
         width="100%"
         ref={ (el) => {
           el?.setItems([ 'a', 'b', 'c' ])
@@ -33,7 +33,7 @@ function Hero () {
       >
 
       </list>
-    </element>
+    </layout>
   )
 }
 
