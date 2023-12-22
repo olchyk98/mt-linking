@@ -3,26 +3,27 @@ import chokidar from 'chokidar'
 import { map } from 'ramda'
 import { TRANSPILE_IGNORE, TRANSPILE_TRIGGERS } from '../../constants'
 
+const applyAbsolutePathToPatterns = (absolutePath: string, patterns: string[]): string[] => (
+  map((t) => path.resolve(absolutePath, t), patterns)
+)
+
 export function observeChangesForPackage (
   absolutePath: string,
   callback: ObserveChangesForPackageCallback,
 ): ObserveChangesForPackageUnsubscribeFn {
-  let updateIndex = 0
+  let updateIndex = -1
 
-  const triggersWithAbsolutePath = map(
-    (t) => path.resolve(absolutePath, t),
-    TRANSPILE_TRIGGERS,
-  )
+  const triggersWithAbsolutePath = applyAbsolutePathToPatterns(absolutePath, TRANSPILE_TRIGGERS)
+  const ignorePatternsWithAbsolutePath = applyAbsolutePathToPatterns(absolutePath, TRANSPILE_IGNORE)
 
-  // FIXME: Does not work
   const instance = chokidar.watch(triggersWithAbsolutePath, {
-    ignored: TRANSPILE_IGNORE,
+    ignored: ignorePatternsWithAbsolutePath,
     persistent: true,
   })
 
   instance.on('change', async (updatedPath) => {
-    await callback(updatedPath, updateIndex)
     updateIndex += 1
+    await callback(updatedPath, updateIndex)
   })
 
   return () => instance.close()

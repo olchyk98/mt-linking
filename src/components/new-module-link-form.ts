@@ -90,6 +90,7 @@ export class NewModuleLinkForm implements UIComponentTrait<void> {
     this.stageTitleNode.setContent('Select a package that the selected package will be linked to.')
     this.listNode.show()
     this.listNode.setItems(pluck('name', availablePackagesForSource))
+    this.listNode.select(0)
     this.listNode.focus()
     this.listNode.once('select', (_, selectedIndex) => {
       const selectedLink = availablePackagesForSource[selectedIndex]

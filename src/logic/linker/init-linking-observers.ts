@@ -1,7 +1,7 @@
 import { head } from 'ramda'
 import { watchStateValue } from '../../state'
-import { createLinker } from './create-linker'
 import { logForLinker } from '../log-for-linker'
+import { Linker } from './linker'
 
 export function initLinkingObservers (): void {
   let _test_inited = false
@@ -15,17 +15,7 @@ export function initLinkingObservers (): void {
     _test_inited = true
 
     logForLinker(link.from, 'Initializing linking')
-    const linker = createLinker(link)
-    linker.start()
-
-    setInterval(() => {
-      linker.stop()
-    }, 5000)
-
-    // 1. Listen to changes in the package (npm package "chokidar")
-    // 2. Transpile with optimal strategy
-    // 3. Copy over to the node_modules
-    // (POTENTIAL) 4. Wait a few seconds and copy
-    // over to node_modules again. (this is done to ensure that webapp reloads after the new changes are pasted -- works as a dirty fix)
+    const linker = new Linker(link)
+    await linker.start()
   })
 }

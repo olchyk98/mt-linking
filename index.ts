@@ -1,5 +1,4 @@
-// TODO: CONTINUE HERE -> Changes do not propagate in logs
-// TODO: CONTINUE HERE -> Once fixed, support multiple screens
+// TODO: CONTINUE HERE -> support multiple screens (it fixes logging as well.)
 
 import { spawnScreen } from './src/core'
 import { bindScreenStager, initLinkingObservers } from './src/logic'
@@ -19,7 +18,7 @@ import { bindScreenStager, initLinkingObservers } from './src/logic'
 // XXX: Overview Page
 //  : Sparkline (To see when update happened) + Table (To see stats, like how many re-builds) + RollingLog (Output from nodemon and transpile)
 
-function main () {
+async function main () {
   const screen = spawnScreen()
   initLinkingObservers()
   bindScreenStager(screen)
@@ -29,6 +28,6 @@ try {
   main()
 } catch (e) {
   console.error(e)
-  console.info('Panic.')
+  console.info('Global exit.')
   process.exit(1)
 }

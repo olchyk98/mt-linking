@@ -21,17 +21,18 @@ async function resolveDestination (link: ModuleLink): Promise<string> {
 
 const copyDistForLink: ApplyTranspilationResultFn = async (link) => {
   const dist = path.resolve(link.from, 'dist')
-  const dest = await resolveDestination(link)
-  await fs.promises.rmdir(path.resolve(dest, 'dist'), { recursive: true }).catch(identity)
+  const dest = path.resolve(await resolveDestination(link), 'dist')
+  await fs.promises.rmdir(dest, { recursive: true }).catch(identity)
   await fs.promises.cp(dist, dest, { recursive: true })
 }
 
 const copyAmendSourcesForLink: ApplyTranspilationResultFn = async (link) => {
   const targets = [ 'amend', 'boundaries', 'lib' ]
-  const dest = await resolveDestination(link)
+  const destBase = await resolveDestination(link)
   await Bluebird.mapSeries(targets, async (target) => {
     const dist = path.resolve(link.from, target)
-    await fs.promises.rmdir(path.resolve(dest, target), { recursive: true }).catch(identity)
+    const dest = path.resolve(destBase, target)
+    await fs.promises.rmdir(dest, { recursive: true }).catch(identity)
     await fs.promises.cp(dist, dest, { recursive: true })
   })
 }
@@ -46,14 +47,13 @@ const strategyApplyResultFnMap: Record<LinkingStrategy, ApplyTranspilationResult
 export async function applyTranspilationResultForLink (
   link: ModuleLink,
   linkingStrategy: LinkingStrategy,
-): Promise<void | Error> {
+): Promise<void> {
   const applyResultFn = strategyApplyResultFnMap[linkingStrategy]
   try {
-    logForLinker(link.from, 'Applying transpilation result')
+    logForLinker(link.from, 'Applying transpilation result...')
     await applyResultFn(link)
   } catch (e) {
-    logForLinker(link.from, `Could not apply transpilation process: ${e}`, 'ERROR')
-    return e
+    new Error(`Could not apply transpilation result: ${e}`)
   }
 }
 
