@@ -1,5 +1,10 @@
 // TODO: CONTINUE HERE -> support multiple screens (it fixes logging as well.)
 
+// XXX: There's one major flow with the current architecture:
+//  -> "from" in ModuleLink is treated as a unique value. Therefore,
+//  a package can only be linked once.
+//  The solution would be to switch to a real unique identifier.
+
 import { spawnScreen } from './src/core'
 import { bindScreenStager, initLinkingObservers } from './src/logic'
 

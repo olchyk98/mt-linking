@@ -1,18 +1,27 @@
-import { head } from 'ramda'
+import { difference, forEach, keys, pluck} from 'ramda'
 import { watchStateValue } from '../../state'
 import { logForLinker } from '../log-for-linker'
 import { Linker } from './linker'
 
 export function initLinkingObservers (): void {
-  let _test_inited = false
-  watchStateValue((state) => state.moduleLinks.links, async (_, __, links) => {
-    // TODO: Make this work with multiple, curently only testing.
+  const linksMap: Record<string, Linker> = {}
+  watchStateValue((state) => state.moduleLinks.links, async (_, __, currentLinks) => {
+    const existingFrom = keys(linksMap)
+    const currentFrom = pluck('from', currentLinks)
 
-    if (_test_inited) return
-    const link = head(links)
-    if (!link) return
+    // TODO: Implement a solution that would work with pausing/resuming.
+    // Probably converted to a global variable class (that can be controlled from anywhere).
 
-    _test_inited = true
+    const removed = difference(existingFrom, currentFrom)
+    const added = difference(currentFrom, currentFrom)
+
+    // TODO: CONTINUE HERE -> 00
+
+    removed.forEach((from) => delete linksMap[from])
+    added.forEach((from) => {
+      const linker = new Linker(from)
+      linksMap[from]
+    })
 
     logForLinker(link.from, 'Initializing linking')
     const linker = new Linker(link)
