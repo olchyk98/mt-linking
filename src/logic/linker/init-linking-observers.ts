@@ -1,4 +1,4 @@
-import { difference, forEach, keys, pluck} from 'ramda'
+import { difference, keys, pluck} from 'ramda'
 import { watchStateValue } from '../../state'
 import { logForLinker } from '../log-for-linker'
 import { Linker } from './linker'

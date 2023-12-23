@@ -1,3 +1,6 @@
+// TODO: CONTINUE HERE -> Implement EventListener which LinkerManager (class to convert from "initLinkingObservers")
+// would subscribe to and listen to all redux actions and payloads (use redux middleware for it) - make it
+// on "state" level, so that it can be used for other features as well: stateActionEmitter.on('SLICE_NAME-ACTION_NAME', ...)
 // TODO: CONTINUE HERE -> support multiple screens (it fixes logging as well.)
 
 // XXX: There's one major flow with the current architecture:
@@ -7,6 +10,7 @@
 
 import { spawnScreen } from './src/core'
 import { bindScreenStager, initLinkingObservers } from './src/logic'
+import { stateStore } from './src/state'
 
 // TODO: Use "composeWidgets" (function in components)
 
