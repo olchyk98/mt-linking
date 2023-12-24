@@ -29,7 +29,7 @@ import { stateStore } from './src/state'
 
 async function main () {
   const screen = spawnScreen()
-  initLinkingObservers()
+  //initLinkingObservers()
   bindScreenStager(screen)
 }
 

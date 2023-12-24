@@ -1,0 +1,3 @@
+{"type":"screen/setActiveScreen","payload":"CREATE_NEW_LINK"}
+{"type":"moduleLinks/createModuleLinkBase","payload":"/Users/olesodynets/Documents/Coding/htdocs/mediatool/authorization"}
+{"type":"moduleLinks/fulfillModuleLink","payload":{"from":"/Users/olesodynets/Documents/Coding/htdocs/mediatool/authorization","to":"/Users/olesodynets/Documents/Coding/htdocs/mediatool/webapp"}}
