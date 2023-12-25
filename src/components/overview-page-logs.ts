@@ -28,6 +28,9 @@ export class OverviewPageLog implements UIComponentTrait<Widgets.ListElement> {
       label: ' Logs ',
       border: { type: 'line' },
     })
+    // TODO: DEBUG
+    this.list.randomId = Math.random().toString()
+    fs.appendFileSync('./output', `added: ${this.list.randomId}\n`)
   }
   public selectLink (from: string) {
     this._selectedLinkFrom = from
@@ -37,6 +40,7 @@ export class OverviewPageLog implements UIComponentTrait<Widgets.ListElement> {
       const linkLogs = selectModuleLinkLogs(from)(state)
       if (!linkLogs) return
       const limitedLogs = linkLogs.slice(-LOGS_LIMIT)
+      fs.appendFileSync('./output', `triggered: ${this.list.randomId}\n`)
       this.list.setItems(pluck('message', limitedLogs))
       this.screen.render()
     })

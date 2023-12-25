@@ -18,9 +18,7 @@ const convertTabToOption = (tab: Tab, selectLink: OnLinkSelected | null): Widget
   // XXX: Invalid types in the external library.
   // @ts-ignore
   text: tab.name,
-  callback () {
-    selectLink?.(tab.key)
-  },
+  callback: () => selectLink?.(tab.key),
 })
 
 export class TabsNavigation implements UIComponentTrait<ListbarElement> {

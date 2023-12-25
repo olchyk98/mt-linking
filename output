@@ -1,2 +1,4 @@
-[{"message":"Initializing linking","severity":"INFO"},{"message":"Linking","severity":"INFO"},{"message":"Choosing linking strategy","severity":"INFO"},{"message":"Selected strategy: \"AMEND_NATIVE\"","severity":"INFO"}]
-[{"message":"Initializing linking","severity":"INFO"},{"message":"Linking","severity":"INFO"},{"message":"Choosing linking strategy","severity":"INFO"},{"message":"Selected strategy: \"AMEND_NATIVE\"","severity":"INFO"},{"message":"Waiting for changes...","severity":"INFO"}]
+added: 0.548808973008306
+added: 0.15411773131332696
+triggered: 0.548808973008306
+triggered: 0.548808973008306
