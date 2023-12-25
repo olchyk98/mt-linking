@@ -13,8 +13,8 @@ export class OverviewPage implements UIComponentTrait<Widgets.LayoutElement> {
   constructor (screen: Screen) {
     this.screen = screen
     this.initLayout()
-    this.initLogs()
     this.initNav()
+    this.initLogs()
   }
   private initLayout () {
     this.layoutWidget = blessed.layout({

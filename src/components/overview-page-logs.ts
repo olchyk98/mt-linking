@@ -14,13 +14,11 @@ const LOGS_LIMIT = 100
 export class OverviewPageLog implements UIComponentTrait<Widgets.ListElement> {
   private list: Widgets.ListElement
   private screen: Screen
-  private parent: Widgets.Node | null
   private unsubscribeFromCurrentLogs: UnsubscribeFromStateAction | null
   private _selectedLinkFrom: string | null
   constructor (screen: Screen, parent?: Widgets.Node) {
     this.unsubscribeFromCurrentLogs = null
     this.screen = screen
-    this.parent = parent ?? null
     this.list = blessed.list({
       parent,
       fg: 'green',
@@ -38,8 +36,7 @@ export class OverviewPageLog implements UIComponentTrait<Widgets.ListElement> {
       const linkLogs = selectModuleLinkLogs(from)(state)
       if (!linkLogs) return
       const limitedLogs = linkLogs.slice(-LOGS_LIMIT)
-      //this.list.setItems(pluck('message', limitedLogs))
-      this.parent?.render()
+      this.list.setItems(pluck('message', limitedLogs))
       this.screen.render()
     })
   }
