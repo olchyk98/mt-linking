@@ -28,6 +28,7 @@ export const moduleLinksSlice = createSlice({
         ...state.linkBases[baseIndex],
         to: action.payload.to,
         logs: [],
+        status: { status: 'DEAD' },
       }
       state.links.push(link)
       state.linkBases = remove(baseIndex, 1, state.linkBases)

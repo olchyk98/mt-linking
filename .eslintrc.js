@@ -47,6 +47,7 @@ module.exports = {
     'no-duplicate-imports': 'error',
     'no-multiple-empty-lines': [ 'error', { max: 1 } ],
     '@typescript-eslint/no-non-null-assertion': 0,
+    '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/naming-convention': [
       'error',
       {

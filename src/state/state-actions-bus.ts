@@ -9,7 +9,7 @@ export const stateActionsBus = (
 
 export const stateActionsBusMiddleware: Middleware<Record<never, unknown>, StateStore> = (
   (store) => (next) => (action) => {
-    stateActionsBus.emit('dispatch', action, store.getState())
     next(action)
+    stateActionsBus.emit('dispatch', action, store.getState())
   }
 )

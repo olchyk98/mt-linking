@@ -1,8 +1,5 @@
-// TODO: CONTINUE HERE -> Implement EventListener which LinkerManager (class to convert from "initLinkingObservers")
-// would subscribe to and listen to all redux actions and payloads (use redux middleware for it) - make it
-// on "state" level, so that it can be used for other features as well: stateActionEmitter.on('SLICE_NAME-ACTION_NAME', ...)
-// TODO: CONTINUE HERE -> support multiple screens (it fixes logging as well.)
-
+// TODO: CONTINUE HERE -> Implement selection between screens (where to store the selected link id?) + Support for multi-link in overview-page-logs
+//
 // XXX: There's one major flow with the current architecture:
 //  -> "from" in ModuleLink is treated as a unique value. Therefore,
 //  a package can only be linked once.
@@ -10,7 +7,6 @@
 
 import { spawnScreen } from './src/core'
 import { bindScreenStager, initLinkingObservers } from './src/logic'
-import { stateStore } from './src/state'
 
 // TODO: Use "composeWidgets" (function in components)
 
@@ -29,7 +25,7 @@ import { stateStore } from './src/state'
 
 async function main () {
   const screen = spawnScreen()
-  //initLinkingObservers()
+  initLinkingObservers()
   bindScreenStager(screen)
 }
 
