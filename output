@@ -1,3 +1,2 @@
-{"type":"screen/setActiveScreen","payload":"CREATE_NEW_LINK"}
-{"type":"moduleLinks/createModuleLinkBase","payload":"/Users/olesodynets/Documents/Coding/htdocs/mediatool/authorization"}
-{"type":"moduleLinks/fulfillModuleLink","payload":{"from":"/Users/olesodynets/Documents/Coding/htdocs/mediatool/authorization","to":"/Users/olesodynets/Documents/Coding/htdocs/mediatool/webapp"}}
+[{"message":"Initializing linking","severity":"INFO"},{"message":"Linking","severity":"INFO"},{"message":"Choosing linking strategy","severity":"INFO"},{"message":"Selected strategy: \"AMEND_NATIVE\"","severity":"INFO"}]
+[{"message":"Initializing linking","severity":"INFO"},{"message":"Linking","severity":"INFO"},{"message":"Choosing linking strategy","severity":"INFO"},{"message":"Selected strategy: \"AMEND_NATIVE\"","severity":"INFO"},{"message":"Waiting for changes...","severity":"INFO"}]

@@ -1,4 +1,5 @@
 import { pluck } from 'ramda'
+import fs from 'fs'
 import blessed, { Widgets } from 'blessed'
 import { UIComponentTrait } from './types'
 import { Screen } from '../core'
@@ -48,6 +49,7 @@ export class OverviewPageLog implements UIComponentTrait<Widgets.ListElement> {
     return this.list
   }
   public destroy () {
+    this.list.destroy()
     this.unsubscribeFromCurrentLogs?.()
   }
 }
