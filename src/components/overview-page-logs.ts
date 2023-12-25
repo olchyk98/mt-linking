@@ -1,12 +1,26 @@
-import blessed, { Widgets } from 'blessed'
 import { pluck } from 'ramda'
-import { Screen } from '../core'
+import blessed, { Widgets } from 'blessed'
 import { UIComponentTrait } from './types'
-import { selectModuleLinkLogs, watchStateValue } from '../state'
+import { Screen } from '../core'
+import {
+  UnsubscribeFromStateAction,
+  moduleLinksSlice,
+  selectModuleLinkLogs,
+  subscribeToStateAction,
+} from '../state'
+
+const LOGS_LIMIT = 100
 
 export class OverviewPageLog implements UIComponentTrait<Widgets.ListElement> {
   private list: Widgets.ListElement
+  private screen: Screen
+  private parent: Widgets.Node | null
+  private unsubscribeFromCurrentLogs: UnsubscribeFromStateAction | null
+  private _selectedLinkFrom: string | null
   constructor (screen: Screen, parent?: Widgets.Node) {
+    this.unsubscribeFromCurrentLogs = null
+    this.screen = screen
+    this.parent = parent ?? null
     this.list = blessed.list({
       parent,
       fg: 'green',
@@ -15,22 +29,28 @@ export class OverviewPageLog implements UIComponentTrait<Widgets.ListElement> {
       label: ' Logs ',
       border: { type: 'line' },
     })
-
-    // TODO: Support multiple (this is a test solution)
-    let inited = false
-    watchStateValue((state) => state.moduleLinks.links, (_, __, newLinks) => {
-      if (!newLinks.length) return
-      if (inited) return
-      inited = true
-      watchStateValue(selectModuleLinkLogs(newLinks[0].from), (_, prevLogs, nextLogs) => {
-        if (!nextLogs) return
-        this.list.setItems(pluck('message', nextLogs))
-        screen.render()
-      })
+  }
+  public selectLink (from: string) {
+    this._selectedLinkFrom = from
+    this.unsubscribeFromCurrentLogs?.()
+    this.unsubscribeFromCurrentLogs = subscribeToStateAction(moduleLinksSlice.actions.logForModuleLink, (action, state) => {
+      if (action.payload.from !== from) return
+      const linkLogs = selectModuleLinkLogs(from)(state)
+      if (!linkLogs) return
+      const limitedLogs = linkLogs.slice(-LOGS_LIMIT)
+      //this.list.setItems(pluck('message', limitedLogs))
+      this.parent?.render()
+      this.screen.render()
     })
   }
-  render () {
+  public get selectedLinkFrom () {
+    return this._selectedLinkFrom
+  }
+  public render () {
     this.list.render()
     return this.list
+  }
+  public destroy () {
+    this.unsubscribeFromCurrentLogs?.()
   }
 }

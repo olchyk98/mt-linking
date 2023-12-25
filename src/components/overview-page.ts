@@ -3,6 +3,7 @@ import { UIComponentTrait } from './types'
 import { TabsNavigation } from './tabs-navigation'
 import { Screen } from '../core'
 import { OverviewPageLog } from './overview-page-logs'
+import { moduleLinksSlice, subscribeToStateAction } from '../state'
 
 export class OverviewPage implements UIComponentTrait<Widgets.LayoutElement> {
   private navComponent: TabsNavigation
@@ -12,8 +13,8 @@ export class OverviewPage implements UIComponentTrait<Widgets.LayoutElement> {
   constructor (screen: Screen) {
     this.screen = screen
     this.initLayout()
-    this.initNav()
     this.initLogs()
+    this.initNav()
   }
   private initLayout () {
     this.layoutWidget = blessed.layout({
@@ -25,9 +26,16 @@ export class OverviewPage implements UIComponentTrait<Widgets.LayoutElement> {
   }
   private initNav () {
     this.navComponent = new TabsNavigation(this.screen, this.layoutWidget)
+      .onLinkSelected((from) => this.logsComponent.selectLink(from))
   }
   private initLogs () {
     this.logsComponent = new OverviewPageLog(this.screen, this.layoutWidget)
+
+    const unsubscribe = subscribeToStateAction(moduleLinksSlice.actions.fulfillModuleLink, (action) => {
+      if (this.logsComponent.selectedLinkFrom) return
+      this.logsComponent.selectLink(action.payload.from)
+      unsubscribe()
+    })
   }
   render () {
     this.navComponent.render()
@@ -38,5 +46,6 @@ export class OverviewPage implements UIComponentTrait<Widgets.LayoutElement> {
   destroy () {
     this.layoutWidget.destroy()
     this.navComponent.destroy()
+    this.logsComponent.destroy()
   }
 }

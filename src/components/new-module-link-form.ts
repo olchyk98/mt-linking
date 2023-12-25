@@ -1,7 +1,7 @@
 import blessed, { Widgets } from 'blessed'
 import { head, pluck } from 'ramda'
 import { UIComponentTrait } from './types'
-import { Node, Screen } from '../core'
+import { Screen } from '../core'
 import { getWithState, moduleLinksSlice, screenSlice, stateStore } from '../state'
 import { getLinkablePackages, getLinkablePackagesForSource } from '../logic'
 
@@ -99,11 +99,7 @@ export class NewModuleLinkForm implements UIComponentTrait<void> {
       })
       stateStore.dispatch(fulfillAction)
       this.listNode.hide()
-      this.messageNode.log(
-        'The link has been created!',
-        2,
-        () => { this.exitForm() },
-      )
+      this.exitForm()
     })
     this.screen.render()
   }
@@ -119,7 +115,7 @@ export class NewModuleLinkForm implements UIComponentTrait<void> {
     stateStore.dispatch(moduleLinksSlice.actions.resetLinkBases())
   }
   render (): void {
-    const rendererMap: Record<FormStep, () => Node> = {
+    const rendererMap: Record<FormStep, () => void> = {
       SELECT_FROM: this.renderFromSelector.bind(this),
       SELECT_TO: this.renderToSelector.bind(this),
     }

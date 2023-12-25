@@ -13,13 +13,13 @@ const convertLinkToTab = (link: ModuleLink): Tab => ({
   name: `${getPackageNameByPath(link.from, true) ?? '?'} -> ${getPackageNameByPath(link.to, true) ?? '?'}`,
 })
 
-const convertTabToOption = (tab: Tab): Widgets.Types.ListbarCommand => ({
+const convertTabToOption = (tab: Tab, selectLink: OnLinkSelected | null): Widgets.Types.ListbarCommand => ({
   key: tab.key,
   // XXX: Invalid types in the external library.
   // @ts-ignore
   text: tab.name,
   callback () {
-    // TODO: Implement switching
+    selectLink?.(tab.key)
   },
 })
 
@@ -27,10 +27,12 @@ export class TabsNavigation implements UIComponentTrait<ListbarElement> {
   private listbar: ListbarElement
   private tabs: Tab[]
   private screen: Screen
+  private linkSelectedCallback: OnLinkSelected | null
   constructor (screen: Screen, parent?: Widgets.Node) {
     // TODO: Should be pulled from redux state
     this.tabs = []
     this.screen = screen
+    this.linkSelectedCallback = null
     this.initListbar(parent)
     this.bindEvents()
   }
@@ -70,12 +72,17 @@ export class TabsNavigation implements UIComponentTrait<ListbarElement> {
   private unbindEvents () {
     this.screen.unkey(KEYMAP.CREATE_NEW_LINK, this.linkNewPackage)
   }
-  render () {
-    this.listbar.setItems(map(convertTabToOption, this.tabs))
+  public onLinkSelected (callback: OnLinkSelected): TabsNavigation {
+    this.linkSelectedCallback = callback
+    return this
+  }
+  public render () {
+    const options = map((tab) => convertTabToOption(tab, this.linkSelectedCallback), this.tabs)
+    this.listbar.setItems(options)
     this.listbar.setLabel(' Press N to add a link ')
     return this.listbar
   }
-  destroy () {
+  public destroy () {
     this.listbar.destroy()
     this.unbindEvents()
     this.screen.render()
@@ -86,3 +93,5 @@ export interface Tab {
   name: string
   key: string
 }
+
+type OnLinkSelected = (from: string) => void

@@ -1,9 +1,14 @@
-// TODO: CONTINUE HERE -> Implement selection between screens (where to store the selected link id?) + Support for multi-link in overview-page-logs
+// TODO: CONTINUE HERE -> Support for multi-link in overview-page-logs
 //
 // XXX: There's one major flow with the current architecture:
 //  -> "from" in ModuleLink is treated as a unique value. Therefore,
 //  a package can only be linked once.
-//  The solution would be to switch to a real unique identifier.
+//  The potential solution would be to convert "to" to an array
+//  so that one package could be linked to zzmultiple packages
+//      -> This would also mean that nav item would not have
+//      content "1:package_name -> package_name", but just "1:package_name",
+//      where in logs/overview page widget you could see what
+//      packages the from is linked to
 
 import { spawnScreen } from './src/core'
 import { bindScreenStager, initLinkingObservers } from './src/logic'
