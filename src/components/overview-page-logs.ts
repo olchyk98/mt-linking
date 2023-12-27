@@ -1,5 +1,4 @@
 import { pluck } from 'ramda'
-import fs from 'fs'
 import blessed, { Widgets } from 'blessed'
 import { UIComponentTrait } from './types'
 import { Screen } from '../core'
@@ -24,13 +23,11 @@ export class OverviewPageLog implements UIComponentTrait<Widgets.ListElement> {
       parent,
       fg: 'green',
       width: '100%',
-      height: 40,
+      // TODO: DEBUG: height should be 40 (some problem with displaying)
+      height: '100%-3',
       label: ' Logs ',
       border: { type: 'line' },
     })
-    // TODO: DEBUG
-    this.list.randomId = Math.random().toString()
-    fs.appendFileSync('./output', `added: ${this.list.randomId}\n`)
   }
   public selectLink (from: string) {
     this._selectedLinkFrom = from
@@ -40,7 +37,6 @@ export class OverviewPageLog implements UIComponentTrait<Widgets.ListElement> {
       const linkLogs = selectModuleLinkLogs(from)(state)
       if (!linkLogs) return
       const limitedLogs = linkLogs.slice(-LOGS_LIMIT)
-      fs.appendFileSync('./output', `triggered: ${this.list.randomId}\n`)
       this.list.setItems(pluck('message', limitedLogs))
       this.screen.render()
     })

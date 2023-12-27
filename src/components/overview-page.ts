@@ -31,7 +31,7 @@ export class OverviewPage implements UIComponentTrait<Widgets.LayoutElement> {
   private initLogs () {
     this.logsComponent = new OverviewPageLog(this.screen, this.layoutWidget)
 
-    // TODO: CONTINUE HERE -> Does not work. Check output -> You can see that the previous list instance gets triggered. You have to investigate why.
+    // TODO: CONTINUE HERE -> Does not work. Check output -> You can see that the previous list instance gets triggered. You have to investigate why. (checkout "error" file that contains the latest error stacktrace that could be pulled).
     const unsubscribe = subscribeToStateAction(moduleLinksSlice.actions.fulfillModuleLink, (action) => {
       if (this.logsComponent.selectedLinkFrom) return
       this.logsComponent.selectLink(action.payload.from)

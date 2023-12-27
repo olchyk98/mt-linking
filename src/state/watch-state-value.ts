@@ -13,8 +13,8 @@ export function watchStateValue <T> (
     const state = stateStore.getState()
     const currentValue = getValue(state)
     if (!compareValues(currentValue, previousValue)) {
-      previousValue = currentValue
       await callback(state, previousValue, currentValue)
+      previousValue = currentValue
     }
   }
 

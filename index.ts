@@ -37,7 +37,6 @@ async function main () {
 try {
   main()
 } catch (e) {
-  console.error(e)
-  console.info('Global exit.')
-  process.exit(1)
+  console.log(e)
+  process.exit()
 }
