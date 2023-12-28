@@ -24,7 +24,7 @@ export class OverviewPageLogs implements UIComponentTrait<Widgets.ListElement> {
       parent,
       fg: 'green',
       width: '100%',
-      height: 40,
+      height: '100%-3',
       label: ' Logs ',
       border: { type: 'line' },
     })
@@ -39,6 +39,7 @@ export class OverviewPageLogs implements UIComponentTrait<Widgets.ListElement> {
       if (!linkLogs) return
       const limitedLogs = linkLogs.slice(-LOGS_LIMIT)
       this.list.setItems(pluck('message', limitedLogs))
+      this.list.scrollTo(limitedLogs.length - 1)
       this.screen.render()
     })
   }
