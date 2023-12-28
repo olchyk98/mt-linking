@@ -1,5 +1,3 @@
-// TODO: CONTINUE HERE -> Support for multi-link in overview-page-logs
-//
 // XXX: There's one major flow with the current architecture:
 //  -> "from" in ModuleLink is treated as a unique value. Therefore,
 //  a package can only be linked once.
@@ -18,8 +16,6 @@ import { screenSlice, stateStore } from './src/state'
 
 // TODO: Write tests for linker
 
-// TODO: "blessed-contrib" for more widgets
-// TODO: Re-write with "react-blessed" :)
 // TODO: For backend packages, output info in logs,
 // saying that webapp has to be restarted.
 // TODO: For frontend packages, output info in logs,
