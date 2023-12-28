@@ -12,6 +12,7 @@
 
 import { spawnScreen } from './src/core'
 import { bindScreenStager, initLinkingObservers } from './src/logic'
+import { screenSlice, stateStore } from './src/state'
 
 // TODO: Use "composeWidgets" (function in components)
 
@@ -32,6 +33,7 @@ async function main () {
   const screen = spawnScreen()
   initLinkingObservers()
   bindScreenStager(screen)
+  stateStore.dispatch(screenSlice.actions.setActiveScreen('OVERVIEW'))
 }
 
 try {

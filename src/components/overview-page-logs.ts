@@ -1,4 +1,5 @@
 import { pluck } from 'ramda'
+import fs from 'fs'
 import blessed, { Widgets } from 'blessed'
 import { UIComponentTrait } from './types'
 import { Screen } from '../core'
@@ -11,7 +12,7 @@ import {
 
 const LOGS_LIMIT = 100
 
-export class OverviewPageLog implements UIComponentTrait<Widgets.ListElement> {
+export class OverviewPageLogs implements UIComponentTrait<Widgets.ListElement> {
   private list: Widgets.ListElement
   private screen: Screen
   private unsubscribeFromCurrentLogs: UnsubscribeFromStateAction | null
@@ -23,13 +24,13 @@ export class OverviewPageLog implements UIComponentTrait<Widgets.ListElement> {
       parent,
       fg: 'green',
       width: '100%',
-      // TODO: DEBUG: height should be 40 (some problem with displaying)
-      height: '100%-3',
+      height: 40,
       label: ' Logs ',
       border: { type: 'line' },
     })
   }
   public selectLink (from: string) {
+    if (this._selectedLinkFrom === from) return
     this._selectedLinkFrom = from
     this.unsubscribeFromCurrentLogs?.()
     this.unsubscribeFromCurrentLogs = subscribeToStateAction(moduleLinksSlice.actions.logForModuleLink, (action, state) => {

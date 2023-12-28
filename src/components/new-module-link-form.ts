@@ -63,8 +63,6 @@ export class NewModuleLinkForm implements UIComponentTrait<void> {
     this.render()
   }
   private renderFromSelector () {
-    this.exitForm()
-    return
     const linkablePackages = getLinkablePackages()
     this.stageTitleNode.setContent('Select a package that will be linked to source.')
     this.listNode.show()

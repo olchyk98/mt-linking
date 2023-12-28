@@ -1,4 +1,4 @@
-import { map } from 'ramda'
+import { any, map } from 'ramda'
 import blessed, { Widgets } from 'blessed'
 import { UIComponentTrait } from './types'
 import { ModuleLink, screenSlice, stateStore, watchStateValue } from '../state'
@@ -8,29 +8,23 @@ import { KEYMAP } from '../constants'
 
 type ListbarElement = Widgets.ListbarElement
 
-const convertLinkToTab = (link: ModuleLink): Tab => ({
+const convertLinkToOption = (link: ModuleLink, selectLink: OnLinkSelected | null): Widgets.Types.ListbarCommand => ({
   key: link.from,
-  name: `${getPackageNameByPath(link.from, true) ?? '?'} -> ${getPackageNameByPath(link.to, true) ?? '?'}`,
-})
-
-const convertTabToOption = (tab: Tab, selectLink: OnLinkSelected | null): Widgets.Types.ListbarCommand => ({
-  key: tab.key,
   // XXX: Invalid types in the external library.
   // @ts-ignore
-  text: tab.name,
-  callback: () => selectLink?.(tab.key),
+  text: `${getPackageNameByPath(link.from, true) ?? '?'} -> ${getPackageNameByPath(link.to, true) ?? '?'}`,
+  callback: () => selectLink?.(link.from),
 })
 
 export class TabsNavigation implements UIComponentTrait<ListbarElement> {
   private listbar: ListbarElement
-  private tabs: Tab[]
   private screen: Screen
   private linkSelectedCallback: OnLinkSelected | null
+  private selectedLinkFrom: string | null
   constructor (screen: Screen, parent?: Widgets.Node) {
-    // TODO: Should be pulled from redux state
-    this.tabs = []
     this.screen = screen
     this.linkSelectedCallback = null
+    this.selectedLinkFrom = null
     this.initListbar(parent)
     this.bindEvents()
   }
@@ -64,19 +58,23 @@ export class TabsNavigation implements UIComponentTrait<ListbarElement> {
     // will trigger N amount of times on each "links" change,
     // where N is amount of times this component has be inited.
     watchStateValue((state) => state.moduleLinks.links, (_, __, links) => {
-      this.tabs = map(convertLinkToTab, links)
+      const selectFirst = !this.selectedLinkFrom || !any((l) => l.key === this.selectedLinkFrom, this.listbar.options.items)
+      const options = map((tab) => convertLinkToOption(tab, this.linkSelectedCallback), links)
+      this.listbar.setItems(options)
+      if (selectFirst) this.listbar.selectTab(0)
     })
   }
   private unbindEvents () {
     this.screen.unkey(KEYMAP.CREATE_NEW_LINK, this.linkNewPackage)
   }
   public onLinkSelected (callback: OnLinkSelected): TabsNavigation {
-    this.linkSelectedCallback = callback
+    this.linkSelectedCallback = (from) => {
+      this.selectedLinkFrom = from
+      callback(from)
+    }
     return this
   }
   public render () {
-    const options = map((tab) => convertTabToOption(tab, this.linkSelectedCallback), this.tabs)
-    this.listbar.setItems(options)
     this.listbar.setLabel(' Press N to add a link ')
     return this.listbar
   }

@@ -13,8 +13,11 @@ export function watchStateValue <T> (
     const state = stateStore.getState()
     const currentValue = getValue(state)
     if (!compareValues(currentValue, previousValue)) {
-      await callback(state, previousValue, currentValue)
+      // NOTE: ImmediatePrevious is used to allow setting "previousValue" before execution.
+      // This is done to prevent accidental infinite recursions.
+      const immediatePrevious = previousValue
       previousValue = currentValue
+      await callback(state, immediatePrevious, currentValue)
     }
   }
 
