@@ -3,7 +3,6 @@ import { LinkingStrategy } from './types'
 import { logForLinker } from '../log-for-linker'
 
 const strategyTranspileFnMap: Record<LinkingStrategy, TranspileFn> = {
-  // TODO: --cwd
   TRANSPILED: (absolutePath) => executeShell('yarn', [ '--cwd', absolutePath, 'transpile' ]),
   TRANSPILED_LEGACY: (absolutePath) => executeShell('yarn', [ '--cwd', absolutePath, 'build' ]),
   AMEND_NATIVE: () => [ 'No transpilation required.' ],

@@ -6,7 +6,7 @@
   "repository": "https://github.com/olchyk98/mt-linking",
   "author": "Oles Odynets <olchyk98@gmail.com>",
   "license": "MIT",
-  "private": false,
+  "private": true,
   "scripts": {
     "pretranspile": "yarn",
     "transpile": "bun build --target=node index.ts --outdir ./dist",

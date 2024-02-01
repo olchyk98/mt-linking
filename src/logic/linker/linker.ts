@@ -51,6 +51,8 @@ export class Linker {
         logForLinker(this.link.from, error.message, 'ERROR')
       }
     })
+    logForLinker(this.link.from, 'Linked! Initiating first transpilation run..')
+    await transpilePackage(this.link.from, linkingStrategy)
     logForLinker(this.link.from, 'Waiting for changes...')
   }
   public stop () {
