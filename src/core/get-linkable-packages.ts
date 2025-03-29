@@ -1,11 +1,13 @@
+import { reduce } from "ramda"
 import path from 'path'
-import os from 'os'
 import fs from 'fs'
-import { append, concat, reduce } from 'ramda'
+import os from 'os'
+import { getPackageJSONAtPath, type PackageJson } from "./get-package-json-at-path"
 
+// TODO: Implement pnpm split
 const YARN_LINKS_LOCATION = path.resolve(os.homedir(), '.config/yarn/link/')
 
-const readPackagesFromDir = (folderPath: string): string[] => {
+export function readPackagesFromDir(folderPath: string): string[] {
   const folderItems = fs.readdirSync(folderPath)
   return reduce(
     (acc, itemPath) => {
@@ -14,32 +16,30 @@ const readPackagesFromDir = (folderPath: string): string[] => {
       if (!stat || stat.isFile()) return acc
       if (stat.isSymbolicLink()) {
         const fullModulePath = path.resolve(folderPath, fs.readlinkSync(fullItemPath))
-        return append(fullModulePath, acc)
+        acc.push(fullModulePath)
+        return acc
       }
       const links = readPackagesFromDir(path.resolve(folderPath, itemPath))
-      return concat(acc, links)
+      acc.push(...links)
+      return acc
     },
     <string[]>[],
     folderItems,
   )
 }
 
-/**
-* -----
-* Upon calling, this recursive function will fetch
-* all packages linked with "yarn link"
-* and return the list of linked packages.
-*
-* The function performs a FS action
-* in sync mode.
-*
-* Returns an array of absolute paths
-* to packages that were saved
-* in the "yarn link" registry.
-*
-* @ported
-* */
-export function getLinkablePackagePaths(): string[] {
+
+export function getLinkablePackages(): PackageJson[] {
   const packagePaths = readPackagesFromDir(YARN_LINKS_LOCATION)
-  return packagePaths
+  return reduce(
+    (acc, absolutePath) => {
+      const linkablePackage = getPackageJSONAtPath(absolutePath)
+      if (linkablePackage == null) return acc
+      acc.push(linkablePackage)
+      return acc
+    },
+    <PackageJson[]>[],
+    packagePaths,
+  )
+
 }

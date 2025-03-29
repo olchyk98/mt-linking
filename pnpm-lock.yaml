@@ -55,6 +55,9 @@ devDependencies:
   eslint-plugin-import:
     specifier: ^2.29.1
     version: 2.31.0(eslint@9.23.0)
+  package-json-type:
+    specifier: ^1.0.3
+    version: 1.0.3
   ts-node:
     specifier: ^10.9.2
     version: 10.9.2(@types/node@18.19.84)(typescript@5.8.2)
@@ -2520,6 +2523,10 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       p-limit: 3.1.0
+    dev: true
+
+  /package-json-type@1.0.3:
+    resolution: {integrity: sha512-Bey4gdRuOwDbS8Fj1qA3/pTq5r8pqiI5E3tjSqCdhaLSsyGG364VFzXLTIexN5AaNGe/vgdBzLfoKdr7EVg2KQ==}
     dev: true
 
   /parent-module@1.0.1:

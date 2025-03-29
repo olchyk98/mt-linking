@@ -1,5 +1,5 @@
 import { append, reduce } from 'ramda'
-import { LinkablePackage, getPackageForPath } from './get-package-for-path'
+import { type LinkablePackage, getPackageForPath } from './get-package-for-path'
 import { getLinkablePackagePaths } from './get-linkable-package-paths'
 
 /**
@@ -9,7 +9,7 @@ import { getLinkablePackagePaths } from './get-linkable-package-paths'
 * registered registry with "yarn link"
 * command.
 * */
-export function getLinkablePackages (): LinkablePackage[] {
+export function getLinkablePackages(): LinkablePackage[] {
   const absolutePaths = getLinkablePackagePaths()
   const linkablePackagesWithMeta = reduce(
     (acc, absolutePath) => {
@@ -17,7 +17,7 @@ export function getLinkablePackages (): LinkablePackage[] {
       if (!linkablePackage) return acc
       return append(linkablePackage, acc)
     },
-    <LinkablePackage[]> [],
+    <LinkablePackage[]>[],
     absolutePaths,
   )
   return linkablePackagesWithMeta
