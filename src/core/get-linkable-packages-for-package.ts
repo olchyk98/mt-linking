@@ -1,6 +1,6 @@
 import { filter } from 'ramda'
 import { getLinkablePackages } from './get-linkable-packages';
-import { getPackageJSONAtPath, type PackageJson } from './get-package-json-at-path'
+import { getPackageAtPath, type ResolvedPackageWithValidName, type ResolvedPackage } from './get-package-at-path'
 
 /**
  * Returns list of all PackageJSON structs (potentially customized),
@@ -18,15 +18,20 @@ import { getPackageJSONAtPath, type PackageJson } from './get-package-json-at-pa
  * found at the location, but the name field is
  * not specified.
  * */
-export function getLinkablePackagesForPackage(absolutePath: string | PackageJson): PackageJson[] | null {
-  const sourcePackage = typeof absolutePath === 'object'
+export function getLinkablePackagesForPackage(absolutePath: string): ResolvedPackage[] | null
+export function getLinkablePackagesForPackage(absolutePath: ResolvedPackage): ResolvedPackage[]
+export function getLinkablePackagesForPackage(absolutePath: string | ResolvedPackage): ResolvedPackage[] | null {
+  const destinationPackage = typeof absolutePath === 'object'
     ? absolutePath
-    : getPackageJSONAtPath(absolutePath)
-  if (sourcePackage?.name == null) return null
-  const { dependencies = {}, devDependencies = {} } = sourcePackage
+    : getPackageAtPath(absolutePath)
+  if (destinationPackage?.packageJson?.name == null) return null
+  const { dependencies = {}, devDependencies = {} } = destinationPackage.packageJson
   const linkablePackages = getLinkablePackages()
-  return filter(({ name }) => {
-    if (name == null) return false
-    return name in dependencies || name in devDependencies
-  }, linkablePackages)
+  return filter(
+    ({ packageJson: { name } }) => {
+      if (name == null) return false
+      return name in dependencies || name in devDependencies
+    },
+    linkablePackages
+  ) as ResolvedPackageWithValidName[]
 }

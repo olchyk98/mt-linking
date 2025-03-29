@@ -2,7 +2,7 @@ import { reduce } from "ramda"
 import path from 'path'
 import fs from 'fs'
 import os from 'os'
-import { getPackageJSONAtPath, type PackageJson } from "./get-package-json-at-path"
+import { getPackageAtPath, type ResolvedPackage } from './get-package-at-path'
 
 // TODO: Implement pnpm split
 const YARN_LINKS_LOCATION = path.resolve(os.homedir(), '.config/yarn/link/')
@@ -29,16 +29,16 @@ export function readPackagesFromDir(folderPath: string): string[] {
 }
 
 
-export function getLinkablePackages(): PackageJson[] {
+export function getLinkablePackages(): ResolvedPackage[] {
   const packagePaths = readPackagesFromDir(YARN_LINKS_LOCATION)
   return reduce(
     (acc, absolutePath) => {
-      const linkablePackage = getPackageJSONAtPath(absolutePath)
+      const linkablePackage = getPackageAtPath(absolutePath)
       if (linkablePackage == null) return acc
       acc.push(linkablePackage)
       return acc
     },
-    <PackageJson[]>[],
+    <ResolvedPackage[]>[],
     packagePaths,
   )
 

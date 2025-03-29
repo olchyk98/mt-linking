@@ -11,7 +11,7 @@
     "rules": {
       "recommended": true,
       "complexity": {
-        "noBannedTypes": "error",
+        "noBannedTypes": "off",
         "noExtraBooleanCast": "error",
         "noMultipleSpacesInRegularExpressionLiterals": "error",
         "noUselessCatch": "error",

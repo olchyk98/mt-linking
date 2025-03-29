@@ -1,1 +1,5 @@
 export * from './strip-suffix'
+export * from './execute-shell-with-stream'
+export * from './observe-folder-changes'
+export * from './debounce-fn'
+export * from './execute-shell'
