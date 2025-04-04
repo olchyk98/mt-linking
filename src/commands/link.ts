@@ -11,6 +11,7 @@ import {
   transpilePackage
 } from '../core'
 import { observeFolderChanges } from '../utils'
+import { promptPackageToLink } from '../ui'
 
 // TODO: Split up this code into smaller modules
 // TODO: If flags and args are not specified, you can use inquirer in runtime to obtain the values
@@ -35,7 +36,6 @@ export default class Link extends Command {
     from: Args.string({
       char: 't',
       description: 'Name of package to propagate changes from',
-      required: true
     })
   }
 
@@ -43,16 +43,18 @@ export default class Link extends Command {
     const logAsLinker = createLogLinker.call(this)
 
     const { args, flags } = await this.parse(Link)
-    const { dest = __dirname, livereload } = flags
+    const { dest = './', livereload } = flags
 
     const absolutePath = path.isAbsolute(dest)
-      ? flags.source : path.resolve(__dirname, dest)
+      ? dest : path.resolve(__dirname, dest)
     const destinationPackage = getPackageAtPath(absolutePath)
     if (destinationPackage == null) {
       this.error('INSUFFICIENT_INFO_IN_DEST_PACKAGE_JSON')
     }
     const linkablePackages = getLinkablePackagesForPackage(destinationPackage)
-    const sourcePackage = find((l) => l.packageJson.name === args.from, linkablePackages)
+    const sourcePackage = args.from == null
+      ? await promptPackageToLink(linkablePackages)
+      : find((l) => l.packageJson.name === args.from, linkablePackages)
     if (sourcePackage == null) {
       this.error('SPECIFIED_FROM_PACKAGE_IS_NOT_LINKABLE')
     }
