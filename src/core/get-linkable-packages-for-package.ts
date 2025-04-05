@@ -1,6 +1,6 @@
 import { filter } from 'ramda'
 import { getLinkablePackages } from './get-linkable-packages';
-import { getPackageAtPath, type ResolvedPackageWithValidName, type ResolvedPackage } from './get-package-at-path'
+import { getPackageAtPath, type ResolvedPackage } from './get-package-at-path'
 
 /**
  * Returns list of all PackageJSON structs (potentially customized),
@@ -33,5 +33,5 @@ export function getLinkablePackagesForPackage(absolutePath: string | ResolvedPac
       return name in dependencies || name in devDependencies
     },
     linkablePackages
-  ) as ResolvedPackageWithValidName[]
+  )
 }

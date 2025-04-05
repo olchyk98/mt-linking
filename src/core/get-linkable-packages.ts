@@ -4,8 +4,7 @@ import fs from 'fs'
 import os from 'os'
 import { getPackageAtPath, type ResolvedPackage } from './get-package-at-path'
 
-// TODO: Implement pnpm split
-const YARN_LINKS_LOCATION = path.resolve(os.homedir(), '.config/yarn/link/')
+const LINKS_LOCATION = path.resolve(os.homedir(), '.config/olink/link/')
 
 export function readPackagesFromDir(folderPath: string): string[] {
   const folderItems = fs.readdirSync(folderPath)
@@ -30,7 +29,7 @@ export function readPackagesFromDir(folderPath: string): string[] {
 
 
 export function getLinkablePackages(): ResolvedPackage[] {
-  const packagePaths = readPackagesFromDir(YARN_LINKS_LOCATION)
+  const packagePaths = readPackagesFromDir(LINKS_LOCATION)
   return reduce(
     (acc, absolutePath) => {
       const linkablePackage = getPackageAtPath(absolutePath)

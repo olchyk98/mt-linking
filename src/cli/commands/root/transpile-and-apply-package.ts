@@ -1,9 +1,5 @@
 import type { LinkingStrategy, ResolvedPackage } from '../../../core'
-import {
-  applyTranspilationResult,
-  getLinkingStrategyForPackage,
-  transpilePackage,
-} from '../../../core'
+import { applyTranspilationResult, getLinkingStrategyForPackage, transpilePackage } from '../../../core'
 import { log, error } from '../../lifecycle'
 import { logAsLinker } from '../../log-as-linker'
 
@@ -15,9 +11,9 @@ import { logAsLinker } from '../../log-as-linker'
  * This function must only be called from the commands
  * module, since it utilizes oclif native utilities.
  * */
-export function transpileAndLinkPackages(sourcePackage: ResolvedPackage, destinationPackage: ResolvedPackage): Promise<void>
-export function transpileAndLinkPackages(sourcePackage: ResolvedPackage, destinationPackage: ResolvedPackage, $linkingStrategy: LinkingStrategy): Promise<void>
-export function transpileAndLinkPackages(sourcePackage: ResolvedPackage, destinationPackage: ResolvedPackage, $linkingStrategy?: LinkingStrategy): Promise<void> {
+export function transpileAndApplyPackage(sourcePackage: ResolvedPackage, destinationPackage: ResolvedPackage): Promise<void>
+export function transpileAndApplyPackage(sourcePackage: ResolvedPackage, destinationPackage: ResolvedPackage, $linkingStrategy: LinkingStrategy): Promise<void>
+export function transpileAndApplyPackage(sourcePackage: ResolvedPackage, destinationPackage: ResolvedPackage, $linkingStrategy?: LinkingStrategy): Promise<void> {
   const linkingStrategy = $linkingStrategy ?? getLinkingStrategyForPackage(sourcePackage)
   if(linkingStrategy == null) {
     error('SPECIFIED_SOURCE_PACKAGE_IS_NOT_LINKABLE')

@@ -11,7 +11,7 @@
   "scripts": {
     "pretranspile": "pnpm install",
     "predev": "pnpm install && pnpm run transpile",
-    "dev": "pnpm transpile && node dist",
+    "dev": "pnpm transpile && node --enable-source-maps dist",
     "dev:verbose": "DEBUG=* pnpm dev",
     "prestart": "pnpm install && pnpm run start",
     "start": "pnpm dev",

@@ -21,7 +21,8 @@ export function getPackageAtPath($absolutePath: string): ResolvedPackage | null 
     const specPath = path.resolve(absolutePath, 'package.json')
     const packageJson = fs.readFileSync(specPath, 'utf8')
     const packageJsonObj = JSON.parse(packageJson) as PackageJson
-    return { absolutePath, packageJson: packageJsonObj }
+    if(packageJsonObj.name == null) return null
+    return { absolutePath, packageJson: packageJsonObj } as ResolvedPackage
   } catch (_) {
     return null
   }
@@ -30,15 +31,5 @@ export function getPackageAtPath($absolutePath: string): ResolvedPackage | null 
 
 export interface ResolvedPackage {
   absolutePath: string
-  packageJson: PackageJson
+  packageJson: Omit<PackageJson, 'name'> & Required<Pick<PackageJson, 'name'>>
 }
-
-/**
- * Same as "ResolvedPackage", but "packageJson.name"
- * is not "string | undefined", but "string" (required to exist).
- * */
-export type ResolvedPackageWithValidName = (
-  Omit<ResolvedPackage, 'packageJson'> & {
-    packageJson: Omit<PackageJson, 'name'> & Required<Pick<PackageJson, 'name'>>
-  }
-)

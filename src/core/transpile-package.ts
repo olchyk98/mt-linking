@@ -1,4 +1,5 @@
-import { Readable } from 'stream'
+import { PassThrough} from 'stream'
+import type { Readable } from 'stream'
 import { getPackageAtPath, type ResolvedPackage } from './get-package-at-path'
 import { getLinkingStrategyForPackage, type LinkingStrategy } from './get-linking-strategy-for-package'
 import { executeShellWithStream } from '../utils'
@@ -7,12 +8,12 @@ const strategyTranspileFnMap: Record<LinkingStrategy, TranspileFn> = {
   TRANSPILED: (absolutePath) => executeShellWithStream('yarn', ['--cwd', absolutePath, 'transpile']),
   TRANSPILED_LEGACY: (absolutePath) => executeShellWithStream('yarn', ['--cwd', absolutePath, 'build']),
   AMEND_NATIVE() {
-    const readStream = new Readable()
+    const readStream = new PassThrough()
     // TODO: Weird shit. Putting this here just for now,
     // can be patched later.
     setTimeout(() => {
       readStream.push('No transpilation required')
-      readStream.destroy()
+      readStream.end()
     }, 100)
     return readStream
   },
