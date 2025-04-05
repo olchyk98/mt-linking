@@ -17,6 +17,7 @@ import { logAsLinker } from '../../log-as-linker'
 // TODO: Test with mediaplanning, mt-mediaplanning-ui, integrations, etc.
 // TODO: Switch to eslint
 // TODO: Improve global errors (like INSUFFICIENT_INFO_IN_DEST_PACKAGE_JSON)
+// TODO: Introduce CI
 // TODO: Write unit tests
 // TODO: Introduce ASCII art
 // TODO: Introduce git readme and make it public
