@@ -19,7 +19,9 @@
     "transpile": "rm -rf dist && esbuild index.ts --platform=node --format=cjs --sourcemap --bundle --outdir=dist/",
     "unit": "vitest",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "test": "pnpm run lint && pnpm run typecheck && pnpm unit"
+    "test": "pnpm run lint && pnpm run typecheck && pnpm unit",
+    "transpile:predeploy": "./scripts/predeploy",
+    "deploy": "pnpm run transpile:predeploy && sudo cp ./dist/run.js /usr/local/bin/olink"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",

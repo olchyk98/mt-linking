@@ -66,6 +66,7 @@ export function applyTranspilationResult(
   const destinationPackage = typeof destinationAbsolutePath === 'object' ? destinationAbsolutePath : getPackageAtPath(destinationAbsolutePath)
   if (sourcePackage == null || destinationPackage == null) return null
   const linkingStrategy = $linkingStrategy ?? getLinkingStrategyForPackage(sourcePackage)
+  if(linkingStrategy == null) return null
   const applyTranspilationResultFn = strategyApplyResultFnMap[linkingStrategy]
   return applyTranspilationResultFn(sourcePackage, destinationPackage)
 }

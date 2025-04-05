@@ -14,6 +14,9 @@ import { program } from '../../program'
 import { error } from '../../lifecycle'
 import { logAsLinker } from '../../log-as-linker'
 
+// TODO: Package
+// TODO: Test with mediaplanning, mt-mediaplanning-ui, integrations, etc.
+// TODO: Switch to eslint
 // TODO: Improve global errors (like INSUFFICIENT_INFO_IN_DEST_PACKAGE_JSON)
 // TODO: Write unit tests
 // TODO: Ship bundle to npm
