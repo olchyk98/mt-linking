@@ -1,0 +1,85 @@
+import { createErrorBanner } from './create-error-banner'
+
+export const errorRenderers = {
+  /**
+   * The error indicates that the folder
+   * where the program has been executed ("destination")
+   * does not have a valid package.json.
+   * */
+  INSUFFICIENT_INFO_IN_DEST_PACKAGE_JSON () {
+    return createErrorBanner({
+      tip: 'Did you know? You can specify a custom project folder with the --dest flag.',
+      title: 'Program cannot be run here',
+      description: `
+  The selected folder is not a valid Node.js project.
+
+  Possible reasons:
+  - No package.json file found in the directory.
+  - The package.json file is missing the required "name" property.
+
+  Please select a valid Node.js project folder and try again.
+`,
+    })
+  },
+  SPECIFIED_SOURCE_PACKAGE_IS_NOT_LINKABLE () {
+    return createErrorBanner({
+      title: 'Specified package is not linkable',
+      description: `
+  The selected package cannot be linked.
+
+  Possible reasons:
+  - The package.json file is missing the required "name" property.
+  - The specified package is not installed in the current project.
+
+  Please verify the package details and try again.
+`,
+    })
+  },
+  NO_LINKABLE_PACKAGES_FOR_DEST () {
+    return createErrorBanner({
+      tip: 'Run `olink link` in the package you want to link, then try again.',
+      title: 'No linkable packages found for the project',
+      description: `
+  No packages can be linked to the selected project.
+
+  Possible reasons:
+  - You haven't run 'olink link' in a package you want to link to this project.
+  - The linked package is not installed in the current project.
+
+  Please ensure the correct package is linked and installed before retrying.
+`,
+    })
+  },
+  NO_LINKING_STRATEGY_AVAILABLE_FOR_SOURCE () {
+    return createErrorBanner({
+      tip: 'Pull requests and feature requests are welcome and appreciated.',
+      title: 'Unsupported Package Type',
+      description: `
+  The selected package cannot be linked because its  
+  type is not currently supported.
+
+  What you can do:
+  - Contact the project author for guidance.
+  - Submit a feature request.
+  - Consider submitting a pull request to add support  
+    for this package's transpilation strategy.
+
+  Unfortunately, we cannot proceed with linking at this time.
+`,
+    })
+  },
+  FATAL_UNEXPECTED_ERROR () {
+    return createErrorBanner({
+      title: 'Unexpected Error Occurred',
+      description: `
+  An unexpected and untraceable error has occurred.  
+  This error is not expected and is considered a bug.
+
+  If you're able to reproduce this issue, please submit  
+  a bug report with the steps to reproduce.
+
+  We apologize for the inconvenience.
+`,
+    })
+  },
+} satisfies Record<string, (...args: never[]) => string>

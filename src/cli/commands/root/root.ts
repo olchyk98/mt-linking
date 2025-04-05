@@ -13,10 +13,9 @@ import { transpileAndApplyPackage } from './transpile-and-apply-package'
 import { program } from '../../program'
 import { error } from '../../lifecycle'
 import { logAsLinker } from '../../log-as-linker'
+import { errorRenderers } from '../../../errors'
 
-// TODO: Test with mediaplanning, mt-mediaplanning-ui, integrations, etc.
-// TODO: Switch to eslint
-// TODO: Improve global errors (like INSUFFICIENT_INFO_IN_DEST_PACKAGE_JSON)
+// TODO: Introduce chart for readme excali explaining how the program works
 // TODO: Introduce CI
 // TODO: Write unit tests
 // TODO: Introduce ASCII art
@@ -48,21 +47,24 @@ program
       : path.resolve(__dirname, dest)
     const destinationPackage = getPackageAtPath(absolutePath)
     if (destinationPackage == null) {
-      error('INSUFFICIENT_INFO_IN_DEST_PACKAGE_JSON')
+      error(errorRenderers.INSUFFICIENT_INFO_IN_DEST_PACKAGE_JSON())
     }
 
     const linkablePackages = getLinkablePackagesForPackage(destinationPackage)
+    if (linkablePackages.length <= 0) {
+      error(errorRenderers.NO_LINKABLE_PACKAGES_FOR_DEST())
+    }
     const sourcePackage =
       from == null
         ? await promptPackageToLink(linkablePackages)
         : find((l) => l.packageJson.name === from, linkablePackages)
     if (sourcePackage == null) {
-      error('SPECIFIED_SOURCE_PACKAGE_IS_NOT_LINKABLE')
+      error(errorRenderers.SPECIFIED_SOURCE_PACKAGE_IS_NOT_LINKABLE())
     }
 
     const linkingStrategy = getLinkingStrategyForPackage(sourcePackage)
     if (linkingStrategy == null) {
-      error('NO_LINKING_STRATEGY_AVAILABLE_FOR_SOURCE')
+      error(errorRenderers.NO_LINKING_STRATEGY_AVAILABLE_FOR_SOURCE())
     }
     logAsLinker(`🔗 Established linking strategy: "${linkingStrategy}"`)
 
@@ -102,7 +104,7 @@ program
                   if (e instanceof Error) {
                     error(e)
                   } else {
-                    error('Unexpected error occurred.')
+                    error(errorRenderers.FATAL_UNEXPECTED_ERROR())
                   }
                 }
               })

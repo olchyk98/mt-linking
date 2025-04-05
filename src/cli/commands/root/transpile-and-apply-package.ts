@@ -5,6 +5,7 @@ import {
   getLinkingStrategyForPackage,
   transpilePackage,
 } from '../../../core'
+import { errorRenderers } from '../../../errors'
 import { error, log } from '../../lifecycle'
 import { errorAsLinker, logAsLinker } from '../../log-as-linker'
 
@@ -21,11 +22,11 @@ export function transpileAndApplyPackage(sourcePackage: ResolvedPackage, destina
 export function transpileAndApplyPackage (sourcePackage: ResolvedPackage, destinationPackage: ResolvedPackage, $linkingStrategy?: LinkingStrategy): Promise<void> {
   const linkingStrategy = $linkingStrategy ?? getLinkingStrategyForPackage(sourcePackage)
   if (linkingStrategy == null) {
-    error('SPECIFIED_SOURCE_PACKAGE_IS_NOT_LINKABLE')
+    error(errorRenderers.SPECIFIED_SOURCE_PACKAGE_IS_NOT_LINKABLE())
   }
   const transpilationStream = transpilePackage(sourcePackage, linkingStrategy)
   if (transpilationStream == null) {
-    error('WEIRD_CASE_1')
+    error(errorRenderers.FATAL_UNEXPECTED_ERROR())
   }
   transpilationStream.on('data', (message: string) => {
     log(message)

@@ -3,6 +3,7 @@ import { program } from '../../program'
 import { logAsLinker } from '../../log-as-linker'
 import { error } from '../../lifecycle'
 import { getPackageAtPath, linkPackage } from '../../../core'
+import { errorRenderers } from '../../../errors'
 
 program
   .command('link')
@@ -14,11 +15,11 @@ program
     const cwd = process.cwd()
     const packageToLink = getPackageAtPath(cwd)
     if (packageToLink == null) {
-      error('PACKAGE_MISSING_AT_CWD')
+      error(errorRenderers.INSUFFICIENT_INFO_IN_DEST_PACKAGE_JSON())
     }
     if (linkPackage(packageToLink)) {
       logAsLinker(`${packageToLink.packageJson.name} has been linked!`)
     } else {
-      error('WEIRD_CASE_2')
+      error(errorRenderers.FATAL_UNEXPECTED_ERROR())
     }
   })
