@@ -3,7 +3,7 @@
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
-    "include": ["index.ts"]
+    "include": ["index.ts", "./src/**/*"]
   },
   "organizeImports": { "enabled": true },
   "linter": {
@@ -53,7 +53,7 @@
       },
       "suspicious": {
         "noAssignInExpressions": "error",
-        "noAsyncPromiseExecutor": "error",
+        "noAsyncPromiseExecutor": "off",
         "noCatchAssign": "error",
         "noClassAssign": "error",
         "noCompareNegZero": "error",

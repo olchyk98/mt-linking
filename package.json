@@ -1,5 +1,5 @@
 {
-  "name": "mt-linking",
+  "name": "olink",
   "version": "0.0.1",
   "description": "A smart linker for Mediatool repository",
   "packageManager": "pnpm",
@@ -11,18 +11,17 @@
   "scripts": {
     "pretranspile": "pnpm install",
     "predev": "pnpm install && pnpm run transpile",
-    "dev": "pnpm transpile && node ./bin/run.js",
+    "dev": "pnpm transpile && node dist",
     "dev:verbose": "DEBUG=* pnpm dev",
     "prestart": "pnpm install && pnpm run start",
-    "start": "pnpm transpile && node ./bin/run.js",
+    "start": "pnpm dev",
     "lint": "pnpm biome check index.ts",
-    "transpile": "rm -rf dist && esbuild ./src/**/*.ts --platform=node --format=cjs --sourcemap --outdir=dist/",
+    "transpile": "rm -rf dist && esbuild index.ts --platform=node --format=cjs --sourcemap --bundle --outdir=dist/",
     "unit": "vitest",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "test": "pnpm run lint && pnpm run typecheck && pnpm unit"
   },
   "dependencies": {
-    "@oclif/core": "^4.2.10",
     "@reduxjs/toolkit": "^2.0.1",
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.11.0",
@@ -42,6 +41,7 @@
     "@types/bluebird": "^3.5.42",
     "@types/node": "^18",
     "@types/ramda": "^0.29.9",
+    "commander": "^13.1.0",
     "esbuild": "^0.25.1",
     "eslint-plugin-import": "^2.29.1",
     "package-json-type": "^1.0.3",
@@ -49,14 +49,5 @@
     "typed-emitter": "^2.1.0",
     "typescript": "latest",
     "vitest": "^3.0.9"
-  },
-  "bin": {
-    "mt-linking": "./bin/run.js"
-  },
-  "oclif": {
-    "bin": "mt-linking",
-    "commands": "./dist/commands",
-    "dirname": "mt-linking",
-    "topicSeparator": " "
   }
 }
