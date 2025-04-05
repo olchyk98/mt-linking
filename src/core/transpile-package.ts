@@ -7,13 +7,9 @@ const strategyTranspileFnMap: Record<LinkingStrategy, TranspileFn> = {
   TRANSPILED: (absolutePath) => executeShellWithStream('yarn', [ '--cwd', absolutePath, 'transpile' ]),
   TRANSPILED_LEGACY: (absolutePath) => executeShellWithStream('yarn', [ '--cwd', absolutePath, 'build' ]),
   AMEND_NATIVE () {
-    const readStream = new PassThrough()
-    // TODO: Weird shit. Putting this here just for now,
-    // can be patched later.
-    setTimeout(() => {
-      readStream.push('No transpilation required')
-      readStream.end()
-    }, 100)
+    const readStream = new PassThrough({ objectMode: true })
+    readStream.push('>> 🟢 No transpilation is required for this linking strategy 🟢 <<')
+    readStream.end()
     return readStream
   },
   MAKEFILE_BUILD: (absolutePath) => executeShellWithStream('make', [ `-C ${absolutePath}` ]),
