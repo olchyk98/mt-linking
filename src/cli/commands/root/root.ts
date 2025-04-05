@@ -85,12 +85,16 @@ program
             // and we don't support more than one items (no livereload mode, single use program),
             // then we block queuing of all future linking requests.
             if (!livereload) return
-            logAsLinker(`[QUEUED] Change triggered! - ${filename}`)
+            logAsLinker(`Change triggered - ${filename}! OLink is going to re-run once current linking pipeline has been completed`)
+            // XXX: Let's clear all waiting tasks in queue, since they
+            // are now outdated. Once current pipeline has finished, let's
+            // process newest change.
+            transpilationQueue.clear()
           }
           transpilationQueue.add(
-            () =>
+            () => (
               new Promise(async (res) => {
-                logAsLinker(`Processing change in file ${filename}`)
+                logAsLinker('A change has been detected! Time to OLink 👷')
                 try {
                   await transpileAndApplyPackage(sourcePackage, destinationPackage, linkingStrategy)
                   res(void 0)
@@ -101,7 +105,8 @@ program
                     error('Unexpected error occurred.')
                   }
                 }
-              }),
+              })
+            ),
           )
         },
       )
