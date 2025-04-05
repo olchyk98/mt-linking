@@ -1,7 +1,7 @@
-import { spawn } from "child_process";
+import { spawn } from 'child_process'
 import { PassThrough, type Readable } from 'stream'
 
-export function executeShellWithStream(command: string, args: string[]): Readable {
+export function executeShellWithStream (command: string, args: string[]): Readable {
   const readStream = new PassThrough({ objectMode: true })
   const shell = spawn(command, args)
   shell.stdout.on('data', (data) => {

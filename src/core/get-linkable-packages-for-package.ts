@@ -1,6 +1,6 @@
 import { filter } from 'ramda'
-import { getLinkablePackages } from './get-linkable-packages';
-import { getPackageAtPath, type ResolvedPackage } from './get-package-at-path'
+import { getLinkablePackages } from './get-linkable-packages'
+import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 
 /**
  * Returns list of all PackageJSON structs (potentially customized),
@@ -20,7 +20,7 @@ import { getPackageAtPath, type ResolvedPackage } from './get-package-at-path'
  * */
 export function getLinkablePackagesForPackage(absolutePath: string): ResolvedPackage[] | null
 export function getLinkablePackagesForPackage(absolutePath: ResolvedPackage): ResolvedPackage[]
-export function getLinkablePackagesForPackage(absolutePath: string | ResolvedPackage): ResolvedPackage[] | null {
+export function getLinkablePackagesForPackage (absolutePath: string | ResolvedPackage): ResolvedPackage[] | null {
   const destinationPackage = typeof absolutePath === 'object'
     ? absolutePath
     : getPackageAtPath(absolutePath)
@@ -32,6 +32,6 @@ export function getLinkablePackagesForPackage(absolutePath: string | ResolvedPac
       if (name == null) return false
       return name in dependencies || name in devDependencies
     },
-    linkablePackages
+    linkablePackages,
   )
 }

@@ -1,6 +1,11 @@
-import type { LinkingStrategy, ResolvedPackage } from '../../../core'
-import { applyTranspilationResult, getLinkingStrategyForPackage, transpilePackage } from '../../../core'
-import { log, error } from '../../lifecycle'
+import {
+  LinkingStrategy,
+  ResolvedPackage,
+  applyTranspilationResult,
+  getLinkingStrategyForPackage,
+  transpilePackage,
+} from '../../../core'
+import { error, log } from '../../lifecycle'
 import { errorAsLinker, logAsLinker } from '../../log-as-linker'
 
 /**
@@ -13,9 +18,9 @@ import { errorAsLinker, logAsLinker } from '../../log-as-linker'
  * */
 export function transpileAndApplyPackage(sourcePackage: ResolvedPackage, destinationPackage: ResolvedPackage): Promise<void>
 export function transpileAndApplyPackage(sourcePackage: ResolvedPackage, destinationPackage: ResolvedPackage, $linkingStrategy: LinkingStrategy): Promise<void>
-export function transpileAndApplyPackage(sourcePackage: ResolvedPackage, destinationPackage: ResolvedPackage, $linkingStrategy?: LinkingStrategy): Promise<void> {
+export function transpileAndApplyPackage (sourcePackage: ResolvedPackage, destinationPackage: ResolvedPackage, $linkingStrategy?: LinkingStrategy): Promise<void> {
   const linkingStrategy = $linkingStrategy ?? getLinkingStrategyForPackage(sourcePackage)
-  if(linkingStrategy == null) {
+  if (linkingStrategy == null) {
     error('SPECIFIED_SOURCE_PACKAGE_IS_NOT_LINKABLE')
   }
   const transpilationStream = transpilePackage(sourcePackage, linkingStrategy)

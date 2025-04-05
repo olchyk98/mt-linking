@@ -1,10 +1,10 @@
-import { keys } from "ramda";
+import { keys } from 'ramda'
 import fs from 'fs'
-import { type ResolvedPackage, getPackageAtPath } from "./get-package-at-path";
+import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 
 const strategyCheckersMap: Record<LinkingStrategy, StrategyCheckerFn> = {
   TRANSPILED: (items) => items.has('rollup.config.mjs'),
-  TRANSPILED_LEGACY(_, { packageJson }) {
+  TRANSPILED_LEGACY (_, { packageJson }) {
     const { scripts: scriptsMap } = packageJson
     if (scriptsMap == null) return false
     const scriptsSet = new Set<string>(keys(scriptsMap))
@@ -15,7 +15,6 @@ const strategyCheckersMap: Record<LinkingStrategy, StrategyCheckerFn> = {
   ),
   MAKEFILE_BUILD: (items) => items.has('Makefile'),
 }
-
 
 /**
  * Accepts resolved package or absolute path
@@ -37,7 +36,7 @@ const strategyCheckersMap: Record<LinkingStrategy, StrategyCheckerFn> = {
  * */
 export function getLinkingStrategyForPackage(absolutePath: string): LinkingStrategy | null
 export function getLinkingStrategyForPackage(absolutePath: ResolvedPackage): LinkingStrategy | null
-export function getLinkingStrategyForPackage(absolutePath: ResolvedPackage | string): LinkingStrategy | null {
+export function getLinkingStrategyForPackage (absolutePath: ResolvedPackage | string): LinkingStrategy | null {
   const resolvedPackage = typeof absolutePath === 'object'
     ? absolutePath
     : getPackageAtPath(absolutePath)

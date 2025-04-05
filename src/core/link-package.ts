@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import os from 'os'
-import { getPackageAtPath, type ResolvedPackage } from './get-package-at-path'
+import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 
 export const LINKS_LOCATION = path.resolve(os.homedir(), '.config/olink/link/')
 
@@ -12,8 +12,8 @@ export const LINKS_LOCATION = path.resolve(os.homedir(), '.config/olink/link/')
  * of linkable packages that are used by the "root" command.
  * */
 export function linkPackage (absolutePath: ResolvedPackage | string): true | null {
-  const packageToLink = typeof absolutePath === 'string' 
-    ? getPackageAtPath(absolutePath) 
+  const packageToLink = typeof absolutePath === 'string'
+    ? getPackageAtPath(absolutePath)
     : absolutePath
   if (packageToLink == null) return null
   const linkLocation = path.resolve(LINKS_LOCATION, packageToLink.packageJson.name)

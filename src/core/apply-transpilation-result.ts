@@ -1,9 +1,9 @@
 import fs from 'fs'
 import path from 'path'
-import { getLinkingStrategyForPackage, type LinkingStrategy } from './get-linking-strategy-for-package'
+import { type LinkingStrategy, getLinkingStrategyForPackage } from './get-linking-strategy-for-package'
 import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 
-function resolveNodeModulesLocationForSource(source: ResolvedPackage, destination: ResolvedPackage): string | never {
+function resolveNodeModulesLocationForSource (source: ResolvedPackage, destination: ResolvedPackage): string | never {
   const packageName = source.packageJson.name
   if (packageName == null) throw new Error(`Unknown module (${source.absolutePath})`)
   return path.resolve(destination.absolutePath, 'node_modules', packageName)
@@ -18,7 +18,7 @@ const copyDistForLink: ApplyTranspilationResultFn = (source, destination) => {
 }
 
 const copyAmendSourcesForLink: ApplyTranspilationResultFn = (source, destination) => {
-  const targets = ['amend', 'boundaries', 'lib']
+  const targets = [ 'amend', 'boundaries', 'lib' ]
   const destBase = resolveNodeModulesLocationForSource(source, destination)
   for (const target of targets) {
     const dist = path.resolve(source.absolutePath, target)
@@ -52,21 +52,21 @@ const strategyApplyResultFnMap: Record<LinkingStrategy, ApplyTranspilationResult
  * to a folder with a valid package.json.
  *
  * The function will return null if linkingStrategy
- * was not specified and package at sourceAbsolutePath 
+ * was not specified and package at sourceAbsolutePath
  * does not have a supported linkingStrategy.
  *
  * The function returns true on success and throws on error.
  * */
-export function applyTranspilationResult(
+export function applyTranspilationResult (
   sourceAbsolutePath: string | ResolvedPackage,
   destinationAbsolutePath: string | ResolvedPackage,
-  $linkingStrategy?: LinkingStrategy
+  $linkingStrategy?: LinkingStrategy,
 ): true | null | never {
   const sourcePackage = typeof sourceAbsolutePath === 'object' ? sourceAbsolutePath : getPackageAtPath(sourceAbsolutePath)
   const destinationPackage = typeof destinationAbsolutePath === 'object' ? destinationAbsolutePath : getPackageAtPath(destinationAbsolutePath)
   if (sourcePackage == null || destinationPackage == null) return null
   const linkingStrategy = $linkingStrategy ?? getLinkingStrategyForPackage(sourcePackage)
-  if(linkingStrategy == null) return null
+  if (linkingStrategy == null) return null
   const applyTranspilationResultFn = strategyApplyResultFnMap[linkingStrategy]
   return applyTranspilationResultFn(sourcePackage, destinationPackage)
 }

@@ -1,12 +1,12 @@
-import { reduce } from "ramda"
+import { reduce } from 'ramda'
 import path from 'path'
 import fs from 'fs'
 import os from 'os'
-import { getPackageAtPath, type ResolvedPackage } from './get-package-at-path'
+import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 
 const LINKS_LOCATION = path.resolve(os.homedir(), '.config/olink/link/')
 
-export function readPackagesFromDir(folderPath: string): string[] {
+export function readPackagesFromDir (folderPath: string): string[] {
   const folderItems = fs.readdirSync(folderPath)
   return reduce(
     (acc, itemPath) => {
@@ -27,8 +27,7 @@ export function readPackagesFromDir(folderPath: string): string[] {
   )
 }
 
-
-export function getLinkablePackages(): ResolvedPackage[] {
+export function getLinkablePackages (): ResolvedPackage[] {
   const packagePaths = readPackagesFromDir(LINKS_LOCATION)
   return reduce(
     (acc, absolutePath) => {

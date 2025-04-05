@@ -38,7 +38,7 @@ program
     // no arg will produce a boolean.
     const dest = typeof _dest === 'string' ? _dest : process.cwd()
 
-    if(livereload === true) {
+    if (livereload === true) {
       logAsLinker('👓 Running in Livereload mode.')
     }
 
@@ -68,7 +68,7 @@ program
     // XXX: Upon command execution, initial linking has to be
     // performed. Let's queue it.
     transpilationQueue.add(async () => {
-    logAsLinker(`⚓ Linking "${sourcePackage.packageJson.name}" to "${destinationPackage.packageJson.name}"`)
+      logAsLinker(`⚓ Linking "${sourcePackage.packageJson.name}" to "${destinationPackage.packageJson.name}"`)
       await transpileAndApplyPackage(sourcePackage, destinationPackage, linkingStrategy)
     })
 

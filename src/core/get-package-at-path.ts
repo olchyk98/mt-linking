@@ -8,20 +8,20 @@ import { stripSuffix } from '../utils'
  * derived from package.json placed in the specified
  * location. Helpful if you're trying to quickly
  * get meta information about a specific
- * package at some location. 
+ * package at some location.
  *
  * RGturns null if there's no package.json
  * at specified location. The input can
  * either point to package.json or folder
  * containing it.
  * */
-export function getPackageAtPath($absolutePath: string): ResolvedPackage | null {
+export function getPackageAtPath ($absolutePath: string): ResolvedPackage | null {
   try {
     const absolutePath = stripSuffix($absolutePath, 'package.json')
     const specPath = path.resolve(absolutePath, 'package.json')
     const packageJson = fs.readFileSync(specPath, 'utf8')
     const packageJsonObj = JSON.parse(packageJson) as PackageJson
-    if(packageJsonObj.name == null) return null
+    if (packageJsonObj.name == null) return null
     return { absolutePath, packageJson: packageJsonObj } as ResolvedPackage
   } catch (_) {
     return null
@@ -29,8 +29,8 @@ export function getPackageAtPath($absolutePath: string): ResolvedPackage | null 
 
 }
 
-// XXX: We have to create this interface without index, because 
-// using Omit (and Pick) seems to break the interface otherwise. 
+// XXX: We have to create this interface without index, because
+// using Omit (and Pick) seems to break the interface otherwise.
 type PackageJsonWithoutIndex = {
   // XXX: "...as string..." - removes the index by remapping key to "never",
   // making the compiler omit the property. This is called "Key Remapping".
