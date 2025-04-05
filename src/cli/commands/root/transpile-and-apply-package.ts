@@ -1,7 +1,7 @@
 import type { LinkingStrategy, ResolvedPackage } from '../../../core'
 import { applyTranspilationResult, getLinkingStrategyForPackage, transpilePackage } from '../../../core'
 import { log, error } from '../../lifecycle'
-import { logAsLinker } from '../../log-as-linker'
+import { errorAsLinker, logAsLinker } from '../../log-as-linker'
 
 /**
  * The function triggers transpilePackage
@@ -25,10 +25,9 @@ export function transpileAndApplyPackage(sourcePackage: ResolvedPackage, destina
   transpilationStream.on('data', (message: string) => {
     log(message)
   })
-  return new Promise((res, rej) => {
+  return new Promise((res) => {
     transpilationStream.on('error', (err) => {
-      rej(err)
-      error(`Errored: ${err}`)
+      errorAsLinker(`Transpilation process has failed. See emitted logs from transpiler above. (Finished with: "${err}")`)
     })
     transpilationStream.on('end', () => {
       logAsLinker('Applying transpilation result...')
