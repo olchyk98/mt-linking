@@ -14,8 +14,8 @@ import { program } from '../../program'
 import { error } from '../../lifecycle'
 import { logAsLinker } from '../../log-as-linker'
 
-// TODO: Split up this code into smaller modules
-// TODO: If flags and args are not specified, you can use inquirer in runtime to obtain the values
+// TODO: "link" -> root
+// TODO: "yarn link" -> link
 
 const transpilationQueue = new PQueue({ concurrency: 1 })
 
@@ -24,13 +24,17 @@ program
   .description('Link one package to another package')
   .argument('[package]', 'Name of package to propagate changes from')
   .option('-d, --dest [string]')
-  .option('-l', 're-link automatically on every file change')
+  .option('--livereload', 're-link automatically on every file change')
   .action(async (from, _flags) => {
-    const { dest: _dest = process.cwd(), l: livereload = false } =
-      _flags as { dest: string, l?: boolean }
+    const { dest: _dest = process.cwd(), livereload = false } =
+      _flags as { dest: string, livereload?: boolean }
     // FIXME: Utilize parseArg from commander, since "--dest" with
     // no arg will produce a boolean.
     const dest = typeof _dest === 'string' ? _dest : process.cwd()
+
+    if(livereload === true) {
+      logAsLinker('👓 Running in Livereload mode.')
+    }
 
     const absolutePath = path.isAbsolute(dest)
       ? dest
@@ -53,11 +57,12 @@ program
     if (linkingStrategy == null) {
       error('NO_LINKING_STRATEGY_AVAILABLE_FOR_SOURCE')
     }
-    logAsLinker(`Established linking strategy: "${linkingStrategy}"`)
+    logAsLinker(`🔗 Established linking strategy: "${linkingStrategy}"`)
 
     // XXX: Upon command execution, initial linking has to be
     // performed. Let's queue it.
     transpilationQueue.add(async () => {
+    logAsLinker(`⚓ Linking "${sourcePackage.packageJson.name}" to "${destinationPackage.packageJson.name}"`)
       await transpileAndLinkPackages.call(
         this,
         sourcePackage,
