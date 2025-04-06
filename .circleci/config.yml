@@ -1,0 +1,22 @@
+version: 2.1
+
+jobs:
+  test:
+    resource_class: medium+
+    docker:
+      - image: node:16
+        environment:
+          TZ: "Europe/Stockholm"
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: pnpm install --frozen-lockfile
+      - run:
+          name: Test all packages
+          command: pnpm test
+
+workflows:
+  sample:
+    jobs:
+      - test

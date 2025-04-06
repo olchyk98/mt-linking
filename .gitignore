@@ -166,3 +166,7 @@ compile_commands.json
 yarn-error.log
 
 dist
+
+!.circleci
+
+tsconfig.tsbuildinfo
