@@ -5,7 +5,6 @@ import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 
 function resolveNodeModulesLocationForSource (source: ResolvedPackage, destination: ResolvedPackage): string | never {
   const packageName = source.packageJson.name
-  if (packageName == null) throw new Error(`Unknown module (${source.absolutePath})`)
   return path.resolve(destination.absolutePath, 'node_modules', packageName)
 }
 

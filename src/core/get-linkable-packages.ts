@@ -1,43 +1,30 @@
 import { reduce } from 'ramda'
 import path from 'path'
 import fs from 'fs'
-import os from 'os'
 import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
+import { LINKS_LOCATION } from '../constants'
 
-const LINKS_LOCATION = path.resolve(os.homedir(), '.config/olink/link/')
-
-export function readPackagesFromDir (folderPath: string): string[] {
-  const folderItems = fs.readdirSync(folderPath)
+export function getLinkablePackages (rootPath: string = LINKS_LOCATION): ResolvedPackage[] {
+  const folderItems = fs.readdirSync(rootPath)
   return reduce(
     (acc, itemPath) => {
-      const fullItemPath = path.resolve(folderPath, itemPath)
+      const fullItemPath = path.resolve(rootPath, itemPath)
       const stat = fs.lstatSync(fullItemPath)
       if (!stat || stat.isFile()) return acc
       if (stat.isSymbolicLink()) {
-        const fullModulePath = path.resolve(folderPath, fs.readlinkSync(fullItemPath))
-        acc.push(fullModulePath)
+        const fullModulePath = path.resolve(rootPath, fs.readlinkSync(fullItemPath))
+        const linkablePackage = getPackageAtPath(fullModulePath)
+        if (linkablePackage != null){
+          acc.push(linkablePackage)
+        }
         return acc
       }
-      const links = readPackagesFromDir(path.resolve(folderPath, itemPath))
-      acc.push(...links)
+      const childPath = path.resolve(rootPath, itemPath)
+      const packages = getLinkablePackages(childPath)
+      acc.push(...packages)
       return acc
     },
-    <string[]>[],
+    <ResolvedPackage[]> [],
     folderItems,
   )
-}
-
-export function getLinkablePackages (): ResolvedPackage[] {
-  const packagePaths = readPackagesFromDir(LINKS_LOCATION)
-  return reduce(
-    (acc, absolutePath) => {
-      const linkablePackage = getPackageAtPath(absolutePath)
-      if (linkablePackage == null) return acc
-      acc.push(linkablePackage)
-      return acc
-    },
-    <ResolvedPackage[]>[],
-    packagePaths,
-  )
-
 }

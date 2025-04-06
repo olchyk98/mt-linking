@@ -2,13 +2,14 @@ import { keys } from 'ramda'
 import fs from 'fs'
 import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 
+// WARNING: Order matters.
 const strategyCheckersMap: Record<LinkingStrategy, StrategyCheckerFn> = {
   TRANSPILED: (items) => items.has('rollup.config.mjs'),
   TRANSPILED_LEGACY (_, { packageJson }) {
     const { scripts: scriptsMap } = packageJson
     if (scriptsMap == null) return false
-    const scriptsSet = new Set<string>(keys(scriptsMap))
-    return scriptsSet.has('build') // refers to "yarn build"
+    const scriptsSet: string[] = keys(scriptsMap)
+    return scriptsSet.includes('build') // refers to "yarn build"
   },
   AMEND_NATIVE: (items) => (
     items.has('amend') && items.has('lib')

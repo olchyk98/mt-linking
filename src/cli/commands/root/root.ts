@@ -15,10 +15,8 @@ import { error } from '../../lifecycle'
 import { logAsLinker } from '../../log'
 import { errorRenderers } from '../../../errors'
 
-// TODO: Write unit tests
 // TODO: Introduce ASCII art
-// TODO: Introduce git readme and make it public
-// TODO: Re-write commits with conventional commits
+// TODO: Introduce git readme with excalidraw and make it public
 // TODO: Create a landing page explaining how to use the CLI
 // TODO: Ship bundle to npm
 

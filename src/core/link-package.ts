@@ -1,15 +1,16 @@
 import path from 'path'
 import fs from 'fs'
-import os from 'os'
 import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
-
-export const LINKS_LOCATION = path.resolve(os.homedir(), '.config/olink/link/')
+import { LINKS_LOCATION } from '../constants'
 
 /**
  * Accepting ResolvedPackage or absolutePath it tries
  * to resolve to the package and create symlink to
  * the internal folder which works as a readable collection
  * of linkable packages that are used by the "root" command.
+ *
+ * The function will return null if there is
+ * no valid package to be resolved at the specified absolutePath.
  * */
 export function linkPackage (absolutePath: ResolvedPackage | string): true | null {
   const packageToLink = typeof absolutePath === 'string'

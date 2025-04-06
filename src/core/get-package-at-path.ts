@@ -17,13 +17,13 @@ import { stripSuffix } from '../utils'
  * */
 export function getPackageAtPath ($absolutePath: string): ResolvedPackage | null {
   try {
-    const absolutePath = stripSuffix($absolutePath, 'package.json')
+    const absolutePath = stripSuffix($absolutePath, '/package.json')
     const specPath = path.resolve(absolutePath, 'package.json')
     const packageJson = fs.readFileSync(specPath, 'utf8')
     const packageJsonObj = JSON.parse(packageJson) as PackageJson
     if (packageJsonObj.name == null) return null
     return { absolutePath, packageJson: packageJsonObj } as ResolvedPackage
-  } catch (_) {
+  } catch (e_) {
     return null
   }
 
