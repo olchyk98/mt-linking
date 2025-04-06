@@ -15,7 +15,6 @@ import { error } from '../../lifecycle'
 import { logAsLinker } from '../../log-as-linker'
 import { errorRenderers } from '../../../errors'
 
-// TODO: Introduce chart for readme excali explaining how the program works
 // TODO: Introduce CI
 // TODO: Write unit tests
 // TODO: Introduce ASCII art
