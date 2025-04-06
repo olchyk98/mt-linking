@@ -7,7 +7,7 @@ import {
 } from '../../../core'
 import { errorRenderers } from '../../../errors'
 import { error, log } from '../../lifecycle'
-import { errorAsLinker, logAsLinker } from '../../log-as-linker'
+import { errorAsLinker, logAsLinker } from '../../log'
 
 /**
  * The function triggers transpilePackage

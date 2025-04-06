@@ -1,6 +1,6 @@
 import process from 'process'
 import { program } from '../../program'
-import { logAsLinker } from '../../log-as-linker'
+import { logAsLinker } from '../../log'
 import { error } from '../../lifecycle'
 import { getPackageAtPath, linkPackage } from '../../../core'
 import { errorRenderers } from '../../../errors'

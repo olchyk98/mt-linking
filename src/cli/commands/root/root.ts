@@ -12,7 +12,7 @@ import { promptPackageToLink } from '../../../ui'
 import { transpileAndApplyPackage } from './transpile-and-apply-package'
 import { program } from '../../program'
 import { error } from '../../lifecycle'
-import { logAsLinker } from '../../log-as-linker'
+import { logAsLinker } from '../../log'
 import { errorRenderers } from '../../../errors'
 
 // TODO: Write unit tests
