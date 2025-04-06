@@ -15,7 +15,6 @@ import { error } from '../../lifecycle'
 import { logAsLinker } from '../../log-as-linker'
 import { errorRenderers } from '../../../errors'
 
-// TODO: Introduce CI
 // TODO: Write unit tests
 // TODO: Introduce ASCII art
 // TODO: Introduce git readme and make it public
