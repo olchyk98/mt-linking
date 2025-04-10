@@ -15,6 +15,8 @@ import { error } from '../../lifecycle'
 import { logAsLinker } from '../../log'
 import { errorRenderers } from '../../../errors'
 
+// TODO: Make link work with yarn and pnpm workspaces (link every single package in the workspace)
+// TODO: Figure out how to handle the case with multiple links at the same time in node_modules?
 // TODO: Introduce ASCII art
 // TODO: Introduce git readme with excalidraw and make it public
 // TODO: Create a landing page explaining how to use the CLI

@@ -1,3 +1,4 @@
+import nodeNotifier from 'node-notifier'
 import {
   LinkingStrategy,
   ResolvedPackage,
@@ -43,6 +44,12 @@ export function transpileAndApplyPackage (sourcePackage: ResolvedPackage, destin
         linkingStrategy,
       )
       logAsLinker('Success!')
+      nodeNotifier.notify({
+        title: 'OLink',
+        message: `${sourcePackage.packageJson.name} has successfully been linked to ${destinationPackage.packageJson.name}`,
+        sound: false,
+        wait: false,
+      })
       res(void 0)
     })
   })
