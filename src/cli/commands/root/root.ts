@@ -11,12 +11,11 @@ import { observeFolderChanges } from '../../../utils'
 import { promptPackageToLink } from '../../../ui'
 import { transpileAndApplyPackage } from './transpile-and-apply-package'
 import { program } from '../../program'
-import { error } from '../../lifecycle'
+import { error, log } from '../../lifecycle'
 import { logAsLinker } from '../../log'
 import { errorRenderers } from '../../../errors'
+import chalk from 'chalk'
 
-// TODO: Make link work with yarn and pnpm workspaces (link every single package in the workspace)
-// TODO: Introduce ASCII art
 // TODO: Introduce git readme with excalidraw and make it public
 // TODO: Create a landing page explaining how to use the CLI
 // TODO: Ship bundle to npm
@@ -34,6 +33,16 @@ program
     // FIXME: Utilize parseArg from commander, since "--dest" with
     // no arg will produce a boolean.
     const dest = typeof _dest === 'string' ? _dest : process.cwd()
+
+    log(chalk.bgBlack.white(`
+░▒▓██████▓▒░░▒▓█▓▒░      ░▒▓█▓▒░▒▓███████▓▒░░▒▓█▓▒░░▒▓█▓▒░ 
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ 
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ 
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░  
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ 
+░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ 
+ ░▒▓██████▓▒░░▒▓████████▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░
+    `))
 
     if (livereload === true) {
       logAsLinker('👓 Running in Livereload mode.')
