@@ -76,6 +76,11 @@ Oink is built with fully typed source code, providing enhanced reliability, impr
 
 ## Documentation 📜
 
+
+![image](https://github.com/user-attachments/assets/c27f592a-eabe-4e2b-ab2c-9f76b2057717)
+![image](https://github.com/user-attachments/assets/bdafa600-da9a-489b-b7b2-9f8cfd6bdc7c)
+
+
 _It’s windy here... 🌬️_
 
 ## Contribution 🤝
