@@ -18,6 +18,8 @@ import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
+// TODO: Type fzf
+// TODO: Notification on error
 // TODO: Introduce git readme with excalidraw and make it public
 // TODO: Create a landing page explaining how to use the CLI
 // TODO: Ship bundle to npm
