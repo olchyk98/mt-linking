@@ -35,6 +35,12 @@ export function transpileAndApplyPackage (sourcePackage: ResolvedPackage, destin
   return new Promise((res) => {
     transpilationStream.on('error', (err) => {
       errorAsLinker(`Transpilation process has failed. See emitted logs from transpiler above. (Finished with: "${err}")`)
+      nodeNotifier.notify({
+        title: 'Oink',
+        message: 'Transpilation process has failed. See emitted logs in your terminal to find out more',
+        sound: true,
+        wait: false,
+      })
     })
     transpilationStream.on('end', async () => {
       logAsLinker('Applying transpilation result...')
