@@ -77,4 +77,23 @@ export const errorRenderers = {
 `,
     })
   },
+  NO_SOURCE_PACKAGE_SELECTED () {
+    return createErrorBanner({
+      tip: 'Pull requests and feature requests are welcome and appreciated.',
+      title: 'No package to link has been selected',
+      description: `
+  Seems like the application has been prompted to exit
+  without specifying a package to link. 
+
+  If you believe this is a mistake, consider following steps:
+  - Try running OLink in another terminal.
+  - Try running OLink in another shell (for example, ZSH or FISH).
+
+  If you believe this to be a bug, please submit  
+  a bug report with the steps to reproduce.
+
+  We apologize for the inconvenience.
+`,
+    })
+  },
 } satisfies Record<string, (...args: never[]) => string>
