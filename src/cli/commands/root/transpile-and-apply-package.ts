@@ -36,9 +36,9 @@ export function transpileAndApplyPackage (sourcePackage: ResolvedPackage, destin
     transpilationStream.on('error', (err) => {
       errorAsLinker(`Transpilation process has failed. See emitted logs from transpiler above. (Finished with: "${err}")`)
     })
-    transpilationStream.on('end', () => {
+    transpilationStream.on('end', async () => {
       logAsLinker('Applying transpilation result...')
-      applyTranspilationResult(
+      await applyTranspilationResult(
         sourcePackage,
         destinationPackage,
         linkingStrategy,

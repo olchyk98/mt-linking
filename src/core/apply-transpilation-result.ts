@@ -2,30 +2,40 @@ import fs from 'fs'
 import path from 'path'
 import { type LinkingStrategy, getLinkingStrategyForPackage } from './get-linking-strategy-for-package'
 import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
+import { executeShell } from '../utils'
 
-function resolveNodeModulesLocationForSource (source: ResolvedPackage, destination: ResolvedPackage): string | never {
-  const packageName = source.packageJson.name
-  return path.resolve(destination.absolutePath, 'node_modules', packageName)
+async function resolveNodeModulesLocationForSource (source: ResolvedPackage, destination: ResolvedPackage): Promise<string[] | never> {
+  // XXX: We're searching for all occurrences, because there's a high chance
+  // there's more than one. Yarn and PNPM may install different versions
+  // of the same package and not hoist in case different dependencies require
+  // different semver incompatible versions of the source package.
+  const result = await executeShell('find', [ 'node_modules', '-type d', `-path "*/node_modules/${source.packageJson.name}"` ], { cwd: destination.absolutePath })
+  return result.split('\n').filter(Boolean).map((s) => path.resolve(s))
 }
 
-const copyDistForLink: ApplyTranspilationResultFn = (source, destination) => {
-  const dist = path.resolve(source.absolutePath, 'dist')
-  const dest = path.resolve(resolveNodeModulesLocationForSource(source, destination), 'dist')
-  fs.rmSync(dest, { recursive: true })
-  fs.cpSync(dist, dest, { recursive: true })
-  return true
-}
-
-const copyAmendSourcesForLink: ApplyTranspilationResultFn = (source, destination) => {
-  const targets = [ 'amend', 'boundaries', 'lib' ]
-  const destBase = resolveNodeModulesLocationForSource(source, destination)
-  for (const target of targets) {
-    const dist = path.resolve(source.absolutePath, target)
-    const dest = path.resolve(destBase, target)
-    fs.rmSync(dest, { recursive: true })
-    fs.cpSync(dist, dest, { recursive: true })
+const copyDistForLink: ApplyTranspilationResultFn = async (source, destination) => {
+  const sourceDist = path.resolve(source.absolutePath, 'dist')
+  const dests = await resolveNodeModulesLocationForSource(source, destination)
+  for (const dest of dests) {
+    const destDist = path.resolve(dest, 'dist')
+    fs.rmSync(destDist, { recursive: true })
+    fs.cpSync(sourceDist, destDist, { recursive: true })
   }
-  return true
+  return true as const
+}
+
+const copyAmendSourcesForLink: ApplyTranspilationResultFn = async (source, destination) => {
+  const targets = [ 'amend', 'boundaries', 'lib' ]
+  const destBases = await resolveNodeModulesLocationForSource(source, destination)
+  for (const destBase of destBases) {
+    for (const target of targets) {
+      const dist = path.resolve(source.absolutePath, target)
+      const dest = path.resolve(destBase, target)
+      fs.rmSync(dest, { recursive: true })
+      fs.cpSync(dist, dest, { recursive: true })
+    }
+  }
+  return true as const
 }
 
 const strategyApplyResultFnMap: Record<LinkingStrategy, ApplyTranspilationResultFn> = {
@@ -56,11 +66,11 @@ const strategyApplyResultFnMap: Record<LinkingStrategy, ApplyTranspilationResult
  *
  * The function returns true on success and throws on error.
  * */
-export function applyTranspilationResult (
+export async function applyTranspilationResult (
   sourceAbsolutePath: string | ResolvedPackage,
   destinationAbsolutePath: string | ResolvedPackage,
   $linkingStrategy?: LinkingStrategy,
-): true | null | never {
+): Promise<true | null | never> {
   const sourcePackage = typeof sourceAbsolutePath === 'object' ? sourceAbsolutePath : getPackageAtPath(sourceAbsolutePath)
   const destinationPackage = typeof destinationAbsolutePath === 'object' ? destinationAbsolutePath : getPackageAtPath(destinationAbsolutePath)
   if (sourcePackage == null || destinationPackage == null) return null
@@ -71,5 +81,5 @@ export function applyTranspilationResult (
 }
 
 type ApplyTranspilationResultFn = (
-  (sourcePackage: ResolvedPackage, destinationPackage: ResolvedPackage) => true | never
+  (sourcePackage: ResolvedPackage, destinationPackage: ResolvedPackage) => true | never | Promise<true | never>
 )

@@ -1,16 +1,27 @@
-import { afterEach, describe, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, it, vi } from 'vitest'
 import path from 'path'
 import fs from 'fs'
 import * as GetPackageAtPathModule from '../../../src/core/get-package-at-path'
+import * as ExecuteShellModule from '../../../src/utils/execute-shell'
 import { applyTranspilationResult } from '../../../src/core/apply-transpilation-result'
 import * as GetLinkingStrategyForPackageModule from '../../../src/core/get-linking-strategy-for-package'
 
-describe.concurrent('applyTranspilationResult', () => {
+// XXX: Run this suite sequentially, because
+// we're heavily overriding implementation of functions
+// used between the test cases.
+describe.sequential('applyTranspilationResult', () => {
+  beforeEach(() => {
+    vi.spyOn(ExecuteShellModule, 'executeShell')
+      .mockImplementation(async (_command, _args, opts) => (
+        [ `${opts?.cwd ?? ''}/node_modules/source/` ].join('\n')
+      ))
+  })
+
   afterEach(() => {
     vi.clearAllMocks()
   })
 
-  it('should return null if there is no package at specified source package path', ({ expect }) => {
+  it('should return null if there is no package at specified source package path', async ({ expect }) => {
     vi.spyOn(GetPackageAtPathModule, 'getPackageAtPath')
       .mockImplementation((absolutePath) => {
         if (absolutePath === 'dest_path') {
@@ -18,11 +29,11 @@ describe.concurrent('applyTranspilationResult', () => {
         }
         return null
       })
-    const result = applyTranspilationResult('source_path', 'dest_path', 'TRANSPILED')
+    const result = await applyTranspilationResult('source_path', 'dest_path', 'TRANSPILED')
     expect(result).toEqual(null)
   })
 
-  it('should return null if there is no package at specified dest package path', ({ expect }) => {
+  it('should return null if there is no package at specified dest package path', async ({ expect }) => {
     vi.spyOn(GetPackageAtPathModule, 'getPackageAtPath')
       .mockImplementation((absolutePath) => {
         if (absolutePath === 'source_path') {
@@ -30,24 +41,24 @@ describe.concurrent('applyTranspilationResult', () => {
         }
         return null
       })
-    const result = applyTranspilationResult('source_path', 'dest_path', 'TRANSPILED')
+    const result = await applyTranspilationResult('source_path', 'dest_path', 'TRANSPILED')
     expect(result).toEqual(null)
   })
 
-  it('should return null if linking strategy cannot be identified for source package', ({ expect }) => {
+  it('should return null if linking strategy cannot be identified for source package', async ({ expect }) => {
     vi.spyOn(GetLinkingStrategyForPackageModule, 'getLinkingStrategyForPackage')
       .mockReturnValueOnce(null)
-    const result = applyTranspilationResult(
+    const result = await applyTranspilationResult(
       { absolutePath: 'source_path', packageJson: { name: 'source' } },
       { absolutePath: 'dest_path', packageJson: { name: 'dest' } },
     )
     expect(result).toEqual(null)
   })
 
-  it('should properly apply transpilation result for strategy: TRANSPILED', ({ expect }) => {
+  it('should properly apply transpilation result for strategy: TRANSPILED', async ({ expect }) => {
     const rmSyncSpy = vi.spyOn(fs, 'rmSync').mockReturnValueOnce(void 0)
     const cpSyncSpy = vi.spyOn(fs, 'cpSync').mockReturnValueOnce(void 0)
-    const result = applyTranspilationResult(
+    const result = await applyTranspilationResult(
       { absolutePath: 'source_path', packageJson: { name: 'source' } },
       { absolutePath: 'dest_path', packageJson: { name: 'dest' } },
       'TRANSPILED',
@@ -64,10 +75,10 @@ describe.concurrent('applyTranspilationResult', () => {
     ])
   })
 
-  it('should properly apply transpilation result for strategy: TRANSPILED_LEGACY', ({ expect }) => {
+  it('should properly apply transpilation result for strategy: TRANSPILED_LEGACY', async ({ expect }) => {
     const rmSyncSpy = vi.spyOn(fs, 'rmSync').mockReturnValueOnce(void 0)
     const cpSyncSpy = vi.spyOn(fs, 'cpSync').mockReturnValueOnce(void 0)
-    const result = applyTranspilationResult(
+    const result = await applyTranspilationResult(
       { absolutePath: 'source_path', packageJson: { name: 'source' } },
       { absolutePath: 'dest_path', packageJson: { name: 'dest' } },
       'TRANSPILED_LEGACY',
@@ -84,10 +95,10 @@ describe.concurrent('applyTranspilationResult', () => {
     ])
   })
 
-  it('should properly apply transpilation result for strategy: MAKEFILE_BUILD', ({ expect }) => {
+  it('should properly apply transpilation result for strategy: MAKEFILE_BUILD', async ({ expect }) => {
     const rmSyncSpy = vi.spyOn(fs, 'rmSync').mockReturnValueOnce(void 0)
     const cpSyncSpy = vi.spyOn(fs, 'cpSync').mockReturnValueOnce(void 0)
-    const result = applyTranspilationResult(
+    const result = await applyTranspilationResult(
       { absolutePath: 'source_path', packageJson: { name: 'source' } },
       { absolutePath: 'dest_path', packageJson: { name: 'dest' } },
       'MAKEFILE_BUILD',
@@ -104,10 +115,10 @@ describe.concurrent('applyTranspilationResult', () => {
     ])
   })
 
-  it('should properly apply transpilation result for strategy: AMEND_NATIVE', ({ expect }) => {
+  it('should properly apply transpilation result for strategy: AMEND_NATIVE', async ({ expect }) => {
     const rmSyncSpy = vi.spyOn(fs, 'rmSync').mockReturnValue(void 0)
     const cpSyncSpy = vi.spyOn(fs, 'cpSync').mockReturnValue(void 0)
-    const result = applyTranspilationResult(
+    const result = await applyTranspilationResult(
       { absolutePath: 'source_path', packageJson: { name: 'source' } },
       { absolutePath: 'dest_path', packageJson: { name: 'dest' } },
       'AMEND_NATIVE',
