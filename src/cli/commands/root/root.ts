@@ -18,9 +18,13 @@ import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
+// TODO: make the tests work, write test for getWorkspaceType
 // TODO: Support workspaces (linking to core of workspaces)
-// TODO: Prevent learning workspaces. Tip: specify pattern
+// TODO: Introduce "forget" command to reset config
+// TODO: When learning workspaces, utilize getChildPackagePathsForWorkspace
+// and learn every single package.
 // TODO: Create a landing page explaining how to use the CLI
+// TODO: Introduce git readme with excalidraw and make it public
 // TODO: Ship bundle to npm
 
 const transpilationQueue = new PQueue({ concurrency: 1 })
@@ -47,7 +51,7 @@ program
  ░▒▓██████▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░ 
     `))
 
-    // XXX: Checking if Oink .config folder exists, because otherwise
+    // XXX: Checkin Oink .config folder exists, because otherwise
     // the whole thing will explode.
     if (!fs.existsSync(LINKS_LOCATION)) {
       error(errorRenderers.NO_LINKABLE_PACKAGES_SETUP())

@@ -1,10 +1,9 @@
 import process from 'process'
 import path from 'path'
-import { globSync } from 'glob'
 import { program } from '../program'
 import { logAsLinker, warnAsLinker } from '../log'
 import { getPackageAtPath, learnPackage } from '../../core'
-import { stripSuffix } from '../../utils'
+import { globMatch, stripSuffix } from '../../utils'
 
 program
   .command('learn')
@@ -16,7 +15,7 @@ program
     const cwd = process.cwd()
     const paths = pattern == null
       ? [ cwd ]
-      : globSync(`${stripSuffix(pattern, '/')}/package.json`, { cwd })
+      : globMatch(`${stripSuffix(pattern, '/')}/package.json`, { cwd })
         .map((s) => path.resolve(s))
     if (pattern != null) {
       logAsLinker(`Found ${paths.length} package(s).`)
