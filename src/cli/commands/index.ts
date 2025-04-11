@@ -1,2 +1,2 @@
 export * from './root'
-export * from './link'
+export * from './learn'

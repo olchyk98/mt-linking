@@ -12,7 +12,7 @@ import { LINKS_LOCATION } from '../constants'
  * The function will return null if there is
  * no valid package to be resolved at the specified absolutePath.
  * */
-export function linkPackage (absolutePath: ResolvedPackage | string): true | null {
+export function learnPackage (absolutePath: ResolvedPackage | string): true | null {
   const packageToLink = typeof absolutePath === 'string'
     ? getPackageAtPath(absolutePath)
     : absolutePath

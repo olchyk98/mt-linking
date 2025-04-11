@@ -6,6 +6,11 @@ export function logAsLinker (message: string) {
   log(payload)
 }
 
+export function warnAsLinker (message: string) {
+  const payload = chalk.bgYellow.black(`[OLINK]: ${message}`)
+  log(payload)
+}
+
 export function errorAsLinker (message: string) {
   const payload = chalk.bgRed.white(`[OLINK][ERROR]: ${message}`)
   log(payload)

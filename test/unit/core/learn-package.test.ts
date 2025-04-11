@@ -1,11 +1,11 @@
 import fs from 'fs'
 import { afterEach, describe, it, vi } from 'vitest'
 import * as GetPackageAtPathModule from '../../../src/core/get-package-at-path'
-import { linkPackage } from '../../../src/core'
+import { learnPackage } from '../../../src/core'
 import path from 'path'
 import { LINKS_LOCATION } from '../../../src/constants'
 
-describe.concurrent('linkPackage', () => {
+describe.concurrent('learnPackage', () => {
   afterEach(() => {
     vi.clearAllMocks()
   })
@@ -13,7 +13,7 @@ describe.concurrent('linkPackage', () => {
   it('should return null if specified absolutePath does not lead to a valid package', ({ expect }) => {
     vi.spyOn(GetPackageAtPathModule, 'getPackageAtPath')
       .mockReturnValueOnce(null)
-    const result = linkPackage('some_path')
+    const result = learnPackage('some_path')
     expect(result).toEqual(null)
   })
 
@@ -21,7 +21,7 @@ describe.concurrent('linkPackage', () => {
     const mkdirSyncSpy = vi.spyOn(fs, 'mkdirSync').mockResolvedValueOnce(void 0)
     const rmSyncSpy = vi.spyOn(fs, 'rmSync').mockResolvedValueOnce(void 0)
     const symlinkSyncSpy = vi.spyOn(fs, 'symlinkSync').mockResolvedValueOnce(void 0)
-    const result = linkPackage({
+    const result = learnPackage({
       absolutePath: 'absolute_path_for_some_package',
       packageJson: { name: 'some_package' },
     })
@@ -44,7 +44,7 @@ describe.concurrent('linkPackage', () => {
     const mkdirSyncSpy = vi.spyOn(fs, 'mkdirSync').mockResolvedValueOnce(void 0)
     const rmSyncSpy = vi.spyOn(fs, 'rmSync').mockResolvedValueOnce(void 0)
     const symlinkSyncSpy = vi.spyOn(fs, 'symlinkSync').mockResolvedValueOnce(void 0)
-    const result = linkPackage({
+    const result = learnPackage({
       absolutePath: 'absolute_path_for_some_package',
       packageJson: { name: '@workspace/some_package' },
     })

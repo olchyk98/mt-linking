@@ -1,11 +1,6 @@
 import { createErrorBanner } from './create-error-banner'
 
 export const errorRenderers = {
-  /**
-   * The error indicates that the folder
-   * where the program has been executed ("destination")
-   * does not have a valid package.json.
-   * */
   INSUFFICIENT_INFO_IN_DEST_PACKAGE_JSON () {
     return createErrorBanner({
       tip: 'Did you know? You can specify a custom project folder with the --dest flag.',
@@ -37,13 +32,13 @@ export const errorRenderers = {
   },
   NO_LINKABLE_PACKAGES_FOR_DEST () {
     return createErrorBanner({
-      tip: 'Run `olink link` in the package you want to link, then try again.',
+      tip: 'Run `olink learn` in the package you want to link, then try again.',
       title: 'No linkable packages found for the project',
       description: `
   No packages can be linked to the selected project.
 
   Possible reasons:
-  - You haven't run 'olink link' in a package you want to link to this project.
+  - You haven't run 'olink learn' in a package you want to link to this project.
   - The linked package is not installed in the current project.
 
   Please ensure the correct package is linked and installed before retrying.
