@@ -45,7 +45,7 @@ export function transpileAndApplyPackage (sourcePackage: ResolvedPackage, destin
       )
       logAsLinker('Success!')
       nodeNotifier.notify({
-        title: 'OLink',
+        title: 'Oink',
         message: `${sourcePackage.packageJson.name} has successfully been linked to ${destinationPackage.packageJson.name}`,
         sound: false,
         wait: false,

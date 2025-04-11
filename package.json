@@ -1,5 +1,5 @@
 {
-  "name": "olink",
+  "name": "Oink",
   "version": "0.0.1",
   "description": "A smart linker for Mediatool repository",
   "main": "dist/index.js",
@@ -20,7 +20,7 @@
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "test": "pnpm run lint && pnpm run typecheck && pnpm unit",
     "transpile:predeploy": "./scripts/predeploy",
-    "deploy": "pnpm run transpile:predeploy && echo 'We are trying to move the executable to /usr/local/bin folder. Running with sudo.' && sudo cp ./dist/run.js /usr/local/bin/olink"
+    "deploy": "pnpm run transpile:predeploy && echo 'We are trying to move the executable to /usr/local/bin folder. Running with sudo.' && sudo cp ./dist/run.js /usr/local/bin/oink"
   },
   "dependencies": {
     "bluebird": "^3.7.2",

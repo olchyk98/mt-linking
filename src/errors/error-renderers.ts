@@ -32,13 +32,13 @@ export const errorRenderers = {
   },
   NO_LINKABLE_PACKAGES_FOR_DEST () {
     return createErrorBanner({
-      tip: 'Run `olink learn` in the package you want to link, then try again.',
+      tip: 'Run `oink learn` in the package you want to link, then try again.',
       title: 'No linkable packages found for the project',
       description: `
   No packages can be linked to the selected project.
 
   Possible reasons:
-  - You haven't run 'olink learn' in a package you want to link to this project.
+  - You haven't run 'oink learn' in a package you want to link to this project.
   - The linked package is not installed in the current project.
 
   Please ensure the correct package is linked and installed before retrying.
@@ -86,8 +86,8 @@ export const errorRenderers = {
   without specifying a package to link. 
 
   If you believe this is a mistake, consider following steps:
-  - Try running OLink in another terminal.
-  - Try running OLink in another shell (for example, ZSH or FISH).
+  - Try running Oink in another terminal.
+  - Try running Oink in another shell (for example, ZSH or FISH).
 
   If you believe this to be a bug, please submit  
   a bug report with the steps to reproduce.
