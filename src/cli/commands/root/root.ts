@@ -18,7 +18,6 @@ import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
-// TODO: Introduce "forget" command to reset config
 // TODO: When learning workspaces, utilize getChildPackagePathsForWorkspace
 // and learn every single package.
 // TODO: Create a landing page explaining how to use the CLI

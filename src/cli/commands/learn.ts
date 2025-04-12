@@ -9,8 +9,6 @@ program
   .command('learn')
   .description('Link one package to another package')
   .argument('[pattern]', 'Optional pattern to match package.json files against. Allows to link multiple packages at once')
-  .option('-d, --dest [string]')
-  .option('--livereload', 're-link automatically on every file change')
   .action(async (pattern?: string) => {
     const cwd = process.cwd()
     const paths = pattern == null
