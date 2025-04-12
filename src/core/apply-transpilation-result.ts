@@ -9,7 +9,7 @@ async function resolveNodeModulesLocationForSource (source: ResolvedPackage, des
   // there's more than one. Yarn and PNPM may install different versions
   // of the same package and not hoist in case different dependencies require
   // different semver incompatible versions of the source package.
-  const result = await executeShell('find', [ 'node_modules', '-type d', `-path "*/node_modules/${source.packageJson.name}"` ], { cwd: destination.absolutePath })
+  const result = await executeShell('find', [ 'node_modules', '-type d', `-path "*node_modules/${source.packageJson.name}"` ], { cwd: destination.absolutePath })
   return result.split('\n').filter(Boolean).map((s) => path.resolve(s))
 }
 
