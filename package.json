@@ -24,7 +24,7 @@
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "test": "pnpm run lint && pnpm run typecheck && pnpm unit",
     "predeploy": "./scripts/predeploy",
-    "deploy:local": "pnpm run transpile:predeploy && echo 'We are trying to move the executable to /usr/local/bin folder. Running with sudo.' && sudo cp ./dist/run.js /usr/local/bin/oink"
+    "deploy:local": "pnpm run predeploy && echo 'We are trying to move the executable to /usr/local/bin folder. Running with sudo.' && sudo cp ./dist/run.js /usr/local/bin/oink"
   },
   "dependencies": {
     "bluebird": "^3.7.2",
