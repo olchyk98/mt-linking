@@ -119,7 +119,7 @@ describe.concurrent('getLinkablePackagesForPackage', () => {
         return collection[packagePath] ?? null
       })
     vi.spyOn(GetLinkablePackagesModule, 'getLinkablePackages')
-      .mockReturnValue([
+      .mockReturnValueOnce([
         { absolutePath: 'a', packageJson: { name: 'a' } },
         { absolutePath: 'b', packageJson: { name: 'b' } },
         { absolutePath: 'c', packageJson: { name: 'c' } },

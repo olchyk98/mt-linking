@@ -4,6 +4,17 @@ import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 import { WorkspaceType, getWorkspaceType } from './get-workspace-type'
 import { getChildPackagePathsForWorkspace } from './get-child-packages-paths-for-workspace'
 
+function getInstalledPackagesForPackage (resolvedPackage: ResolvedPackage, packagesToCheck: ResolvedPackage[]): ResolvedPackage[] {
+  const { dependencies = {}, devDependencies = {} } = resolvedPackage.packageJson
+  return filter(
+    ({ packageJson: { name } }) => {
+      if (name == null) return false
+      return name in dependencies || name in devDependencies
+    },
+    packagesToCheck,
+  )
+}
+
 function getLinkablePackagesForWorkspace (destinationPackage: ResolvedPackage, workspaceType: WorkspaceType): ResolvedPackage[] {
   // XXX: 1. Compile lookup table for all workspace packages.
   // The function fetches linkable packages for each individual workspace package.
@@ -19,12 +30,9 @@ function getLinkablePackagesForWorkspace (destinationPackage: ResolvedPackage, w
   // XXX: 2. We construct a list (here it is a map for performance reasons) of all packages
   // that are linkable to ANY package in the workspace.
   // We remove duplicates and we also remove packages that are within the workspace itself.
+  const allLinkablePackages = getLinkablePackages()
   const packagesMap = reduce<ResolvedPackage, Record<string, ResolvedPackage>>((acc, childPackage) => {
-    // FIXME: Calling "getLinkablePackagesForPackage" here is expensive,
-    // because it calls "getLinkablePackages" function which makes FS call.
-    // Break out needed comparison logic into another function and call
-    // "getLinkablePackages" here - only once.
-    const linkablePackages = getLinkablePackagesForPackage(childPackage) ?? []
+    const linkablePackages = getInstalledPackagesForPackage(childPackage, allLinkablePackages)
     // XXX: We have the map here to be able to quickly deduplicate packages.
     linkablePackages.forEach((linkablePackage) => {
       // XXX: Packages in the workspace may depend on each other. We ignore those.
@@ -68,13 +76,6 @@ export function getLinkablePackagesForPackage (absolutePath: string | ResolvedPa
   if (potentialWorkspaceType != null) {
     return getLinkablePackagesForWorkspace(destinationPackage, potentialWorkspaceType)
   }
-  const { dependencies = {}, devDependencies = {} } = destinationPackage.packageJson
   const linkablePackages = getLinkablePackages()
-  return filter(
-    ({ packageJson: { name } }) => {
-      if (name == null) return false
-      return name in dependencies || name in devDependencies
-    },
-    linkablePackages,
-  )
+  return getInstalledPackagesForPackage(destinationPackage, linkablePackages)
 }

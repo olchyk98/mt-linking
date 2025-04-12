@@ -18,8 +18,6 @@ import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
-// TODO: make the tests work, write test for getWorkspaceType
-// TODO: Support workspaces (linking to core of workspaces)
 // TODO: Introduce "forget" command to reset config
 // TODO: When learning workspaces, utilize getChildPackagePathsForWorkspace
 // and learn every single package.
