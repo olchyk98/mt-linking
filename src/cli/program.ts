@@ -8,7 +8,7 @@ program
   .description(
     'This is the right tool for linking. Reduce pain - increase productivity.',
   )
-  .version('0.0.1')
+  .version('0.0.2')
 
 export function initProgram () {
   program.parse(process.argv)

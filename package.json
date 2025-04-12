@@ -1,6 +1,6 @@
 {
   "name": "oink0",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A smart linker for Mediatool repository",
   "main": "dist/run.js",
   "repository": "https://github.com/olchyk98/mt-linking",
