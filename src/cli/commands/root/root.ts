@@ -18,10 +18,6 @@ import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
-// TODO: When learning workspaces, utilize getChildPackagePathsForWorkspace
-// and learn every single package.
-// TODO: Create a landing page explaining how to use the CLI
-// TODO: Introduce git readme with excalidraw and make it public
 // TODO: Ship bundle to npm
 
 const transpilationQueue = new PQueue({ concurrency: 1 })

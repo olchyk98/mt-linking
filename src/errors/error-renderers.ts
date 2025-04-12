@@ -106,4 +106,17 @@ export const errorRenderers = {
 `,
     })
   },
+  WORKSPACE_HAS_NO_PACKAGES_TO_LEARN () {
+    return createErrorBanner({
+      title: 'Workspace has no packages to learn',
+      description: `
+  Current folder has been identified as a workspace root,
+  but the workspace doesn't seem to contain any packages.
+
+  For Oink to identify packages in the workspace,
+  your workspace has to follow traditional PNPM/YARN workspaces
+  rules. Refer to documentation for more information.
+`,
+    })
+  },
 } satisfies Record<string, (...args: never[]) => string>

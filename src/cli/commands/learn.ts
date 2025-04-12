@@ -2,19 +2,35 @@ import process from 'process'
 import path from 'path'
 import { program } from '../program'
 import { logAsLinker, warnAsLinker } from '../log'
-import { getPackageAtPath, learnPackage } from '../../core'
+import { getChildPackagePathsForWorkspace, getPackageAtPath, getWorkspaceType, learnPackage } from '../../core'
 import { globMatch, stripSuffix } from '../../utils'
+import { error } from '../lifecycle'
+import { errorRenderers } from '../../errors'
+
+function getPaths (inputPattern?: string): string[] {
+  const cwd = process.cwd()
+  if (inputPattern != null) {
+    return globMatch(`${stripSuffix(inputPattern, '/')}/package.json`, { cwd })
+      .map((s) => path.resolve(s))
+  }
+  // XXX: Case for adding all packages in a workspace
+  const workspaceType = getWorkspaceType(cwd)
+  if (workspaceType != null) {
+    const childPaths = getChildPackagePathsForWorkspace(cwd, workspaceType)
+    if (childPaths == null) {
+      error(errorRenderers.WORKSPACE_HAS_NO_PACKAGES_TO_LEARN())
+    }
+    return childPaths
+  }
+  return [ cwd ]
+}
 
 program
   .command('learn')
   .description('Link one package to another package')
   .argument('[pattern]', 'Optional pattern to match package.json files against. Allows to link multiple packages at once')
   .action(async (pattern?: string) => {
-    const cwd = process.cwd()
-    const paths = pattern == null
-      ? [ cwd ]
-      : globMatch(`${stripSuffix(pattern, '/')}/package.json`, { cwd })
-        .map((s) => path.resolve(s))
+    const paths = getPaths(pattern)
     if (pattern != null) {
       logAsLinker(`Found ${paths.length} package(s).`)
     }
