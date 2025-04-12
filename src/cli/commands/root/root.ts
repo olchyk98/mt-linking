@@ -18,7 +18,9 @@ import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
-// TODO: Ship bundle to npm
+// TODO: Fix tests
+// TODO: Support linking of type packages
+// TODO: [ DONE ]: Support the case when linking something in a child package in workspace... (IMPLEMENTED)
 
 const transpilationQueue = new PQueue({ concurrency: 1 })
 

@@ -2,7 +2,7 @@ import path from 'path'
 import * as yaml from 'yaml'
 import fs from 'fs'
 import { ResolvedPackage, getPackageAtPath } from './get-package-at-path'
-import { WorkspaceType, getWorkspaceType } from './get-workspace-type'
+import { WorkspaceType, getWorkspaceTypeForRoot } from './get-workspace-type-for-root'
 import { globMatch } from '../utils'
 
 /**
@@ -27,7 +27,7 @@ export function getChildPackagePathsForWorkspace (resolvedPackage: ResolvedPacka
 export function getChildPackagePathsForWorkspace (absolutePath: ResolvedPackage | string, $workspaceType?: WorkspaceType): string[] | null {
   const resolvedPackage = typeof absolutePath === 'object' ? absolutePath : getPackageAtPath(absolutePath)
   if (resolvedPackage == null) return null
-  const workspaceType = typeof $workspaceType === 'string' ? $workspaceType : getWorkspaceType(resolvedPackage)
+  const workspaceType = typeof $workspaceType === 'string' ? $workspaceType : getWorkspaceTypeForRoot(resolvedPackage)
   if (workspaceType == null) return null
   if (workspaceType === 'yarn') {
     const workspaces = resolvedPackage.packageJson.workspaces

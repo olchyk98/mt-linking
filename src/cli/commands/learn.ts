@@ -2,7 +2,7 @@ import process from 'process'
 import path from 'path'
 import { program } from '../program'
 import { logAsLinker, warnAsLinker } from '../log'
-import { getChildPackagePathsForWorkspace, getPackageAtPath, getWorkspaceType, learnPackage } from '../../core'
+import { getChildPackagePathsForWorkspace, getPackageAtPath, getWorkspaceTypeForRoot, learnPackage } from '../../core'
 import { globMatch, stripSuffix } from '../../utils'
 import { error } from '../lifecycle'
 import { errorRenderers } from '../../errors'
@@ -14,7 +14,7 @@ function getPaths (inputPattern?: string): string[] {
       .map((s) => path.resolve(s))
   }
   // XXX: Case for adding all packages in a workspace
-  const workspaceType = getWorkspaceType(cwd)
+  const workspaceType = getWorkspaceTypeForRoot(cwd)
   if (workspaceType != null) {
     const childPaths = getChildPackagePathsForWorkspace(cwd, workspaceType)
     if (childPaths == null) {

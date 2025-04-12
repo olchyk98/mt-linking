@@ -1,9 +1,9 @@
-import { getWorkspaceType } from '../../../src/core'
+import { getWorkspaceTypeForRoot } from '../../../src/core'
 import fs, { Dirent } from 'fs'
 import * as GetPackageAtPathModule from '../../../src/core/get-package-at-path'
 import { afterEach, describe, it, vi } from 'vitest'
 
-describe.concurrent('getWorkspaceType', () => {
+describe.concurrent('getWorkspaceTypeForRoot', () => {
   afterEach(() => {
     vi.clearAllMocks()
   })
@@ -13,12 +13,12 @@ describe.concurrent('getWorkspaceType', () => {
       .mockReturnValueOnce([])
     vi.spyOn(GetPackageAtPathModule, 'getPackageAtPath')
       .mockReturnValueOnce(null)
-    const result = getWorkspaceType('some_path')
+    const result = getWorkspaceTypeForRoot('some_path')
     expect(result).toEqual(null)
   })
 
   it('should return null if package is not a workspace root', ({ expect }) => {
-    const result = getWorkspaceType({
+    const result = getWorkspaceTypeForRoot({
       absolutePath: 'some_path',
       packageJson: { name: 'some_package' },
     })
@@ -26,7 +26,7 @@ describe.concurrent('getWorkspaceType', () => {
   })
 
   it('should properly match workspace root type: yarn', ({ expect }) => {
-    const result = getWorkspaceType({
+    const result = getWorkspaceTypeForRoot({
       absolutePath: 'some_path',
       packageJson: {
         name: 'some_package',
@@ -40,7 +40,7 @@ describe.concurrent('getWorkspaceType', () => {
     vi.spyOn(fs, 'readdirSync')
       // FIXME: Cause we can't select overload here.
       .mockReturnValueOnce([ 'a', 'pnpm-workspace.yaml', 'b' ] as unknown as Dirent[])
-    const result = getWorkspaceType({
+    const result = getWorkspaceTypeForRoot({
       absolutePath: 'some_path',
       packageJson: { name: 'some_package' },
     })

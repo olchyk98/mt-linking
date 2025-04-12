@@ -1,7 +1,7 @@
 import { filter, has, reduce } from 'ramda'
 import { getLinkablePackages } from './get-linkable-packages'
 import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
-import { WorkspaceType, getWorkspaceType } from './get-workspace-type'
+import { WorkspaceType, getWorkspaceTypeForRoot } from './get-workspace-type-for-root'
 import { getChildPackagePathsForWorkspace } from './get-child-packages-paths-for-workspace'
 
 function getInstalledPackagesForPackage (resolvedPackage: ResolvedPackage, packagesToCheck: ResolvedPackage[]): ResolvedPackage[] {
@@ -72,7 +72,7 @@ export function getLinkablePackagesForPackage (absolutePath: string | ResolvedPa
   // XXX: In case it's a workspace root, we want to get all
   // linkable packages for all its children.
   // Linking to entire workspace scenario.
-  const potentialWorkspaceType = getWorkspaceType(destinationPackage)
+  const potentialWorkspaceType = getWorkspaceTypeForRoot(destinationPackage)
   if (potentialWorkspaceType != null) {
     return getLinkablePackagesForWorkspace(destinationPackage, potentialWorkspaceType)
   }

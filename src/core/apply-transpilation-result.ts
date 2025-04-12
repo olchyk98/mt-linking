@@ -3,19 +3,33 @@ import path from 'path'
 import { type LinkingStrategy, getLinkingStrategyForPackage } from './get-linking-strategy-for-package'
 import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 import { executeShell } from '../utils'
+import { getWorkspaceRootPathForPackage } from './get-workspace-root-path-for-package'
+import { logAsLinker } from '../cli/log'
 
-async function resolveNodeModulesLocationForSource (source: ResolvedPackage, destination: ResolvedPackage): Promise<string[] | never> {
+async function resolveModuleLocationsForSource (source: ResolvedPackage, destination: ResolvedPackage): Promise<string[] | never> {
+  // XXX: When working in workspaces, we don't want to navigate ONLY to package's
+  // node_modules, because that one most likely won't have the source package,
+  // due to how hoisting in workspaces works. Therefore we have to take package's
+  // node_modules AND workspace root's node_modules as dirs to look
+  // for the deployed source package code for.
+  const rootPath = getWorkspaceRootPathForPackage(destination.absolutePath)
   // XXX: We're searching for all occurrences, because there's a high chance
   // there's more than one. Yarn and PNPM may install different versions
   // of the same package and not hoist in case different dependencies require
   // different semver incompatible versions of the source package.
-  const result = await executeShell('find', [ 'node_modules', '-type d', `-path "*node_modules/${source.packageJson.name}"` ], { cwd: destination.absolutePath })
-  return result.split('\n').filter(Boolean).map((s) => path.resolve(s))
+  const args = [ 'node_modules', '-type d', `-path "*node_modules/${source.packageJson.name}"` ]
+  const workspaceResult = rootPath && await executeShell('find', args, { cwd: rootPath })
+  const packageResult = await executeShell('find', args, { cwd: destination.absolutePath })
+  const workspaceLocations = rootPath && workspaceResult && workspaceResult.split('\n').filter(Boolean).map((s) => path.resolve(rootPath, s))
+  const packageLocations = packageResult.split('\n').filter(Boolean).map((s) => path.resolve(destination.absolutePath, s))
+  const locations = [ ...workspaceLocations || [], ...packageLocations ]
+  logAsLinker(`Resolved to ${locations.length} locations.`)
+  return locations
 }
 
 const copyDistForLink: ApplyTranspilationResultFn = async (source, destination) => {
   const sourceDist = path.resolve(source.absolutePath, 'dist')
-  const dests = await resolveNodeModulesLocationForSource(source, destination)
+  const dests = await resolveModuleLocationsForSource(source, destination)
   for (const dest of dests) {
     const destDist = path.resolve(dest, 'dist')
     fs.rmSync(destDist, { recursive: true })
@@ -26,7 +40,7 @@ const copyDistForLink: ApplyTranspilationResultFn = async (source, destination) 
 
 const copyAmendSourcesForLink: ApplyTranspilationResultFn = async (source, destination) => {
   const targets = [ 'amend', 'boundaries', 'lib' ]
-  const destBases = await resolveNodeModulesLocationForSource(source, destination)
+  const destBases = await resolveModuleLocationsForSource(source, destination)
   for (const destBase of destBases) {
     for (const target of targets) {
       const dist = path.resolve(source.absolutePath, target)

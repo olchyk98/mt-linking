@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, it, vi } from 'vitest'
 import path from 'path'
 import fs from 'fs'
+import * as GetWorkspaceRootPathForPackageModule from '../../../src/core/get-workspace-root-path-for-package'
 import * as GetPackageAtPathModule from '../../../src/core/get-package-at-path'
 import * as ExecuteShellModule from '../../../src/utils/execute-shell'
 import { applyTranspilationResult } from '../../../src/core/apply-transpilation-result'
@@ -13,8 +14,10 @@ describe.sequential('applyTranspilationResult', () => {
   beforeEach(() => {
     vi.spyOn(ExecuteShellModule, 'executeShell')
       .mockImplementation(async (_command, _args, opts) => (
-        [ `${opts?.cwd ?? ''}/node_modules/source/` ].join('\n')
+        [ `${path.resolve(opts?.cwd as string ?? '')}/node_modules/source/` ].join('\n')
       ))
+    vi.spyOn(GetWorkspaceRootPathForPackageModule, 'getWorkspaceRootPathForPackage')
+      .mockReturnValue(null)
   })
 
   afterEach(() => {
@@ -72,6 +75,41 @@ describe.sequential('applyTranspilationResult', () => {
       path.resolve('source_path', 'dist'),
       path.resolve('dest_path', 'node_modules/source/dist'),
       { recursive: true },
+    ])
+  })
+
+  it('should properly apply transpilation result for workspace package (strategy: TRANSPILED)', async ({ expect }) => {
+    const rmSyncSpy = vi.spyOn(fs, 'rmSync').mockReturnValue(void 0)
+    const cpSyncSpy = vi.spyOn(fs, 'cpSync').mockReturnValue(void 0)
+    vi.spyOn(GetWorkspaceRootPathForPackageModule, 'getWorkspaceRootPathForPackage')
+      .mockReturnValue('workspace_root_path')
+    const result = await applyTranspilationResult(
+      { absolutePath: 'source_path', packageJson: { name: 'source' } },
+      { absolutePath: 'dest_path', packageJson: { name: 'dest' } },
+      'TRANSPILED',
+    )
+    expect(result).toEqual(true)
+    expect(rmSyncSpy.mock.calls).toEqual([
+      [
+        path.resolve('workspace_root_path', 'node_modules/source/dist'),
+        { recursive: true },
+      ],
+      [
+        path.resolve('dest_path', 'node_modules/source/dist'),
+        { recursive: true },
+      ],
+    ])
+    expect(cpSyncSpy.mock.calls).toEqual([
+      [
+        path.resolve('source_path', 'dist'),
+        path.resolve('workspace_root_path', 'node_modules/source/dist'),
+        { recursive: true },
+      ],
+      [
+        path.resolve('source_path', 'dist'),
+        path.resolve('dest_path', 'node_modules/source/dist'),
+        { recursive: true },
+      ],
     ])
   })
 

@@ -11,9 +11,9 @@ import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
  * The function will return null if the specified path
  * doesn't lead to a folder containing ROOT package.json.
  * */
-export function getWorkspaceType (absolutePath: string): WorkspaceType | null
-export function getWorkspaceType (resolvedPackage: ResolvedPackage): WorkspaceType | null
-export function getWorkspaceType (absolutePath: ResolvedPackage | string): WorkspaceType | null {
+export function getWorkspaceTypeForRoot (absolutePath: string): WorkspaceType | null
+export function getWorkspaceTypeForRoot (resolvedPackage: ResolvedPackage): WorkspaceType | null
+export function getWorkspaceTypeForRoot (absolutePath: ResolvedPackage | string): WorkspaceType | null {
   const resolvedPackage = typeof absolutePath === 'object'
     ? absolutePath
     : getPackageAtPath(absolutePath)

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, it, vi } from 'vitest'
-import * as GetWorkspaceTypeModule from '../../../src/core/get-workspace-type'
+import * as GetWorkspaceTypeModule from '../../../src/core/get-workspace-type-for-root'
 import * as GetPackageAtPathModule from '../../../src/core/get-package-at-path'
 import * as GetChildPackagePathsForWorkspace from '../../../src/core/get-child-packages-paths-for-workspace'
 import * as GetLinkablePackagesModule from '../../../src/core/get-linkable-packages'
@@ -7,7 +7,7 @@ import { getLinkablePackagesForPackage } from '../../../src/core/get-linkable-pa
 
 describe.concurrent('getLinkablePackagesForPackage', () => {
   beforeEach(() => {
-    vi.spyOn(GetWorkspaceTypeModule, 'getWorkspaceType')
+    vi.spyOn(GetWorkspaceTypeModule, 'getWorkspaceTypeForRoot')
       .mockReturnValueOnce(null)
   })
 
@@ -58,7 +58,7 @@ describe.concurrent('getLinkablePackagesForPackage', () => {
   })
 
   it('should properly extract all linkable packages for all packages in a workspace', ({ expect }) => {
-    vi.spyOn(GetWorkspaceTypeModule, 'getWorkspaceType')
+    vi.spyOn(GetWorkspaceTypeModule, 'getWorkspaceTypeForRoot')
       .mockReturnValueOnce('yarn')
       .mockReturnValue(null)
     vi.spyOn(GetChildPackagePathsForWorkspace, 'getChildPackagePathsForWorkspace')

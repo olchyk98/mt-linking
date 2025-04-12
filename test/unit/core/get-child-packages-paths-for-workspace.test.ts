@@ -2,7 +2,7 @@ import { afterEach, describe, it, vi } from 'vitest'
 import fs from 'fs'
 import * as GlobMatchModule from '../../../src/utils/glob-match'
 import * as GetPackageAtPathModule from '../../../src/core/get-package-at-path'
-import * as GetWorkspaceTypeModule from '../../../src/core/get-workspace-type'
+import * as GetWorkspaceTypeModule from '../../../src/core/get-workspace-type-for-root'
 import { getChildPackagePathsForWorkspace } from '../../../src/core'
 
 describe.concurrent('getChildPackagePathsForWorkspace', () => {
@@ -18,7 +18,7 @@ describe.concurrent('getChildPackagePathsForWorkspace', () => {
   })
 
   it('should return null if specified package is not a workspace root', ({ expect }) => {
-    vi.spyOn(GetWorkspaceTypeModule, 'getWorkspaceType')
+    vi.spyOn(GetWorkspaceTypeModule, 'getWorkspaceTypeForRoot')
       .mockReturnValueOnce(null)
     const result = getChildPackagePathsForWorkspace(
       { absolutePath: 'some_path', packageJson: { name: 'a' } },
