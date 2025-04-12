@@ -9,7 +9,7 @@ _It's as easy as 1..2..3._
 ### 1️⃣ Install Oink globally
 
 ```sh
-pnpm install -g @oles/oink
+pnpm install -g oink0
 ```
 
 ### 2️⃣ Teach Oink about a package

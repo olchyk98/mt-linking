@@ -1,12 +1,16 @@
 {
-  "name": "@oles/oink",
+  "name": "oink0",
   "version": "0.0.1",
   "description": "A smart linker for Mediatool repository",
-  "main": "dist/index.js",
+  "main": "dist/run.js",
   "repository": "https://github.com/olchyk98/mt-linking",
   "author": "Oles Odynets <olchyk98@gmail.com>",
   "license": "MIT",
   "private": false,
+  "bin": {
+    "oink": "dist/run.js",
+    "olink": "dist/run.js"
+  },
   "scripts": {
     "pretranspile": "pnpm install",
     "predev": "pnpm install && pnpm run transpile",
@@ -19,8 +23,8 @@
     "unit": "vitest --run",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "test": "pnpm run lint && pnpm run typecheck && pnpm unit",
-    "transpile:predeploy": "./scripts/predeploy",
-    "deploy": "pnpm run transpile:predeploy && echo 'We are trying to move the executable to /usr/local/bin folder. Running with sudo.' && sudo cp ./dist/run.js /usr/local/bin/oink"
+    "predeploy": "./scripts/predeploy",
+    "deploy:local": "pnpm run transpile:predeploy && echo 'We are trying to move the executable to /usr/local/bin folder. Running with sudo.' && sudo cp ./dist/run.js /usr/local/bin/oink"
   },
   "dependencies": {
     "bluebird": "^3.7.2",

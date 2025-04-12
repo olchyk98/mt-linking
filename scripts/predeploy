@@ -2,4 +2,5 @@
 pnpm transpile
 echo '#!/usr/local/bin/node' > ./dist/run.js
 cat ./dist/index.js >> ./dist/run.js
+rm -rf ./dist/index.js
 chmod +x ./dist/run.js
