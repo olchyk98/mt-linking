@@ -54,6 +54,10 @@ Right now, we don’t have full coverage of PNPM workspaces yet, so until we get
 ### 🚀 **Effortless Linking**
 With a simple command, Oink intelligently links packages in your project, eliminating the hassle of manual file management.
 
+### 🏠 **Workspace Aware**
+Oink intelligently handles different scenarios within PNPM/Yarn workspaces, allowing to create one-to-one (a package links to another package) linking, 
+but also one-to-many (one package links to every single package in the workspace).
+
 ### 🔄 **Live Reload for Instant Updates**
 Tired of manually rebuilding and re-linking? With Oink’s `--livereload` flag, your changes are automatically detected and applied in real time.
 
