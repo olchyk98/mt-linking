@@ -70,4 +70,17 @@ describe.concurrent('getLinkingStrategyForPackage', () => {
     const result = getLinkingStrategyForPackage('mypath')
     expect(result).toEqual('MAKEFILE_BUILD')
   })
+
+  it('should properly identify strategy: NOBUILD_SOURCE', ({ expect }) => {
+    vi.spyOn(GetPackageAtPathModule, 'getPackageAtPath')
+      .mockReturnValueOnce({ absolutePath: 'mypath', packageJson: { name: 'package' } })
+    vi.spyOn(fs, 'readdirSync')
+      .mockImplementationOnce(() => [
+        'lib',
+        'package.json',
+        // FIXME: Cause we can't select overload here.
+      ] as unknown as Dirent[])
+    const result = getLinkingStrategyForPackage('mypath')
+    expect(result).toEqual('NOBUILD_SOURCE')
+  })
 })

@@ -195,4 +195,38 @@ describe.sequential('applyTranspilationResult', () => {
     ])
   })
 
+  it('should properly apply transpilation result for strategy: NOBUILD_SOURCE', async ({ expect }) => {
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true)
+    const rmSyncSpy = vi.spyOn(fs, 'rmSync').mockReturnValue(void 0)
+    const cpSyncSpy = vi.spyOn(fs, 'cpSync').mockReturnValue(void 0)
+    const result = await applyTranspilationResult(
+      { absolutePath: 'source_path', packageJson: { name: 'source' } },
+      { absolutePath: 'dest_path', packageJson: { name: 'dest' } },
+      'NOBUILD_SOURCE',
+    )
+    expect(result).toEqual(true)
+    expect(rmSyncSpy.mock.calls).toEqual([
+      [
+        path.resolve('dest_path', 'node_modules/source/src'),
+        { recursive: true },
+      ],
+      [
+        path.resolve('dest_path', 'node_modules/source/lib'),
+        { recursive: true },
+      ],
+    ])
+    expect(cpSyncSpy.mock.calls).toEqual([
+      [
+        path.resolve('source_path', 'src'),
+        path.resolve('dest_path', 'node_modules/source/src'),
+        { recursive: true },
+      ],
+      [
+        path.resolve('source_path', 'lib'),
+        path.resolve('dest_path', 'node_modules/source/lib'),
+        { recursive: true },
+      ],
+    ])
+  })
+
 })

@@ -15,6 +15,7 @@ const strategyCheckersMap: Record<LinkingStrategy, StrategyCheckerFn> = {
     items.has('amend') && items.has('lib')
   ),
   MAKEFILE_BUILD: (items) => items.has('Makefile'),
+  NOBUILD_SOURCE: (items) => items.has('src') || items.has('lib'),
 }
 
 /**
@@ -34,6 +35,7 @@ const strategyCheckersMap: Record<LinkingStrategy, StrategyCheckerFn> = {
  *  TRANSPILED_LEGACY = For frontend packages that use "yarn build" instead of "yarn transpile"
  *  AMEND_NATIVE = For packages that use amend (backend) -- no transpilation required
  *  MAKEFILE_BUILD = For packages that are transpiled with "Makefile" (executed with "make" native command)
+ *  SOURCE_COPY = For packages that don't feature any build step, where "src"/"lib" folders can be deployed "as-is"
  * */
 export function getLinkingStrategyForPackage(absolutePath: string): LinkingStrategy | null
 export function getLinkingStrategyForPackage(absolutePath: ResolvedPackage): LinkingStrategy | null
@@ -61,4 +63,5 @@ export type LinkingStrategy =
   | 'TRANSPILED_LEGACY' // For frontend packages that use "yarn build" instead of "yarn transpile"
   | 'AMEND_NATIVE' // For packages that use amend (backend) -- no transpilation required
   | 'MAKEFILE_BUILD' // For packages that are transpiled with "Makefile" (executed with "make" native command)
+  | 'NOBUILD_SOURCE' // For packages that don't feature any build step, where "src"/"lib" folders can be deployed "as-is"
 

@@ -3,16 +3,19 @@ import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 import { type LinkingStrategy, getLinkingStrategyForPackage } from './get-linking-strategy-for-package'
 import { executeShellWithStream } from '../utils'
 
+const zeroTranspilationHandler: TranspileFn = () => {
+  const readStream = new PassThrough({ objectMode: true })
+  readStream.push('>> 🟢 No transpilation is required for this linking strategy 🟢 <<')
+  readStream.end()
+  return readStream
+}
+
 const strategyTranspileFnMap: Record<LinkingStrategy, TranspileFn> = {
   TRANSPILED: (absolutePath) => executeShellWithStream('yarn', [ '--cwd', absolutePath, 'transpile' ]),
   TRANSPILED_LEGACY: (absolutePath) => executeShellWithStream('yarn', [ '--cwd', absolutePath, 'build' ]),
-  AMEND_NATIVE () {
-    const readStream = new PassThrough({ objectMode: true })
-    readStream.push('>> 🟢 No transpilation is required for this linking strategy 🟢 <<')
-    readStream.end()
-    return readStream
-  },
   MAKEFILE_BUILD: (absolutePath) => executeShellWithStream('make', [ `-C ${absolutePath}` ]),
+  AMEND_NATIVE: zeroTranspilationHandler,
+  NOBUILD_SOURCE: zeroTranspilationHandler,
 }
 
 /**

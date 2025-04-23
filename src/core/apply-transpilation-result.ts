@@ -52,11 +52,27 @@ const copyAmendSourcesForLink: ApplyTranspilationResultFn = async (source, desti
   return true as const
 }
 
+export const copySrcAndLibForLink: ApplyTranspilationResultFn = async (source, destination) => {
+  const targets = [ 'src', 'lib' ]
+  const destBases = await resolveModuleLocationsForSource(source, destination)
+  for (const destBase of destBases) {
+    for (const target of targets) {
+      const sourceDir = path.resolve(source.absolutePath, target)
+      if (!fs.existsSync(sourceDir)) continue
+      const destDir = path.resolve(destBase, target)
+      fs.rmSync(destDir, { recursive: true })
+      fs.cpSync(sourceDir, destDir, { recursive: true })
+    }
+  }
+  return true as const
+}
+
 const strategyApplyResultFnMap: Record<LinkingStrategy, ApplyTranspilationResultFn> = {
   TRANSPILED: copyDistForLink,
   TRANSPILED_LEGACY: copyDistForLink,
   MAKEFILE_BUILD: copyDistForLink,
   AMEND_NATIVE: copyAmendSourcesForLink,
+  NOBUILD_SOURCE: copySrcAndLibForLink,
 }
 
 /**

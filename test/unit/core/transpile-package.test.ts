@@ -82,6 +82,18 @@ describe.concurrent('transpilePackage', () => {
     expect(res).toEqual([ '>> 🟢 No transpilation is required for this linking strategy 🟢 <<' ])
   })
 
+  it('should properly transpile package with linking strategy: NOBUILD_SOURCE', async ({ expect }) => {
+    vi.spyOn(GetLinkingStrategyForPackageModule, 'getLinkingStrategyForPackage')
+      .mockReturnValueOnce('NOBUILD_SOURCE')
+    const transpileStream = transpilePackage({
+      absolutePath: 'some_path',
+      packageJson: { name: 'package' },
+    })
+    expect(transpileStream instanceof Readable).toEqual(true)
+    const res = await consumeStream(transpileStream as Exclude<typeof transpileStream, null>)
+    expect(res).toEqual([ '>> 🟢 No transpilation is required for this linking strategy 🟢 <<' ])
+  })
+
   it('should properly transpile package with linking strategy: MAKEFILE_BUILD', async ({ expect }) => {
     vi.spyOn(GetLinkingStrategyForPackageModule, 'getLinkingStrategyForPackage')
       .mockReturnValueOnce('MAKEFILE_BUILD')
