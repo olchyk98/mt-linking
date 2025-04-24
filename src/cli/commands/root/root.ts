@@ -85,7 +85,7 @@ program
     // XXX: Upon command execution, initial linking has to be
     // performed. Let's queue it.
     transpilationQueue.add(async () => {
-      logAsLinker(`⚓ Linking "${sourcePackage.packageJson.name}" to "${destinationPackage.packageJson.name}"`)
+      logAsLinker(`⚓OINKing "${sourcePackage.packageJson.name}" to "${destinationPackage.packageJson.name}"`)
       await transpileAndApplyPackage(sourcePackage, destinationPackage, linkingStrategy)
     })
 
