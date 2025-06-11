@@ -18,7 +18,8 @@ import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
-// TODO: Support linking of type packages
+// TODO: Deny current package, if it doesn't have node_modules.
+// TODO: Support mt-integrations (where it has build command, but also "web", "lib", "amend")
 
 const transpilationQueue = new PQueue({ concurrency: 1 })
 
