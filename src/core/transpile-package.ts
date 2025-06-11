@@ -11,8 +11,8 @@ const zeroTranspilationHandler: TranspileFn = () => {
 }
 
 const strategyTranspileFnMap: Record<LinkingStrategy, TranspileFn> = {
-  TRANSPILED: (absolutePath) => executeShellWithStream('yarn', [ '--cwd', absolutePath, 'transpile' ]),
-  TRANSPILED_LEGACY: (absolutePath) => executeShellWithStream('yarn', [ '--cwd', absolutePath, 'build' ]),
+  TRANSPILED: (absolutePath) => executeShellWithStream('pnpm', [ '--cwd', absolutePath, 'transpile' ]),
+  TRANSPILED_LEGACY: (absolutePath) => executeShellWithStream('pnpm', [ '--cwd', absolutePath, 'build' ]),
   MAKEFILE_BUILD: (absolutePath) => executeShellWithStream('make', [ `-C ${absolutePath}` ]),
   AMEND_NATIVE: zeroTranspilationHandler,
   NOBUILD_SOURCE: zeroTranspilationHandler,

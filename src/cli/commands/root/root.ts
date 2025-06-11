@@ -19,6 +19,9 @@ import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
 // TODO: Deny current package, if it doesn't have node_modules.
+// TODO: Check errors that occur when running oink learn in workspace
+// TODO: Copy lib for frontend packages (for css)
+// TODO: Determine whether to use pnpm or yarn based on corepack settings
 // TODO: Support mt-integrations (where it has build command, but also "web", "lib", "amend")
 
 const transpilationQueue = new PQueue({ concurrency: 1 })
