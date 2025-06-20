@@ -18,11 +18,12 @@ import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
-// TODO: Deny current package, if it doesn't have node_modules.
 // TODO: Check errors that occur when running oink learn in workspace
 // TODO: Copy lib for frontend packages (for css)
 // TODO: Determine whether to use pnpm or yarn based on corepack settings
 // TODO: Support mt-integrations (where it has build command, but also "web", "lib", "amend")
+// TODO: Support mt-errors
+// TODO: Switch between pnpm transpile and yarn transpile (and other commands) based on which type of package we are in
 
 const transpilationQueue = new PQueue({ concurrency: 1 })
 
@@ -66,6 +67,10 @@ program
     const destinationPackage = getPackageAtPath(absolutePath)
     if (destinationPackage == null) {
       error(errorRenderers.INSUFFICIENT_INFO_IN_DEST_PACKAGE_JSON())
+    }
+
+    if (!fs.existsSync(path.resolve(absolutePath, 'node_modules'))) {
+      error(errorRenderers.PACKAGE_IS_NOT_INSTALLED())
     }
 
     const linkablePackages = getLinkablePackagesForPackage(destinationPackage)

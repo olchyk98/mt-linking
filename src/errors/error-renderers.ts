@@ -119,4 +119,14 @@ export const errorRenderers = {
 `,
     })
   },
+  PACKAGE_IS_NOT_INSTALLED () {
+    return createErrorBanner({
+      title: 'Current package is not ready to be used',
+      description: `
+Seems like the package in the current folder does not
+have node_modules. Please, run install command through
+your package managere (npm/yarn/pnpm).
+`,
+    })
+  },
 } satisfies Record<string, (...args: never[]) => string>
