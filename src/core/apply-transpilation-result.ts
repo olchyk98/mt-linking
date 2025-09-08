@@ -32,7 +32,7 @@ const copyDistForLink: ApplyTranspilationResultFn = async (source, destination) 
   const dests = await resolveModuleLocationsForSource(source, destination)
   for (const dest of dests) {
     const destDist = path.resolve(dest, 'dist')
-    fs.rmSync(destDist, { recursive: true })
+    try { fs.rmSync(destDist, { recursive: true }) } catch {}
     fs.cpSync(sourceDist, destDist, { recursive: true })
   }
   return true as const
@@ -45,8 +45,8 @@ const copyAmendSourcesForLink: ApplyTranspilationResultFn = async (source, desti
     for (const target of targets) {
       const dist = path.resolve(source.absolutePath, target)
       const dest = path.resolve(destBase, target)
-      fs.rmSync(dest, { recursive: true })
-      fs.cpSync(dist, dest, { recursive: true })
+      try { fs.rmSync(dest, { recursive: true }) } catch {}
+      try { fs.cpSync(dist, dest, { recursive: true }) } catch {}
     }
   }
   return true as const
@@ -60,8 +60,8 @@ export const copySrcAndLibForLink: ApplyTranspilationResultFn = async (source, d
       const sourceDir = path.resolve(source.absolutePath, target)
       if (!fs.existsSync(sourceDir)) continue
       const destDir = path.resolve(destBase, target)
-      fs.rmSync(destDir, { recursive: true })
-      fs.cpSync(sourceDir, destDir, { recursive: true })
+      try { fs.rmSync(destDir, { recursive: true }) } catch {}
+      try { fs.cpSync(sourceDir, destDir, { recursive: true }) } catch {}
     }
   }
   return true as const

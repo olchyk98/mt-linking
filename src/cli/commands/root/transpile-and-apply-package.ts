@@ -1,6 +1,4 @@
 import nodeNotifier from 'node-notifier'
-import path from 'path'
-import fs from 'fs'
 import {
   LinkingStrategy,
   ResolvedPackage,

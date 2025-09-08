@@ -19,11 +19,13 @@ import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
 // TODO: Check errors that occur when running oink learn in workspace
-// TODO: Copy lib for frontend packages (for css)
+// TODO: Copy lib and web for frontend packages (for css)
 // TODO: Determine whether to use pnpm or yarn based on corepack settings
 // TODO: Support mt-integrations (where it has build command, but also "web", "lib", "amend")
 // TODO: Support mt-errors
 // TODO: Switch between pnpm transpile and yarn transpile (and other commands) based on which type of package we are in
+// TODO: Ignore when deleting folders in node_modules that don't exist (like amend does not exist) - generally ignore errors in optional operations
+// TODO: Move over package.json also? - for when updating exports (which file is the root when importing)
 
 const transpilationQueue = new PQueue({ concurrency: 1 })
 
