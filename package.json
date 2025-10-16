@@ -19,7 +19,7 @@
     "prestart": "pnpm install && pnpm run start",
     "start": "pnpm dev",
     "lint": "pnpm eslint ./**/*.ts index.ts",
-    "transpile": "rm -rf dist && esbuild index.ts --platform=node --format=cjs --sourcemap --bundle --outdir=dist/",
+    "transpile": "rm -rf dist && node scripts/transpile",
     "unit": "vitest --run",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "test": "pnpm run lint && pnpm run typecheck && pnpm unit",
