@@ -2,6 +2,7 @@ import path from 'path'
 import fs from 'fs'
 import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 import { LINKS_LOCATION } from '../constants'
+import { upsertLinksConfigFolder } from './upsert-links-config-folder'
 
 /**
  * Accepting ResolvedPackage or absolutePath it tries
@@ -17,7 +18,11 @@ export function learnPackage (absolutePath: ResolvedPackage | string): true | nu
     ? getPackageAtPath(absolutePath)
     : absolutePath
   if (packageToLink == null) return null
+  upsertLinksConfigFolder()
   const linkLocation = path.resolve(LINKS_LOCATION, packageToLink.packageJson.name)
+  // NOTE: The location be extremely nested, therefore in those cases we'll
+  // create folders to match the structure and symlink at the end. For
+  // this we back up one level, create folders and then create a symlink at the end.
   const linkDirLocation = path.resolve(linkLocation, '..')
   fs.mkdirSync(linkDirLocation, { recursive: true })
   try { fs.rmSync(linkLocation, { recursive: true }) } catch {}
