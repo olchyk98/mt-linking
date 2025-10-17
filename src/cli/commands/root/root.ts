@@ -18,13 +18,6 @@ import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
-// TODO: Copy lib and web for frontend packages (for css)
-// TODO: Remove ramda
-// TODO: Determine whether to use pnpm or yarn based on corepack settings
-// TODO: Support mt-integrations (where it has build command, but also "web", "lib", "amend")
-// TODO: Support mt-errors
-// TODO: Switch between pnpm transpile and yarn transpile (and other commands) based on which type of package we are in
-// TODO: Ignore when deleting folders in node_modules that don't exist (like amend does not exist) - generally ignore errors in optional operations
 // TODO: Move over package.json also? - for when updating exports (which file is the root when importing)
 //
 // TODO: Upsert initial .config folder in "learn forget"
@@ -33,6 +26,10 @@ import { LINKS_LOCATION } from '../../../constants'
 // TODO: Introduce "--reprompt" => when NOT IN LIVERELOAD MODE, prompt user to select a package to link after they have linked a package, instead of  closing the process.
 // TODO: Introduce "--debounce" => to prevent running transpile too many times, user can specify any debounce in ms.
 // TODO: Sentry integration
+// TODO: Remove ramda
+// TODO: Write tests with memfs
+// TODO: Intoduce sentry
+// TODO: Determine whether to use pnpm or yarn based on corepack settings (putting on hold, since this is a non issue)
 
 const transpilationQueue = new PQueue({ concurrency: 1 })
 

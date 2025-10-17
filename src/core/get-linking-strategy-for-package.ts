@@ -5,6 +5,17 @@ import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 // WARNING: Order matters.
 const strategyCheckersMap: Record<LinkingStrategy, StrategyCheckerFn> = {
   TRANSPILED: (items) => items.has('rollup.config.mjs'),
+  LEGACY_AMEND_WEB_HYBRID: (items, { packageJson }) => {
+    const hasEssentials = (
+      (items.has('amend') && items.has('lib')) &&
+        (items.has('web') || items.has('dist'))
+    )
+    if (!hasEssentials) return false
+    const { scripts: scriptsMap } = packageJson
+    if (scriptsMap == null) return false
+    const scriptsSet: string[] = keys(scriptsMap)
+    return scriptsSet.includes('build') // refers to "yarn build"
+  },
   TRANSPILED_LEGACY (_, { packageJson }) {
     const { scripts: scriptsMap } = packageJson
     if (scriptsMap == null) return false
@@ -29,13 +40,6 @@ const strategyCheckersMap: Record<LinkingStrategy, StrategyCheckerFn> = {
  *
  * The function will return null if specified ResolvedPackage
  * does not match any of the known linking strategies.
- *
- * Supported strategies:
- *  TRANSPILED = For frontend and backend packages that produce dist and have "yarn transpile"
- *  TRANSPILED_LEGACY = For frontend packages that use "yarn build" instead of "yarn transpile"
- *  AMEND_NATIVE = For packages that use amend (backend) -- no transpilation required
- *  MAKEFILE_BUILD = For packages that are transpiled with "Makefile" (executed with "make" native command)
- *  SOURCE_COPY = For packages that don't feature any build step, where "src"/"lib" folders can be deployed "as-is"
  * */
 export function getLinkingStrategyForPackage(absolutePath: string): LinkingStrategy | null
 export function getLinkingStrategyForPackage(absolutePath: ResolvedPackage): LinkingStrategy | null
@@ -64,4 +68,5 @@ export type LinkingStrategy =
   | 'AMEND_NATIVE' // For packages that use amend (backend) -- no transpilation required
   | 'MAKEFILE_BUILD' // For packages that are transpiled with "Makefile" (executed with "make" native command)
   | 'NOBUILD_SOURCE' // For packages that don't feature any build step, where "src"/"lib" folders can be deployed "as-is"
+  | 'LEGACY_AMEND_WEB_HYBRID' // For packages that mix backend amend code and transpiled frontend code
 

@@ -10,7 +10,7 @@ export async function executeShell (command: string, args: string[], opts: ExecO
         if (error != null) {
           rej(error)
         } else {
-          res(stdout || stderr)
+          res(stdout.toString() || stderr.toString())
         }
       },
     )
