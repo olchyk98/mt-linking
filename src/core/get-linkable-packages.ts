@@ -1,4 +1,3 @@
-import { reduce } from 'ramda'
 import path from 'path'
 import fs from 'fs'
 import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
@@ -6,7 +5,7 @@ import { LINKS_LOCATION } from '../constants'
 
 export function getLinkablePackages (rootPath: string = LINKS_LOCATION): ResolvedPackage[] {
   const folderItems = fs.readdirSync(rootPath)
-  return reduce(
+  return folderItems.reduce(
     (acc, itemPath) => {
       const fullItemPath = path.resolve(rootPath, itemPath)
       const stat = fs.lstatSync(fullItemPath)
@@ -25,6 +24,5 @@ export function getLinkablePackages (rootPath: string = LINKS_LOCATION): Resolve
       return acc
     },
     <ResolvedPackage[]> [],
-    folderItems,
   )
 }

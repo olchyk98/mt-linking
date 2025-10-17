@@ -1,6 +1,6 @@
-import { keys } from 'ramda'
 import fs from 'fs'
 import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
+import { objectKeys } from '../utils'
 
 // WARNING: Order matters.
 const strategyCheckersMap: Record<LinkingStrategy, StrategyCheckerFn> = {
@@ -13,13 +13,13 @@ const strategyCheckersMap: Record<LinkingStrategy, StrategyCheckerFn> = {
     if (!hasEssentials) return false
     const { scripts: scriptsMap } = packageJson
     if (scriptsMap == null) return false
-    const scriptsSet: string[] = keys(scriptsMap)
+    const scriptsSet: string[] = objectKeys(scriptsMap)
     return scriptsSet.includes('build') // refers to "yarn build"
   },
   TRANSPILED_LEGACY (_, { packageJson }) {
     const { scripts: scriptsMap } = packageJson
     if (scriptsMap == null) return false
-    const scriptsSet: string[] = keys(scriptsMap)
+    const scriptsSet: string[] = objectKeys(scriptsMap)
     return scriptsSet.includes('build') // refers to "yarn build"
   },
   AMEND_NATIVE: (items) => (
@@ -49,7 +49,7 @@ export function getLinkingStrategyForPackage (absolutePath: ResolvedPackage | st
     : getPackageAtPath(absolutePath)
   if (resolvedPackage == null) return null
   const folderItems = new Set(fs.readdirSync(resolvedPackage.absolutePath))
-  for (const linkingStrategy of keys(strategyCheckersMap)) {
+  for (const linkingStrategy of objectKeys(strategyCheckersMap)) {
     const checker = strategyCheckersMap[linkingStrategy]
     if (checker(folderItems, resolvedPackage)) {
       return linkingStrategy

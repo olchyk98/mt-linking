@@ -33,7 +33,6 @@
     "node-fzf": "^0.13.1",
     "node-notifier": "^10.0.1",
     "p-queue": "^6.6.2",
-    "ramda": "^0.29.1",
     "yaml": "^2.7.1"
   },
   "devDependencies": {
@@ -43,7 +42,6 @@
     "@types/eslint__js": "^8.42.3",
     "@types/node": "^18",
     "@types/node-notifier": "^8.0.5",
-    "@types/ramda": "^0.29.9",
     "commander": "^13.1.0",
     "esbuild": "^0.25.1",
     "eslint": "^9.7.0",
