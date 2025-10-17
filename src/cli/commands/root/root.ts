@@ -26,6 +26,13 @@ import { LINKS_LOCATION } from '../../../constants'
 // TODO: Switch between pnpm transpile and yarn transpile (and other commands) based on which type of package we are in
 // TODO: Ignore when deleting folders in node_modules that don't exist (like amend does not exist) - generally ignore errors in optional operations
 // TODO: Move over package.json also? - for when updating exports (which file is the root when importing)
+//
+// TODO: Upsert initial .config folder in "learn forget"
+// TODO: Introduce "-v" => version
+// TODO: Introduce "--unsafe-interruptible-builds" => when in livereload mode, instead of pushing request for lkinking to a queue and wait for cthe current linking process to finish, break the current linking process (maybe with js&promise signal) and start over. this may  break stuff, because we don't know at which point we're interrupting, but therefore it's unsafe.
+// TODO: Introduce "--reprompt" => when NOT IN LIVERELOAD MODE, prompt user to select a package to link after they have linked a package, instead of  closing the process.
+// TODO: Introduce "--debounce" => to prevent running transpile too many times, user can specify any debounce in ms.
+// TODO: Sentry integration
 
 const transpilationQueue = new PQueue({ concurrency: 1 })
 
