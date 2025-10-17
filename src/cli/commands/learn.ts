@@ -34,13 +34,8 @@ program
     if (pattern != null) {
       logAsLinker(`Found ${paths.length} package(s).`)
     }
-    // XXX: The dumb user guard. https://en.wikipedia.org/wiki/User_error
-    const allowedPaths = paths.filter((l) => !l.includes('node_modules'))
-    if (allowedPaths.length !== paths.length) {
-      warnAsLinker(`Filtered out ${paths.length - allowedPaths.length} package(s), since they are defined in node_modules. Consult with documentation about this behaviour.`)
-    }
     let learned = 0
-    for (const pathToLearn of allowedPaths) {
+    for (const pathToLearn of paths) {
       const packageToLink = getPackageAtPath(pathToLearn)
       if (packageToLink == null) {
         warnAsLinker(`Could not learn package at path ${pathToLearn}: not a valid package (1)`)
@@ -54,9 +49,9 @@ program
         continue
       }
     }
-    if (allowedPaths.length === 0) {
+    if (paths.length === 0) {
       logAsLinker('No packages to link')
     } else if (paths.length > 1) {
-      logAsLinker(`Successfully learned ${learned} packages out of ${allowedPaths.length}`)
+      logAsLinker(`Successfully learned ${learned} packages out of ${paths.length}`)
     }
   })

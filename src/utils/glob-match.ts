@@ -2,6 +2,11 @@ import path from 'path'
 import process from 'process'
 import { globSync } from 'glob'
 
+const ignoreList = [
+  '**/node_modules/**',
+  '**/dist/**',
+]
+
 /**
  * The function takes single or list of patterns
  * and traverses from the current directory (can be changed through opts)
@@ -12,5 +17,6 @@ import { globSync } from 'glob'
  * */
 export function globMatch (pattern: string | string[], opts: { cwd?: string } = {}): string[] {
   const cwd = opts.cwd ?? process.cwd()
-  return globSync(pattern, { cwd }).map((item) => path.resolve(cwd, item))
+  const relativePaths = globSync(pattern, { cwd, ignore: ignoreList })
+  return relativePaths.map((item) => path.resolve(cwd, item))
 }
