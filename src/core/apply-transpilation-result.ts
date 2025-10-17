@@ -23,12 +23,12 @@ async function resolveModuleLocationsForSource (source: ResolvedPackage, destina
   const workspaceLocations = rootPath && workspaceResult && workspaceResult.split('\n').filter(Boolean).map((s) => path.resolve(rootPath, s))
   const packageLocations = packageResult.split('\n').filter(Boolean).map((s) => path.resolve(destination.absolutePath, s))
   const locations = [ ...workspaceLocations || [], ...packageLocations ]
-  logAsLinker(`Resolved to ${locations.length} locations.`)
   return locations
 }
 
-async function copyOverFolders (source: ResolvedPackage, destination: ResolvedPackage, targets: string[]): Promise<true> {
+async function copyOverItems (source: ResolvedPackage, destination: ResolvedPackage, targets: string[]): Promise<true> {
   const dests = await resolveModuleLocationsForSource(source, destination)
+  logAsLinker(`Applying ${targets.length} target(s) to to ${dests.length} location(s).`)
   for (const dest of dests) {
     for (const target of targets) {
       const sourceDir = path.resolve(source.absolutePath, target)
@@ -40,24 +40,29 @@ async function copyOverFolders (source: ResolvedPackage, destination: ResolvedPa
   return true as const
 }
 
+async function copyOverPackageEssentials (source: ResolvedPackage, destination: ResolvedPackage) {
+  const targets = [ 'package.json' ]
+  return copyOverItems(source, destination, targets)
+}
+
 const copyDistAndWebForLink: ApplyTranspilationResultFn = (source, destination) => {
   const targets = [ 'dist', 'web', 'lib' ]
-  return copyOverFolders(source, destination, targets)
+  return copyOverItems(source, destination, targets)
 }
 
 const copyAmendSourcesForLink: ApplyTranspilationResultFn = async (source, destination) => {
   const targets = [ 'amend', 'boundaries', 'lib' ]
-  return copyOverFolders(source, destination, targets)
+  return copyOverItems(source, destination, targets)
 }
 
 export const copySrcAndLibForLink: ApplyTranspilationResultFn = async (source, destination) => {
   const targets = [ 'src', 'lib' ]
-  return copyOverFolders(source, destination, targets)
+  return copyOverItems(source, destination, targets)
 }
 
 export const copyAmendAndWebSourcesForLink: ApplyTranspilationResultFn = async (source, destination) => {
   const targets = [ 'amend', 'boundaries', 'lib', 'dist', 'web', 'lib' ]
-  return copyOverFolders(source, destination, targets)
+  return copyOverItems(source, destination, targets)
 }
 
 const strategyApplyResultFnMap: Record<LinkingStrategy, ApplyTranspilationResultFn> = {
@@ -100,6 +105,7 @@ export async function applyTranspilationResult (
   if (sourcePackage == null || destinationPackage == null) return null
   const linkingStrategy = $linkingStrategy ?? getLinkingStrategyForPackage(sourcePackage)
   if (linkingStrategy == null) return null
+  await copyOverPackageEssentials(sourcePackage, destinationPackage)
   const applyTranspilationResultFn = strategyApplyResultFnMap[linkingStrategy]
   return applyTranspilationResultFn(sourcePackage, destinationPackage)
 }
