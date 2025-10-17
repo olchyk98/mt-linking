@@ -125,7 +125,7 @@ export const errorRenderers = {
       description: `
 Seems like the package in the current folder does not
 have node_modules. Please, run install command through
-your package managere (npm/yarn/pnpm).
+your package manager (npm/yarn/pnpm).
 `,
     })
   },

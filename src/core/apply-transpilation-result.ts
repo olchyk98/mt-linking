@@ -27,39 +27,12 @@ async function resolveModuleLocationsForSource (source: ResolvedPackage, destina
   return locations
 }
 
-const copyDistForLink: ApplyTranspilationResultFn = async (source, destination) => {
-  const sourceDist = path.resolve(source.absolutePath, 'dist')
+async function copyOverFolders (source: ResolvedPackage, destination: ResolvedPackage, targets: string[]): Promise<true> {
   const dests = await resolveModuleLocationsForSource(source, destination)
   for (const dest of dests) {
-    const destDist = path.resolve(dest, 'dist')
-    try { fs.rmSync(destDist, { recursive: true }) } catch {}
-    fs.cpSync(sourceDist, destDist, { recursive: true })
-  }
-  return true as const
-}
-
-const copyAmendSourcesForLink: ApplyTranspilationResultFn = async (source, destination) => {
-  const targets = [ 'amend', 'boundaries', 'lib' ]
-  const destBases = await resolveModuleLocationsForSource(source, destination)
-  for (const destBase of destBases) {
-    for (const target of targets) {
-      const dist = path.resolve(source.absolutePath, target)
-      const dest = path.resolve(destBase, target)
-      try { fs.rmSync(dest, { recursive: true }) } catch {}
-      try { fs.cpSync(dist, dest, { recursive: true }) } catch {}
-    }
-  }
-  return true as const
-}
-
-export const copySrcAndLibForLink: ApplyTranspilationResultFn = async (source, destination) => {
-  const targets = [ 'src', 'lib' ]
-  const destBases = await resolveModuleLocationsForSource(source, destination)
-  for (const destBase of destBases) {
     for (const target of targets) {
       const sourceDir = path.resolve(source.absolutePath, target)
-      if (!fs.existsSync(sourceDir)) continue
-      const destDir = path.resolve(destBase, target)
+      const destDir = path.resolve(dest, target)
       try { fs.rmSync(destDir, { recursive: true }) } catch {}
       try { fs.cpSync(sourceDir, destDir, { recursive: true }) } catch {}
     }
@@ -67,12 +40,33 @@ export const copySrcAndLibForLink: ApplyTranspilationResultFn = async (source, d
   return true as const
 }
 
+const copyDistAndWebForLink: ApplyTranspilationResultFn = (source, destination) => {
+  const targets = [ 'dist', 'web', 'lib' ]
+  return copyOverFolders(source, destination, targets)
+}
+
+const copyAmendSourcesForLink: ApplyTranspilationResultFn = async (source, destination) => {
+  const targets = [ 'amend', 'boundaries', 'lib' ]
+  return copyOverFolders(source, destination, targets)
+}
+
+export const copySrcAndLibForLink: ApplyTranspilationResultFn = async (source, destination) => {
+  const targets = [ 'src', 'lib' ]
+  return copyOverFolders(source, destination, targets)
+}
+
+export const copyAmendAndWebSourcesForLink: ApplyTranspilationResultFn = async (source, destination) => {
+  const targets = [ 'amend', 'boundaries', 'lib', 'dist', 'web', 'lib' ]
+  return copyOverFolders(source, destination, targets)
+}
+
 const strategyApplyResultFnMap: Record<LinkingStrategy, ApplyTranspilationResultFn> = {
-  TRANSPILED: copyDistForLink,
-  TRANSPILED_LEGACY: copyDistForLink,
-  MAKEFILE_BUILD: copyDistForLink,
+  TRANSPILED: copyDistAndWebForLink,
+  TRANSPILED_LEGACY: copyDistAndWebForLink,
+  MAKEFILE_BUILD: copyDistAndWebForLink,
   AMEND_NATIVE: copyAmendSourcesForLink,
   NOBUILD_SOURCE: copySrcAndLibForLink,
+  LEGACY_AMEND_WEB_HYBRID: copyAmendAndWebSourcesForLink,
 }
 
 /**
