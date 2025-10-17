@@ -18,8 +18,8 @@ import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
-// TODO: Check errors that occur when running oink learn in workspace
 // TODO: Copy lib and web for frontend packages (for css)
+// TODO: Remove ramda
 // TODO: Determine whether to use pnpm or yarn based on corepack settings
 // TODO: Support mt-integrations (where it has build command, but also "web", "lib", "amend")
 // TODO: Support mt-errors

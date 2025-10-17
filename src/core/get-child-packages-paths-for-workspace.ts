@@ -3,7 +3,40 @@ import * as yaml from 'yaml'
 import fs from 'fs'
 import { ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 import { WorkspaceType, getWorkspaceTypeForRoot } from './get-workspace-type-for-root'
-import { globMatch } from '../utils'
+import { globMatch, stripSuffix } from '../utils'
+
+/**
+* Taking list of relative paths to packages within workspaces
+* that are usually defined with entries like these:
+*
+* The function appends package.json (which marks root of a package)
+* to each entry and tries to recursively find all packages in the workspace.
+*
+* After package.json files have been found, the function returns their location,
+* but without the "package.json" part. With this special approach we're able
+* to get absolute paths to each individual package within the workspace.
+* */
+function resolvePackageRoots (resolvedPackage: ResolvedPackage, paths: string[]): string[] {
+  const relativePackageJsonPaths = paths.map((entry) => (
+    path.resolve(entry, './**/package.json')
+  ))
+  return globMatch(relativePackageJsonPaths, { cwd: resolvedPackage.absolutePath })
+    .map((entry) => stripSuffix(entry, 'package.json'))
+}
+
+function getForYarn (resolvedPackage: ResolvedPackage): string[] {
+  const workspaces = resolvedPackage.packageJson.workspaces
+  if (!Array.isArray(workspaces)) return []
+  return resolvePackageRoots(resolvedPackage, workspaces)
+}
+
+function getForPNPM (resolvedPackage: ResolvedPackage): string[] {
+  const workspaceFilePath = path.resolve(resolvedPackage.absolutePath, 'pnpm-workspace.yaml')
+  const workspaceFileYaml = fs.readFileSync(workspaceFilePath, 'utf8')
+  const workspaceFile = yaml.parse(workspaceFileYaml) as { packages?: string[] }
+  const packages = workspaceFile.packages ?? []
+  return resolvePackageRoots(resolvedPackage, packages)
+}
 
 /**
  * Accepting input package and workspace type the function will
@@ -30,15 +63,10 @@ export function getChildPackagePathsForWorkspace (absolutePath: ResolvedPackage 
   const workspaceType = typeof $workspaceType === 'string' ? $workspaceType : getWorkspaceTypeForRoot(resolvedPackage)
   if (workspaceType == null) return null
   if (workspaceType === 'yarn') {
-    const workspaces = resolvedPackage.packageJson.workspaces
-    if (!Array.isArray(workspaces)) return []
-    return globMatch(workspaces as string[], { cwd: resolvedPackage.absolutePath })
+    return getForYarn(resolvedPackage)
   }
   if (workspaceType === 'pnpm') {
-    const workspaceFilePath = path.resolve(resolvedPackage.absolutePath, 'pnpm-workspace.yaml')
-    const workspaceFileYaml = fs.readFileSync(workspaceFilePath, 'utf8')
-    const workspaceFile = yaml.parse(workspaceFileYaml) as { packages?: string[] }
-    return globMatch(workspaceFile.packages ?? [], { cwd: resolvedPackage.absolutePath })
+    return getForPNPM(resolvedPackage)
   }
   return []
 }
