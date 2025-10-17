@@ -16,9 +16,8 @@ import { error, log } from '../../lifecycle'
 import { logAsLinker } from '../../log'
 import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
-import { LINKS_LOCATION } from '../../../constants'
+import { LINKS_LOCATION, observeChangesMinDebounceMs } from '../../../constants'
 
-// TODO: Introduce "--debounce" => to prevent running transpile too many times, user can specify any debounce in ms.
 // TODO: Sentry integration
 // TODO: Remove ramda
 // TODO: Write tests with memfs
@@ -27,7 +26,12 @@ import { LINKS_LOCATION } from '../../../constants'
 const transpilationQueue = new PQueue({ concurrency: 1 })
 
 async function handler (from: string | null, flags: Flags): Promise<void> {
-  const { dest: _dest = process.cwd(), livereload = false, reprompt = false } = flags
+  const {
+    dest: _dest = process.cwd(),
+    livereload = false,
+    reprompt = false,
+    debounce: debounceMs = observeChangesMinDebounceMs,
+  } = flags
   // FIXME: Utilize parseArg from commander, since "--dest" with
   // no arg will produce a boolean.
   const dest = typeof _dest === 'string' ? _dest : process.cwd()
@@ -99,7 +103,7 @@ async function handler (from: string | null, flags: Flags): Promise<void> {
   if (livereload === true) {
     observeFolderChanges(
       sourcePackage.absolutePath,
-      { debounceMs: 100 },
+      { debounceMs: Math.min(observeChangesMinDebounceMs, debounceMs) },
       (filename) => {
         if (transpilationQueue.pending > 0) {
           // XXX: If we're already running one item through the queue,
@@ -147,10 +151,12 @@ program
   .option('-d, --dest [string]')
   .option('--livereload', 're-link automatically on every file change')
   .option('--reprompt', 'restart oink after linking job has completed')
+  .option('--debounce [number]', 'delay (ms) how quickly oink reacts to new changes when running with --livereload', (n) => (Number(n) || undefined))
   .action(handler)
 
 interface Flags {
   dest: string,
   livereload?: boolean
   reprompt?: boolean
+  debounce?: number
 }
