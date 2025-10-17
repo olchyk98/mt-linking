@@ -18,7 +18,6 @@ import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
-// TODO: Upsert initial .config folder in "learn forget"
 // TODO: Introduce "-v" => version
 // TODO: Introduce "--unsafe-interruptible-builds" => when in livereload mode, instead of pushing request for lkinking to a queue and wait for cthe current linking process to finish, break the current linking process (maybe with js&promise signal) and start over. this may  break stuff, because we don't know at which point we're interrupting, but therefore it's unsafe.
 // TODO: Introduce "--reprompt" => when NOT IN LIVERELOAD MODE, prompt user to select a package to link after they have linked a package, instead of  closing the process.
