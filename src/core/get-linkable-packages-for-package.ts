@@ -1,4 +1,3 @@
-import { filter, has, reduce } from 'ramda'
 import { getLinkablePackages } from './get-linkable-packages'
 import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 import { WorkspaceType, getWorkspaceTypeForRoot } from './get-workspace-type-for-root'
@@ -6,12 +5,11 @@ import { getChildPackagePathsForWorkspace } from './get-child-packages-paths-for
 
 function getInstalledPackagesForPackage (resolvedPackage: ResolvedPackage, packagesToCheck: ResolvedPackage[]): ResolvedPackage[] {
   const { dependencies = {}, devDependencies = {} } = resolvedPackage.packageJson
-  return filter(
+  return packagesToCheck.filter(
     ({ packageJson: { name } }) => {
       if (name == null) return false
       return name in dependencies || name in devDependencies
     },
-    packagesToCheck,
   )
 }
 
@@ -20,28 +18,31 @@ function getLinkablePackagesForWorkspace (destinationPackage: ResolvedPackage, w
   // The function fetches linkable packages for each individual workspace package.
   // This is also needed to remove those from "linkablePackages" list later.
   const workspacePackagePaths = getChildPackagePathsForWorkspace(destinationPackage, workspaceType)
-  const workspacePackagesMap = reduce<string, Record<string, ResolvedPackage>>((acc, childPath) => {
+  const workspacePackagesMap = workspacePackagePaths.reduce<Record<string, ResolvedPackage>>((acc, childPath) => {
     const resolvedPackage = getPackageAtPath(childPath)
     if (resolvedPackage != null) {
       acc[resolvedPackage.packageJson.name] = resolvedPackage
     }
     return acc
-  }, {}, workspacePackagePaths)
+  }, {})
   // XXX: 2. We construct a list (here it is a map for performance reasons) of all packages
   // that are linkable to ANY package in the workspace.
   // We remove duplicates and we also remove packages that are within the workspace itself.
   const allLinkablePackages = getLinkablePackages()
-  const packagesMap = reduce<ResolvedPackage, Record<string, ResolvedPackage>>((acc, childPackage) => {
-    const linkablePackages = getInstalledPackagesForPackage(childPackage, allLinkablePackages)
-    // XXX: We have the map here to be able to quickly deduplicate packages.
-    linkablePackages.forEach((linkablePackage) => {
+  const packagesMap = Object.values(workspacePackagesMap).reduce<Record<string, ResolvedPackage>>(
+    (acc, childPackage) => {
+      const linkablePackages = getInstalledPackagesForPackage(childPackage, allLinkablePackages)
+      // XXX: We have the map here to be able to quickly deduplicate packages.
+      linkablePackages.forEach((linkablePackage) => {
       // XXX: Packages in the workspace may depend on each other. We ignore those.
-      if (!has(linkablePackage.packageJson.name, workspacePackagesMap)) {
-        acc[linkablePackage.packageJson.name] = linkablePackage
-      }
-    }, linkablePackages)
-    return acc
-  }, {}, Object.values(workspacePackagesMap))
+        if (!(linkablePackage.packageJson.name in workspacePackagesMap)) {
+          acc[linkablePackage.packageJson.name] = linkablePackage
+        }
+      }, linkablePackages)
+      return acc
+    },
+    {},
+  )
   // XXX: 3. Converting performance map to a list.
   return Object.values(packagesMap)
 }

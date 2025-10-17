@@ -2,7 +2,6 @@ import path from 'path'
 import process from 'process'
 import PQueue from 'p-queue'
 import fs from 'fs'
-import { find } from 'ramda'
 import {
   getLinkablePackagesForPackage,
   getLinkingStrategyForPackage,
@@ -18,8 +17,6 @@ import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
 import { LINKS_LOCATION, observeChangesMinDebounceMs } from '../../../constants'
 
-// TODO: Sentry integration
-// TODO: Remove ramda
 // TODO: Write tests with memfs
 // TODO: Determine whether to use pnpm or yarn based on corepack settings (putting on hold, since this is a non issue)
 
@@ -80,7 +77,7 @@ async function handler (from: string | null, flags: Flags): Promise<void> {
   const sourcePackage =
       from == null
         ? await promptPackageToLink(linkablePackages)
-        : find((l) => l.packageJson.name === from, linkablePackages)
+        : linkablePackages.find((l) => l.packageJson.name === from)
   if (sourcePackage == null) {
     error(errorRenderers.SPECIFIED_SOURCE_PACKAGE_IS_NOT_LINKABLE())
   }
