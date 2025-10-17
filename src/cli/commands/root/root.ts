@@ -18,8 +18,6 @@ import { errorRenderers } from '../../../errors'
 import chalk from 'chalk'
 import { LINKS_LOCATION } from '../../../constants'
 
-// TODO: Move over package.json also? - for when updating exports (which file is the root when importing)
-//
 // TODO: Upsert initial .config folder in "learn forget"
 // TODO: Introduce "-v" => version
 // TODO: Introduce "--unsafe-interruptible-builds" => when in livereload mode, instead of pushing request for lkinking to a queue and wait for cthe current linking process to finish, break the current linking process (maybe with js&promise signal) and start over. this may  break stuff, because we don't know at which point we're interrupting, but therefore it's unsafe.
@@ -28,7 +26,6 @@ import { LINKS_LOCATION } from '../../../constants'
 // TODO: Sentry integration
 // TODO: Remove ramda
 // TODO: Write tests with memfs
-// TODO: Intoduce sentry
 // TODO: Determine whether to use pnpm or yarn based on corepack settings (putting on hold, since this is a non issue)
 
 const transpilationQueue = new PQueue({ concurrency: 1 })
