@@ -1,14 +1,7 @@
 import nodeNotifier from 'node-notifier'
-import {
-  LinkingStrategy,
-  ResolvedPackage,
-  applyTranspilationResult,
-  getLinkingStrategyForPackage,
-  transpilePackage,
-} from '../../../core'
-import { errorRenderers } from '../../../errors'
-import { error, log } from '../../lifecycle'
-import { errorAsLinker, logAsLinker } from '../../log'
+import { LinkingStrategy, ResolvedPackage, applyTranspilationResult, getLinkingStrategyForPackage, transpilePackage } from '../../core'
+import { error, errorAsLinker, log, logAsLinker } from '../../utils'
+import { errorRenderers } from '../../errors'
 
 /**
  * The function triggers transpilePackage
