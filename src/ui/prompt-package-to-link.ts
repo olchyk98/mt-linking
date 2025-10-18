@@ -1,7 +1,7 @@
 import fzf from 'node-fzf'
 import type { ResolvedPackage } from '../core'
-import { error } from '../cli/lifecycle'
 import { errorRenderers } from '../errors'
+import { error } from '../utils'
 
 export async function promptPackageToLink (linkablePackages: ResolvedPackage[]): Promise<ResolvedPackage> {
   const res = await fzf({

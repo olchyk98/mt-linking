@@ -2,9 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import { type LinkingStrategy, getLinkingStrategyForPackage } from './get-linking-strategy-for-package'
 import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
-import { executeShell } from '../utils'
+import { executeShell, logAsLinker } from '../utils'
 import { getWorkspaceRootPathForPackage } from './get-workspace-root-path-for-package'
-import { logAsLinker } from '../cli/log'
 
 async function resolveModuleLocationsForSource (source: ResolvedPackage, destination: ResolvedPackage): Promise<string[] | never> {
   // XXX: When working in workspaces, we don't want to navigate ONLY to package's

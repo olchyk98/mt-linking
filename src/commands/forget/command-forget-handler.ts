@@ -1,9 +1,8 @@
 import fs from 'fs'
 import path from 'path'
-import { logAsLinker } from '../log'
-import { program } from '../program'
 import { LINKS_LOCATION } from '../../constants'
 import { upsertLinksConfigFolder } from '../../core'
+import { logAsLinker } from '../../utils'
 
 function deleteLinksFolder (dir = LINKS_LOCATION) {
   const entries = fs.readdirSync(dir, { withFileTypes: true })
@@ -17,11 +16,8 @@ function deleteLinksFolder (dir = LINKS_LOCATION) {
   }
 }
 
-program
-  .command('forget')
-  .description('Reset all learned packages')
-  .action(() => {
-    upsertLinksConfigFolder()
-    deleteLinksFolder()
-    logAsLinker('Done!')
-  })
+export function commandForgetHandler () {
+  upsertLinksConfigFolder()
+  deleteLinksFolder()
+  logAsLinker('Done!')
+}

@@ -1,28 +1,20 @@
-import path from 'path'
-import process from 'process'
 import PQueue from 'p-queue'
+import path from 'path'
 import fs from 'fs'
-import {
-  getLinkablePackagesForPackage,
-  getLinkingStrategyForPackage,
-  getPackageAtPath,
-} from '../../../core'
-import { observeFolderChanges } from '../../../utils'
-import { promptPackageToLink } from '../../../ui'
-import { transpileAndApplyPackage } from './transpile-and-apply-package'
-import { program } from '../../program'
-import { error, log } from '../../lifecycle'
-import { logAsLinker } from '../../log'
-import { errorRenderers } from '../../../errors'
+import { LINKS_LOCATION, observeChangesMinDebounceMs } from '../../constants'
+import { errorRenderers } from '../../errors'
+import { error, log, logAsLinker, observeFolderChanges } from '../../utils'
 import chalk from 'chalk'
-import { LINKS_LOCATION, observeChangesMinDebounceMs } from '../../../constants'
+import { getLinkablePackagesForPackage, getLinkingStrategyForPackage, getPackageAtPath } from '../../core'
+import { promptPackageToLink } from '../../ui'
+import { transpileAndApplyPackage } from './transpile-and-apply-package'
 
-// TODO: Write tests with memfs
-// TODO: Determine whether to use pnpm or yarn based on corepack settings (putting on hold, since this is a non issue)
+export async function commandLinkHandler (
+  from: string | null,
+  flags: CommandLinkHandlerOpts,
+): Promise<void> {
+  const transpilationQueue = new PQueue({ concurrency: 1 })
 
-const transpilationQueue = new PQueue({ concurrency: 1 })
-
-async function handler (from: string | null, flags: Flags): Promise<void> {
   const {
     dest: _dest = process.cwd(),
     livereload = false,
@@ -138,20 +130,11 @@ async function handler (from: string | null, flags: Flags): Promise<void> {
     // Oink to rerun from scratch after linking job is done. This allows
     // to simplify the experience where different packages have to be linked
     // one after another.
-    return handler(from, flags)
+    return commandLinkHandler(from, flags)
   }
 }
 
-program
-  .description('Link one package to another package')
-  .argument('[package]', 'Name of package to propagate changes from')
-  .option('-d, --dest [string]')
-  .option('--livereload', 're-link automatically on every file change')
-  .option('--reprompt', 'restart oink after linking job has completed')
-  .option('--debounce [number]', 'delay (ms) how quickly oink reacts to new changes when running with --livereload', (n) => (Number(n) || undefined))
-  .action(handler)
-
-interface Flags {
+export interface CommandLinkHandlerOpts {
   dest: string,
   livereload?: boolean
   reprompt?: boolean

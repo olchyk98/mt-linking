@@ -1,3 +1,2 @@
-import { initProgram } from './src/cli/program'
-import './src/cli/commands'
+import { initProgram } from './src/cli'
 initProgram()
