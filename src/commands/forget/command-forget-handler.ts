@@ -14,9 +14,15 @@ function deleteLinksFolder (dir = LINKS_LOCATION) {
       fs.unlinkSync(entryPath)
     }
   }
+  // XXX: Delete the folder if it's empty. This is
+  // helpful, when we're forgetting packages that
+  // are part of a space (like "@svelte/react").
+  if (fs.readdirSync(dir).length <= 0) {
+    fs.rmdirSync(dir)
+  }
 }
 
-export function commandForgetHandler () {
+export async function commandForgetHandler () {
   upsertLinksConfigFolder()
   deleteLinksFolder()
   logAsLinker('Done!')
