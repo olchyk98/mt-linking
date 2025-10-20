@@ -1,7 +1,7 @@
 import PQueue from 'p-queue'
 import path from 'path'
 import fs from 'fs'
-import { LINKS_LOCATION, observeChangesMinDebounceMs } from '../../constants'
+import { observeChangesMinDebounceMs } from '../../constants'
 import { errorRenderers } from '../../errors'
 import { error, log, logAsLinker, observeFolderChanges } from '../../utils'
 import chalk from 'chalk'
@@ -9,11 +9,12 @@ import { getLinkablePackagesForPackage, getLinkingStrategyForPackage, getPackage
 import { promptPackageToLink } from '../../ui'
 import { transpileAndApplyPackage } from './transpile-and-apply-package'
 
+const transpilationQueue = new PQueue({ concurrency: 1 })
+
 export async function commandLinkHandler (
-  from: string | null,
-  flags: CommandLinkHandlerOpts,
+  from?: string | null,
+  flags: CommandLinkHandlerOpts = {},
 ): Promise<void> {
-  const transpilationQueue = new PQueue({ concurrency: 1 })
 
   const {
     dest: _dest = process.cwd(),
@@ -36,13 +37,6 @@ export async function commandLinkHandler (
 ░ ░ ░ ▒   ▒ ░   ░   ░ ░ ░ ░░ ░ 
     ░ ░   ░           ░ ░  ░   
     `))
-
-  // XXX: Checkin Oink .config folder exists, because otherwise
-  // running oink right away doesn't any sense, since there's
-  // nothing that can be linked. Since there are no known packages.
-  if (!fs.existsSync(LINKS_LOCATION)) {
-    error(errorRenderers.NO_LINKABLE_PACKAGES_SETUP())
-  }
 
   if (livereload === true) {
     logAsLinker('👓 Running in Livereload mode.')
@@ -130,12 +124,14 @@ export async function commandLinkHandler (
     // Oink to rerun from scratch after linking job is done. This allows
     // to simplify the experience where different packages have to be linked
     // one after another.
-    return commandLinkHandler(from, flags)
+    return commandLinkHandler(null, flags)
   }
+
+  await transpilationQueue.onIdle()
 }
 
 export interface CommandLinkHandlerOpts {
-  dest: string,
+  dest?: string,
   livereload?: boolean
   reprompt?: boolean
   debounce?: number

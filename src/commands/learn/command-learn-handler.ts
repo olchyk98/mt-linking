@@ -13,7 +13,7 @@ function getPathsToLearn (inputPattern?: string): string[] {
   const workspaceType = getWorkspaceTypeForRoot(cwd)
   if (workspaceType != null) {
     const childPaths = getChildPackagePathsForWorkspace(cwd, workspaceType)
-    if (childPaths == null) {
+    if (childPaths == null || childPaths.length <= 0) {
       error(errorRenderers.WORKSPACE_HAS_NO_PACKAGES_TO_LEARN())
     }
     return childPaths
@@ -33,13 +33,9 @@ export async function commandLearnHandler (pattern?: string) {
       warnAsLinker(`Could not learn package at path ${pathToLearn}: not a valid package (1)`)
       continue
     }
-    if (learnPackage(packageToLink)) {
-      logAsLinker(`"${packageToLink.packageJson.name}" has been learned!`)
-      learned += 1
-    } else {
-      warnAsLinker(`Could not learn package at path ${packageToLink.packageJson.name}: not a valid package (2)`)
-      continue
-    }
+    learnPackage(packageToLink)
+    logAsLinker(`"${packageToLink.packageJson.name}" has been learned!`)
+    learned += 1
   }
   if (paths.length === 0) {
     logAsLinker('No packages to link')

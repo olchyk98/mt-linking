@@ -45,16 +45,6 @@ export const errorRenderers = {
 `,
     })
   },
-  NO_LINKABLE_PACKAGES_SETUP () {
-    return createErrorBanner({
-      tip: 'Run `oink learn` in the package you want to link, then try again.',
-      title: 'Oink\'s packages collection is empty',
-      description: `
-  Oink doesn't know about any packages yet.  
-  Run 'oink learn' in the package you want to link to this project, then and try again.
-`,
-    })
-  },
   NO_LINKING_STRATEGY_AVAILABLE_FOR_SOURCE () {
     return createErrorBanner({
       tip: 'Pull requests and feature requests are welcome and appreciated.',

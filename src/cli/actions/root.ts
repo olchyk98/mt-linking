@@ -2,6 +2,11 @@ import { commandLinkHandler } from '../../commands'
 import { program } from '../program'
 
 // TODO: Write tests with memfs
+// TODO: Write unit tests that been reset with memfs (mock-fs)
+// TODO: Merge "cli" and "ui"
+// TODO: Merge constant files
+// TODO: Switch to Github Actions for CI
+// TODO: Deprecate "--dest" (i feel like process.cwd() calls will break it)
 // TODO: Determine whether to use pnpm or yarn based on corepack settings (putting on hold, since this is a non issue)
 
 program

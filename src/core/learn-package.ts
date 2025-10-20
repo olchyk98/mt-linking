@@ -13,6 +13,8 @@ import { upsertLinksConfigFolder } from './upsert-links-config-folder'
  * The function will return null if there is
  * no valid package to be resolved at the specified absolutePath.
  * */
+export function learnPackage (absolutePath: string): true | null
+export function learnPackage (absolutePath: ResolvedPackage): true
 export function learnPackage (absolutePath: ResolvedPackage | string): true | null {
   const packageToLink = typeof absolutePath === 'string'
     ? getPackageAtPath(absolutePath)

@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { type LinkingStrategy, getLinkingStrategyForPackage } from './get-linking-strategy-for-package'
 import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
-import { executeShell, logAsLinker } from '../utils'
+import { globMatch, logAsLinker } from '../utils'
 import { getWorkspaceRootPathForPackage } from './get-workspace-root-path-for-package'
 
 async function resolveModuleLocationsForSource (source: ResolvedPackage, destination: ResolvedPackage): Promise<string[] | never> {
@@ -16,11 +16,13 @@ async function resolveModuleLocationsForSource (source: ResolvedPackage, destina
   // there's more than one. Yarn and PNPM may install different versions
   // of the same package and not hoist in case different dependencies require
   // different semver incompatible versions of the source package.
-  const args = [ 'node_modules', '-type d', `-path "*node_modules/${source.packageJson.name}"` ]
-  const workspaceResult = rootPath && await executeShell('find', args, { cwd: rootPath })
-  const packageResult = await executeShell('find', args, { cwd: destination.absolutePath })
-  const workspaceLocations = rootPath && workspaceResult && workspaceResult.split('\n').filter(Boolean).map((s) => path.resolve(rootPath, s))
-  const packageLocations = packageResult.split('\n').filter(Boolean).map((s) => path.resolve(destination.absolutePath, s))
+  // NOTE: "*" in the beginning of the "glob" value indicates that node_modules
+  // can be nested. This is helpful for node_modules packages that install
+  // their own version of a package. With "*" in the beginning we can
+  // identify such packages and link our package for them as well.
+  const glob = `**/node_modules/${source.packageJson.name}/package.json`
+  const packageLocations = globMatch(glob, { cwd: destination.absolutePath, ignoreList: [] }).map((hit) => path.resolve(hit, '../'))
+  const workspaceLocations = rootPath && globMatch(glob, { cwd: rootPath, ignoreList: [] }).map((hit) => path.resolve(hit, '../'))
   const locations = [ ...workspaceLocations || [], ...packageLocations ]
   return locations
 }
