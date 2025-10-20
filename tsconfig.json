@@ -27,6 +27,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "**/*.mjs",
+    "**/*.js",
     "test"
   ],
   "exclude": [

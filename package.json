@@ -20,9 +20,10 @@
     "start": "pnpm dev",
     "lint": "pnpm eslint ./**/*.ts index.ts",
     "transpile": "rm -rf dist && node scripts/transpile",
-    "unit": "vitest --run",
+    "unit": "vitest --run ./test/unit/**",
+    "integration": "vitest --run ./test/it/**",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "test": "pnpm run lint && pnpm run typecheck && pnpm unit",
+    "test": "pnpm run lint && pnpm run typecheck && pnpm unit && pnpm integration",
     "predeploy": "./scripts/predeploy",
     "deploy:local": "pnpm run predeploy && echo 'We are trying to move the executable to /usr/local/bin folder. Running with sudo.' && sudo cp ./dist/run.js /usr/local/bin/oink"
   },

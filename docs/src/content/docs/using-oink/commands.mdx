@@ -1,0 +1,62 @@
+---
+title: CLI Commands
+description: Reference for the root, learn, and forget commands that power Oink.
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+Oink offers three commands. Together they let you register packages, link them, and reset the registry when needed.
+
+## `oink [package?]`
+
+Links a learned package into the current project.
+
+### Flags
+
+| Flag | Description |
+| --- | --- |
+| `[package]` | Optional package name. If omitted, Oink opens an interactive `fzf` picker filtered to packages both learned and installed. |
+| `--dest [path]` | Override the destination directory (defaults to `process.cwd()`). Passing the flag without a value falls back to the current directory. |
+| `--livereload` | Watch the source package for file changes and re-run the linking queue. |
+| `--reprompt` | After the current job finishes, restart the CLI so you can link the next package. Handy when linking several packages back to back. |
+| `--debounce [ms]` | Set the file-watch debounce window. Defaults to `200`. Values below `200` are clamped to that minimum. |
+
+### What happens
+
+1. Oink checks that the destination has a named `package.json` and installed dependencies.
+2. Learned packages from `~/.config/oink/link/` are filtered to those this project depends on (all workspace children if the destination is a root workspace).
+3. It runs the build and copy steps one at a time so results stay consistent.
+4. With `--livereload`, Oink watches the source folder, ignores paths from `.gitignore`, and only keeps the newest queued change.
+5. Logs stream to the terminal, and desktop notifications appear on success or failure.
+
+<Aside type="tip">
+  <p>Know the package you want? Skip the picker with <code>oink my-package</code>.</p>
+</Aside>
+
+## `oink learn [pattern?]`
+
+Registers packages so they appear in the picker and can be linked later.
+
+- No pattern: Oink checks whether the current directory is a Yarn or PNPM workspace root. If so, every child package is learned; otherwise just the current folder.
+- Pattern provided: the glob (keep it quoted) is expanded to every <code>package.json</code>. Each valid package becomes a symlink under <code>~/.config/oink/link/</code>.
+
+### What you see
+
+- Success messages for each learned package.
+- Warnings when a target folder lacks a valid <code>package.json</code> name.
+- A summary when several packages are processed at once.
+
+<Aside type="caution">
+  <p>Always wrap patterns like <code>./**/*</code> in quotes. Without quotes, your shell expands the glob before Oink sees it.</p>
+</Aside>
+
+## `oink forget`
+
+Clears the learned registry by deleting every symlink under <code>~/.config/oink/link/</code>.
+
+Use this when:
+
+- You reorganise packages and want a clean slate.
+- Symlinks point at folders that were removed or need fresh permissions.
+
+Oink recreates the base folder automatically, so the next <code>oink learn</code> call works right away.

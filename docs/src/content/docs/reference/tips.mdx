@@ -1,0 +1,17 @@
+---
+title: Day-to-Day Tips
+description: Handy reminders when working on or with Oink.
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+- Run `pnpm run lint`, `pnpm run typecheck`, and `pnpm run test` before publishing or sharing changes.
+- Unsure which strategy applies? Write a short script that imports `getLinkingStrategyForPackage` and logs the result for your package path.
+- Live reload slowing you down? Increase the debounce (for example `--debounce 500`). Values below `200` milliseconds are ignored.
+- After editing the registry manually, run `oink forget` followed by `oink learn` to rebuild clean symlinks.
+- Watch desktop notifications so you know whether a link succeeded without scrolling back through logs.
+- Update this documentation whenever you add new behaviour or uncover a useful trick.
+
+<Aside type="tip">
+  <p>Share quick wins with your team. Small notes go a long way toward keeping everyone productive.</p>
+</Aside>

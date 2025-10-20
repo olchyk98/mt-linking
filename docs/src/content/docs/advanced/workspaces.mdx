@@ -1,0 +1,32 @@
+---
+title: Workspace Support
+description: Understand how Oink treats Yarn and PNPM workspaces.
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+Oink recognises both Yarn and PNPM workspaces, so you can link once and keep every consumer package updated.
+
+## Detecting workspace roots
+
+- **Yarn:** any folder whose `package.json` includes a `workspaces` array is treated as the root.
+- **PNPM:** Oink reads `pnpm-workspace.yaml` and uses the listed `packages` globs to find child projects.
+
+Running `oink learn` from the root brings every child package into the registry automatically.
+
+## Linking inside a workspace
+
+- `oink` gathers dependencies for every child package, removes duplicates, and ignores packages that already live inside the workspace.
+- Copies go into each matching `node_modules` folder, covering hoisted installs at the root and nested installs inside individual packages.
+
+<Aside type="note">
+  <p>Want to link a single child? Run <code>oink</code> from inside that package. You still use the learned registry without touching other projects.</p>
+</Aside>
+
+## Troubleshooting
+
+- Nothing showing up? Confirm that your workspace file matches the expected format (string array for Yarn, `packages` list for PNPM).
+- If a package is both inside the workspace and linked externally, avoid learning it. Otherwise it may appear as both source and destination.
+- Keep workspace roots within a few directory levels of their children. Extremely deep nesting can fall outside the default search depth.
+
+With these tips, you can keep a whole workspace in sync with a single command.

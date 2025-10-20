@@ -1,0 +1,34 @@
+---
+title: Linking Strategies
+description: Match your package to the right build-and-copy strategy.
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+Oink inspects each package's folder layout and scripts to choose a strategy automatically. The strategy decides which build command runs and which folders are copied into the consumer's `node_modules`.
+
+## Strategy summary
+
+| Strategy | How it is detected | Build command | Copied folders |
+| --- | --- | --- | --- |
+| `TRANSPILED` | `rollup.config.mjs` exists. | `yarn --cwd <pkg> transpile` | `dist`, `web`, `lib`, plus `package.json`. |
+| `TRANSPILED_LEGACY` | No rollup config, but a `build` script is present. | `yarn --cwd <pkg> build` | Same as `TRANSPILED`. |
+| `LEGACY_AMEND_WEB_HYBRID` | Contains `amend` and `lib`, and either `web` or `dist`, with a `build` script. | `yarn --cwd <pkg> build` | `amend`, `boundaries`, `lib`, `dist`, `web`, plus `package.json`. |
+| `AMEND_NATIVE` | Includes `amend` and `lib`. | No build step (prints a message that no transpilation is required). | `amend`, `boundaries`, `lib`, plus `package.json`. |
+| `MAKEFILE_BUILD` | Has a `Makefile`. | `make -C <pkg>` | `dist`, `web`, `lib`, plus `package.json`. |
+| `NOBUILD_SOURCE` | Contains `src` or `lib` and can be used as-is. | No build step. | `src`, `lib`, plus `package.json`. |
+
+## Key behaviours
+
+- Strategies are checked in the order listed. The first match wins.
+- Files are copied into every matching installation, including hoisted workspace locations and the package's own `node_modules`.
+- Oink removes existing targets before copying so stale files do not linger. Avoid storing unrelated assets in these folders.
+- <code>package.json</code> is always copied to keep metadata in sync.
+
+<Aside type="tip">
+  <p>Need a quick win? Adding a simple <code>yarn build</code> script that outputs a <code>dist/</code> folder is often enough to unlock the <code>TRANSPILED</code> strategy.</p>
+</Aside>
+
+## When strategies need tweaks
+
+If your package does not fit any strategy, mimic one of the layouts above (for example, add <code>dist/</code> or <code>lib/</code> folders) and try again. For long-term changes, coordinate with maintainers so a new strategy can be added safely.

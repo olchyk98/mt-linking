@@ -1,0 +1,52 @@
+---
+title: Cheatsheet & FAQ
+description: Quick answers to common issues while using Oink.
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+Need a fast fix? Find the scenario below and follow the suggested command.
+
+### Package not found
+
+Run `oink learn` inside the source package, then rerun `oink` from the consumer project.
+
+### Missing `node_modules`
+
+Install dependencies in the destination project before linking.
+
+### Live reload is noisy
+
+Raise the debounce:
+
+```sh
+oink --livereload --debounce 500
+```
+
+### PNPM scripts
+
+Mirror the expected Yarn scripts or chat with maintainers about adding a PNPM-aware strategy.
+
+### Wrong files copied
+
+Check the [strategy table](/using-oink/linking-strategies/) and confirm your folder names trigger the right strategy.
+
+### Skip the picker
+
+Call the package directly:
+
+```sh
+oink my-package
+```
+
+### Workspace loops
+
+Do not learn packages that already live inside the workspace; run `oink forget` and relearn only external ones.
+
+### Git errors in watcher
+
+Ensure `git` is installed or disable `--livereload` in environments without Git.
+
+<Aside type="note">
+  <p>Still stuck? Grab the <a href="/reference/tips/">Day-to-Day Tips</a> page for more context before filing an issue.</p>
+</Aside>

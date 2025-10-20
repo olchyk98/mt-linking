@@ -1,0 +1,34 @@
+---
+title: Purpose & Scope
+description: Understand what Oink solves and when to reach for it.
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+Oink saves you from copying build artefacts by hand. Learn a package once, run `oink` in any project that depends on it, and Oink keeps the install in sync.
+
+## Why Oink exists
+
+- Sync source code straight into a consumer project without publishing.
+- Support frontend bundles, amend-style services, and everything in between.
+- Handle single-package repos and Yarn or PNPM workspaces with a single workflow.
+
+<Aside type="tip">
+  <p>Whenever you would otherwise copy files into <code>node_modules</code>, try Oink first--it does the heavy lifting and remembers your packages.</p>
+</Aside>
+
+## The core loop
+
+1. **Learn** a package with `oink learn` so it appears in the registry.
+2. **Link** from inside the consumer project with `oink`.
+3. **Iterate** by adding <code>--livereload</code> for automatic rebuilds during development.
+
+## When to use it
+
+Reach for Oink when you:
+
+- Need to test changes in one package against another without publishing.
+- Share code across a workspace and want reliable updates.
+- Prefer clear logs, notifications, and guardrails while linking.
+
+Not sure which strategy fits your package? Head to [Linking Strategies](/using-oink/linking-strategies/) for a simple table that explains every option.

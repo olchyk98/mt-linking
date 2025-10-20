@@ -1,0 +1,54 @@
+---
+title: Quick Start
+description: Install Oink, teach it a package, and link changes in four steps.
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+This quick tour gets you linking in minutes. Follow each step in order, and you will have a working setup ready for live reload by the end.
+
+### 1. Install the CLI
+
+```sh
+pnpm install -g oink0
+```
+
+This places `oink` and `olink` on your PATH so you can call them from any project.
+
+### 2. Teach Oink a package
+
+Run inside the package you want to share:
+
+```sh
+oink learn
+```
+
+Oink creates a symlink in `~/.config/oink/link/` so it remembers this package. Repeat for every package you plan to link.
+
+### 3. Link it into a consumer
+
+Switch to the project that depends on your package and run:
+
+```sh
+oink
+```
+
+Choose the package from the `fzf` list, or pass its name directly. Oink builds the source and copies the results into every matching `node_modules` folder.
+
+### 4. Keep the link fresh (optional)
+
+```sh
+oink --livereload
+```
+
+Live reload watches the source package for changes and repeats the build-and-copy cycle automatically.
+
+<Aside type="tip">
+  <p>Need more time between rebuilds? Add <code>{'--debounce 500'}</code> to wait half a second after each change before the next link runs.</p>
+</Aside>
+
+## What's next?
+
+- Learn when Oink shines in [Purpose & Scope](/getting-started/overview/).
+- Explore every flag in the [CLI Commands](/using-oink/commands/) reference.
+- Keep the [Cheatsheet & FAQ](/reference/cheatsheet/) open for quick fixes while you work.
