@@ -1,0 +1,44 @@
+---
+title: Installation & Setup
+description: Install Oink globally or run it from source in this repository.
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+Oink ships on npm as `oink0` and exposes the `oink` and `olink` binaries. Choose the path that fits your workflow.
+
+### Option A: Global install
+
+```sh
+pnpm install -g oink0
+```
+
+This mirrors the command in the public README and is the fastest way to use Oink across repositories. After installing, run `oink --help` to confirm the CLI is accessible.
+
+### Option B: Run from source
+
+1. Install dependencies:
+
+   ```sh
+   pnpm install
+   ```
+
+2. Bundle the CLI:
+
+   ```sh
+   pnpm run transpile
+   ```
+
+   This uses `esbuild` to bundle `index.ts` into `dist/` and normalises any `node:` protocol imports for broader Node support.
+
+3. Launch the compiled CLI:
+
+   ```sh
+   node --enable-source-maps dist
+   ```
+
+Need a standalone executable? Run `pnpm run predeploy`, then `pnpm run deploy:local` to copy `dist/run.js` into `/usr/local/bin/oink` (requires sudo).
+
+<Aside type="tip">
+  <p>After installing, run <code>oink learn</code> inside a sample package and check for a new entry under <code>~/.config/oink/link/</code>. That confirms Oink can read and write its registry.</p>
+</Aside>

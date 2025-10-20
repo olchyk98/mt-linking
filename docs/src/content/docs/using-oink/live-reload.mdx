@@ -1,0 +1,38 @@
+---
+title: Live Reload & Watching
+description: Learn how Oink watches files and keeps links current.
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+Live reload watches your source package and repeats the linking process whenever files change. Use it while developing so the consumer project always reflects the latest code.
+
+## What the watcher does
+
+- Monitors the source folder for file changes.
+- Skips paths listed in `.gitignore` to reduce noise.
+- Waits for a short debounce window before firing another build.
+
+## How jobs are queued
+
+1. Each change schedules a new link, but Oink runs one job at a time.
+2. If another change arrives mid-run, Oink drops older pending work and keeps only the newest request.
+3. Logs still appear in the terminal, and desktop notifications confirm the result.
+
+## Debounce rules
+
+- The default debounce is `200` milliseconds.
+- Passing `--debounce <ms>` increases the delay. Values below `200` are clamped to keep the system stable.
+
+<Aside type="caution">
+  <p>Heavy builds? Start with <code>--debounce 500</code>. You can shorten the delay once rebuilds feel smooth.</p>
+</Aside>
+
+## Tips for smooth runs
+
+- Pair <code>--livereload</code> with <code>--reprompt</code> only when you want Oink to restart after finishing a run.
+- Ensure <code>git</code> is available. Without it, Oink cannot honour <code>.gitignore</code>, and every change triggers a rebuild.
+
+## One-off linking
+
+Skip <code>--livereload</code> when you only need a single link. Oink will run once and exit.

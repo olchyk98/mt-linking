@@ -1,0 +1,37 @@
+---
+title: Learned Registry
+description: See how Oink stores learned packages and how the registry is managed.
+---
+
+import { Aside } from '@astrojs/starlight/components'
+
+Oink keeps a simple registry of every package you have taught it. The registry lives at `~/.config/oink/link/` and is made of symlinks that point back to the real package folders on your machine.
+
+## Folder layout
+
+- Scoped packages create nested folders that mirror their scope, for example `~/.config/oink/link/@scope/pkg`.
+- Each entry is a symlink named after the package.
+- Peek into the folder any time to see which packages are ready to link.
+
+## How entries are created
+
+When you run `oink learn`, Oink:
+
+1. Checks that the target contains a valid `package.json` with a name.
+2. Creates any parent folders that do not yet exist.
+3. Replaces an existing symlink so the registry always points to the latest path.
+
+## How Oink uses the registry
+
+- The main `oink` command filters the registry to show only packages that are both learned and installed in the current project.
+- The registry also tells Oink exactly where to pull files from when it copies build output into a dependency.
+
+<Aside type="note">
+  <p>Need a fresh start? Run <code>oink forget</code>, then rerun <code>oink learn</code> inside the packages you still use.</p>
+</Aside>
+
+## Keeping the registry healthy
+
+- Use `oink forget` whenever symlinks go stale or packages move.
+- On Windows or restricted environments, creating symlinks may require elevated permissions.
+- If you adjust the folder manually, follow up with <code>oink learn</code> so Oink restores a clean symlink.
