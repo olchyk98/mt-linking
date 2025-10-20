@@ -1,8 +1,9 @@
 import path from 'path'
+import fs from 'fs'
 import process from 'process'
 import { globSync } from 'glob'
 
-const ignoreList = [
+const defaultIgnoreList = [
   '**/node_modules/**',
   '**/dist/**',
 ]
@@ -15,8 +16,18 @@ const ignoreList = [
  * Under the hood the function uses 'glob'.globSync, but also
  * applies path.resolve to always return absolute paths.
  * */
-export function globMatch (pattern: string | string[], opts: { cwd?: string } = {}): string[] {
-  const cwd = opts.cwd ?? process.cwd()
-  const relativePaths = globSync(pattern, { cwd, ignore: ignoreList })
+export function globMatch (pattern: string | string[], opts: GlobMatchOpts = {}): string[] {
+  const {
+    cwd = process.cwd(),
+    ignoreList = defaultIgnoreList,
+  } = opts
+  // NOTE: "fs" is explicitly passed in here to support "memfs" in tests. Without
+  // it globSync will break out and try to use original "fs" package.
+  const relativePaths = globSync(pattern, { cwd, ignore: ignoreList, fs })
   return relativePaths.map((item) => path.resolve(cwd, item))
+}
+
+export interface GlobMatchOpts {
+  cwd?: string
+  ignoreList?: string[]
 }

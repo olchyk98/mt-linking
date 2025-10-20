@@ -34,7 +34,9 @@ function getLinkablePackagesForWorkspace (destinationPackage: ResolvedPackage, w
       const linkablePackages = getInstalledPackagesForPackage(childPackage, allLinkablePackages)
       // XXX: We have the map here to be able to quickly deduplicate packages.
       linkablePackages.forEach((linkablePackage) => {
-      // XXX: Packages in the workspace may depend on each other. We ignore those.
+        // XXX: Packages in the workspace may depend on each other. We ignore those.
+        // Additionally, it doesn't make sense to link a package that is already in workspace,
+        // since those usually are hoisted between each other - sharing their code instantly.
         if (!(linkablePackage.packageJson.name in workspacePackagesMap)) {
           acc[linkablePackage.packageJson.name] = linkablePackage
         }

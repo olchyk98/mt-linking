@@ -4,6 +4,7 @@ import { type ResolvedPackage, getPackageAtPath } from './get-package-at-path'
 import { LINKS_LOCATION } from '../constants'
 
 export function getLinkablePackages (rootPath: string = LINKS_LOCATION): ResolvedPackage[] {
+  if (!fs.existsSync(rootPath)) return []
   const folderItems = fs.readdirSync(rootPath)
   return folderItems.reduce(
     (acc, itemPath) => {
