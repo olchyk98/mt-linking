@@ -86,7 +86,7 @@ export async function commandLinkHandler (
   if (livereload === true) {
     observeFolderChanges(
       sourcePackage.absolutePath,
-      { debounceMs: Math.min(observeChangesMinDebounceMs, debounceMs) },
+      { debounceMs: Math.max(observeChangesMinDebounceMs, debounceMs) },
       (filename) => {
         if (transpilationQueue.pending > 0) {
           // XXX: If we're already running one item through the queue,
