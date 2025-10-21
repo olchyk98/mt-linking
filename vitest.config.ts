@@ -1,6 +1,6 @@
 export default {
   test: {
-    setupFiles: [ './test/mock-fs' ],
+    setupFiles: [ './test/global-mocks', './test/mock-fs' ],
   },
 }
 
