@@ -5,6 +5,8 @@ import starlightThemeRapide from 'starlight-theme-rapide'
 
 // https://astro.build/config
 export default defineConfig({
+  base: '/mt-linking/',
+  trailingSlash: 'always',
   integrations: [
     starlight({
       title: 'Oink Docs',

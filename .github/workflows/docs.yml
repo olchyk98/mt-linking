@@ -1,0 +1,49 @@
+name: Docs
+run-name: Docs
+on: [ push ]
+jobs:
+  test-build-docs:
+    if: github.ref != 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+      - name: Pull branch code
+        uses: actions/checkout@v5
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: ./docs
+      - name: Build docs
+        run: pnpm build
+        working-directory: ./docs
+
+  prod-build-docs:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install & Build & Upload
+        uses: withastro/action@v4
+        with:
+          path: docs
+          node-version: 20
+          package-manager: pnpm@8.15.8
+          build-cmd: pnpm run build --base /mt-linking
+
+  prod-deploy-docs:
+    if: github.ref == 'refs/heads/master'
+    needs: prod-build-docs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
