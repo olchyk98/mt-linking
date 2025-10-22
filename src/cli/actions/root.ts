@@ -4,6 +4,8 @@ import { program } from '../program'
 // TODO: Write tests with memfs
 // TODO: Write unit tests that been reset with memfs (mock-fs)
 // TODO: Merge "cli" and "ui"
+// TODO: Sort fzf packages based on how often they get linked
+// TODO: Introduce --banner
 // TODO: Merge constant files
 // TODO: Switch to Github Actions for CI
 // TODO: Deprecate "--dest" (i feel like process.cwd() calls will break it)
