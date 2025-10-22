@@ -4,6 +4,7 @@ description: Quick answers to common issues while using Oink.
 ---
 
 import { Aside } from '@astrojs/starlight/components'
+import { hrefWithBaseURL } from '../../../utils'
 
 Need a fast fix? Find the scenario below and follow the suggested command.
 
@@ -29,7 +30,7 @@ Mirror the expected Yarn scripts or chat with maintainers about adding a PNPM-aw
 
 ### Wrong files copied
 
-Check the [strategy table](using-oink/linking-strategies/) and confirm your folder names trigger the right strategy.
+Check the <a href={hrefWithBaseURL('using-oink/linking-strategies/')}>strategy table</a> and confirm your folder names trigger the right strategy.
 
 ### Skip the picker
 
@@ -48,5 +49,5 @@ Do not learn packages that already live inside the workspace; run `oink forget` 
 Ensure `git` is installed or disable `--livereload` in environments without Git.
 
 <Aside type="note">
-  <p>Still stuck? Grab the <a href="reference/tips/">Day-to-Day Tips</a> page for more context before filing an issue.</p>
+  <p>Still stuck? Grab the <a href={hrefWithBaseURL('reference/tips/')}>Day-to-Day Tips</a> page for more context before filing an issue.</p>
 </Aside>

@@ -25,14 +25,14 @@ Live reload watches your source package and repeats the linking process whenever
 - Passing `--debounce <ms>` increases the delay. Values below `200` are clamped to keep the system stable.
 
 <Aside type="caution">
-  <p>Heavy builds? Start with <code>--debounce 500</code>. You can shorten the delay once rebuilds feel smooth.</p>
+  <p>Heavy builds? Start with <code>{'--debounce 500'}</code>. You can shorten the delay once rebuilds feel smooth.</p>
 </Aside>
 
 ## Tips for smooth runs
 
-- Pair <code>--livereload</code> with <code>--reprompt</code> only when you want Oink to restart after finishing a run.
+- Pair <code>{'--livereload'}</code> with <code>{'--reprompt'}</code> only when you want Oink to restart after finishing a run.
 - Ensure <code>git</code> is available. Without it, Oink cannot honour <code>.gitignore</code>, and every change triggers a rebuild.
 
 ## One-off linking
 
-Skip <code>--livereload</code> when you only need a single link. Oink will run once and exit.
+Skip <code>{'--livereload'}</code> when you only need a single link. Oink will run once and exit.

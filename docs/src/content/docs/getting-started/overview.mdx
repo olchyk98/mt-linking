@@ -4,6 +4,7 @@ description: Understand what Oink solves and when to reach for it.
 ---
 
 import { Aside } from '@astrojs/starlight/components'
+import { hrefWithBaseURL } from '../../../utils'
 
 Oink saves you from copying build artefacts by hand. Learn a package once, run `oink` in any project that depends on it, and Oink keeps the install in sync.
 
@@ -31,4 +32,4 @@ Reach for Oink when you:
 - Share code across a workspace and want reliable updates.
 - Prefer clear logs, notifications, and guardrails while linking.
 
-Not sure which strategy fits your package? Head to [Linking Strategies](using-oink/linking-strategies/) for a simple table that explains every option.
+Not sure which strategy fits your package? Head to <a href={hrefWithBaseURL('using-oink/linking-strategies/')}>Linking Strategies</a> for a simple table that explains every option.
